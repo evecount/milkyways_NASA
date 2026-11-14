@@ -226,10 +226,10 @@
           <option value="clay">Heavy Clay (High water retention, compaction risk)</option>
         </select>
 
-        <label for="milk">Daily Milk Volume (Litres/day)</label>
+        <label for="milk">Daily Milk Volume (Liters/day)</label>
         <input id="milk" type="number" value="20000" step="1000" min="1000" />
 
-        <label for="heatMode">Data Centre Heat Loop (Control Test)</label>
+        <label for="heatMode">Data Center Heat Loop (Control Test)</label>
         <select id="heatMode">
           <option value="boosted">Positive Control: 55-70°C Liquid + Heat Pump (70-90°C)</option>
           <option value="unboosted">Negative Control: 30-45°C Air Waste Heat (Unboosted)</option>
@@ -286,11 +286,11 @@
       </div>
 
       <div class="card">
-        <h2>Data Centre Waste-Heat Balance</h2>
+        <h2>Data Center Waste-Heat Balance</h2>
         <div class="metrics-grid">
           <div class="metric"><div class="k">Dairy Thermal Demand</div><div class="v" id="hDemand">817 kWh/d</div></div>
           <div class="metric"><div class="k">Avg Heat Load</div><div class="v" id="hKw">82 kW</div></div>
-          <div class="metric"><div class="k">HTST Pasteurisation</div><div class="v" id="hHtst">72&ndash;78 &deg;C (PASS)</div></div>
+          <div class="metric"><div class="k">HTST Pasteurization</div><div class="v" id="hHtst">72&ndash;78 &deg;C (PASS)</div></div>
           <div class="metric"><div class="k">Absorption Chilling</div><div class="v">~7.2 &deg;C</div></div>
         </div>
         <div class="safety-box" id="safetyBox"></div>
@@ -303,7 +303,7 @@
     const ROTATIONS = [
       {
         name: "Maize Silage -> Alfalfa (3 yr) -> Red Clover",
-        note: "High-protein legume break cuts N fertiliser 25-30% and builds organic matter.",
+        note: "High-protein legume break cuts N fertilizer 25-30% and builds organic matter.",
         control: "POSITIVE CONTROL (N-Fixing)",
         controlClass: "pos",
         soil: 92, water: 74, heat: 78, feed: 94,
@@ -385,12 +385,12 @@
         {
           title: "1. Heat & Solar PAR Check",
           pass: true,
-          msg: `Peak month ${summerTemp.toFixed(1)}°C, ${climate.solar.toFixed(1)} MJ/m²/d → ${summerTemp >= 25 ? "C4 Sorghum/Cowpea favoured" : "C3 Alfalfa/Maize favoured"}.`
+          msg: `Peak month ${summerTemp.toFixed(1)}°C, ${climate.solar.toFixed(1)} MJ/m²/d → ${summerTemp >= 25 ? "C4 Sorghum/Cowpea favored" : "C3 Alfalfa/Maize favored"}.`
         },
         {
           title: "2. Water & Soil Check",
           pass: climate.rain >= 1.5,
-          msg: `${climate.rain.toFixed(2)} mm/d rain on ${soilType} soil → ${climate.rain < 2.2 || soilType === "sandy" ? "Drought-tolerant legumes prioritised" : "Balanced moisture"}.`
+          msg: `${climate.rain.toFixed(2)} mm/d rain on ${soilType} soil → ${climate.rain < 2.2 || soilType === "sandy" ? "Drought-tolerant legumes prioritized" : "Balanced moisture"}.`
         },
         {
           title: "3. N-Fixation Cycle Check",
@@ -417,8 +417,8 @@
       const sbox = el("safetyBox");
       sbox.className = `safety-box ${isBoosted ? "" : "fail"}`;
       sbox.innerHTML = isBoosted
-        ? `<strong>Safety &amp; Engineering (Positive Control):</strong> Data centre liquid coolant (55&ndash;70 &deg;C) stays in a closed primary loop. A <strong>double-wall heat exchanger</strong> transfers heat to a food-grade water loop, boosted by a heat pump to 70&ndash;90 &deg;C. <strong>The coolant never touches the milk.</strong>`
-        : `<strong>Negative Control Active:</strong> Unboosted 30&ndash;45 &deg;C air waste heat fails HTST pasteurisation (72&ndash;78 &deg;C). A heat pump boost is required—never overclaim direct air heat for pasteurisation.`;
+        ? `<strong>Safety &amp; Engineering (Positive Control):</strong> Data center liquid coolant (55&ndash;70 &deg;C) stays in a closed primary loop. A <strong>double-wall heat exchanger</strong> transfers heat to a food-grade water loop, boosted by a heat pump to 70&ndash;90 &deg;C. <strong>The coolant never touches the milk.</strong>`
+        : `<strong>Negative Control Active:</strong> Unboosted 30&ndash;45 &deg;C air waste heat fails HTST pasteurization (72&ndash;78 &deg;C). A heat pump boost is required—never overclaim direct air heat for pasteurization.`;
     }
 
     function renderAll() {

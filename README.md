@@ -3,7 +3,7 @@
 **Challenge 7:** *Field Shift: Adapting Farms with NASA Data*
 
 ## What is this?
-**MilkyWays** is a decision-support tool for an industrial dairy farm located next to an AI data centre. It helps the farm choose what fodder rotation to plant next using NASA Earth observations, local soil data, crop characteristics, and farmer priorities — while pairing dairy pasteurisation and cooling with indirect data centre waste heat (*"the coolant never touches the milk"*).
+**MilkyWays** is a decision-support tool for an industrial dairy farm located next to an AI data center. It helps the farm choose what fodder rotation to plant next using NASA Earth observations, local soil data, crop characteristics, and farmer priorities — while pairing dairy pasteurization and cooling with indirect data center waste heat (*"the coolant never touches the milk"*).
 
 ## Repository & Folder Structure
 - `01-spec/` — The single source-of-truth product specification (`milkyways-product-spec.md`).
