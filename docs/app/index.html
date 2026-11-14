@@ -246,6 +246,29 @@
 
 
 
+    @keyframes diaryPop {
+      0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      50% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { transform: scale(1); box-shadow: none; }
+    }
+    .diary-pop {
+      animation: diaryPop 0.55s ease;
+    }
+    .outcome-chip {
+      width: auto;
+      margin: 0;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.78rem;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .outcome-chip:hover {
+      border-color: var(--accent);
+    }
+
     #fetchBtn:active {
       transform: translateY(3px);
       box-shadow: 0 1px 0 #3730a3;
@@ -575,8 +598,13 @@
         <details id="logGroundTruthPanel" style="margin-top:0.85rem; background:#0b1120; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.85rem;">
           <summary style="cursor:pointer; font-size:0.86rem; font-weight:600; color:var(--accent);">Log On-Farm Ground Truth (Improves FodderWeatherNet Over Time)</summary>
           <div style="margin-top:0.65rem;">
-            <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Any farm can enter its coordinates above, run
-              live NASA POWER + FodderWeatherNet, and log real seasonal outcomes to grow the open training dataset.</div>
+            <div id="diagResultBox" style="display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; margin-bottom:0.7rem;"></div>
+            <div style="display:flex; gap:0.45rem; flex-wrap:wrap; align-items:center; margin-bottom:0.5rem;">
+              <span style="font-size:0.78rem; color:var(--muted);">1-Tap Season Outcome:</span>
+              <button type="button" class="outcome-chip" data-score="92">Thriving (92)</button>
+              <button type="button" class="outcome-chip" data-score="78">Steady (78)</button>
+              <button type="button" class="outcome-chip" data-score="54">Heat/Water Stress (54)</button>
+            </div>
             <div class="row2">
               <div>
                 <label for="obsCrop">Planted Fodder Crop</label>
@@ -589,14 +617,14 @@
               </div>
               <div>
                 <label for="obsOutcome">Observed Season Outcome (1&ndash;100)</label>
-                <input id="obsOutcome" type="number" min="1" max="100" value="85" />
+                <input id="obsOutcome" type="number" min="1" max="100" value="92" />
               </div>
             </div>
             <div class="row2">
-              <button id="saveObsBtn" type="button">Save Observation Locally</button>
+              <button id="saveObsBtn" type="button" style="background:linear-gradient(135deg,#16a34a,#0d9488);">Save &amp; Log to Dairy Diary</button>
               <button id="exportObsBtn" type="button" style="background:var(--accent); color:#0b1120;">Export Dataset JSON</button>
             </div>
-            <div class="status" id="obsStatus">0 local observations logged in browser.</div>
+            <div class="status" id="obsStatus" style="color:var(--good);">0 local observations logged in browser.</div>
           </div>
         </details>
       </div>
@@ -1500,18 +1528,55 @@
         return saved.length ? saved : defaults;
       } catch { return defaults; }
     }
-    function updateObsStatus() {
+    function runFarmDiagnostic() {
+      const box = el("diagResultBox");
+      if (!box) return;
+      const isWarm = climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy";
+      const recCrop = isWarm ? "Sorghum -> Cowpea" : "Maize Silage -> Alfalfa";
+      if (el("obsCrop")) el("obsCrop").value = recCrop;
+      const sN = +el("synthN").value || 110;
+      const nSaved = Math.round(sN * 0.27);
+      const milk = Math.max(500, +el("milk").value || 1200);
+      const kwh = Math.round((milk / 20000) * 817);
+      const riskText = el("dlRisk") ? el("dlRisk").textContent : "-- / 100";
+      box.innerHTML = `
+        <div class="metric" style="border-left:3px solid var(--accent);">
+          <div class="k">FodderWeatherNet Stress</div>
+          <div class="v">${riskText}</div>
+        </div>
+        <div class="metric" style="border-left:3px solid var(--good);">
+          <div class="k">Est. Synthetic N Saved</div>
+          <div class="v">~${nSaved} kg/ha</div>
+        </div>
+        <div class="metric" style="border-left:3px solid var(--indigo);">
+          <div class="k">Waste-Heat Offset</div>
+          <div class="v">${kwh.toLocaleString()} kWh/d</div>
+        </div>
+      `;
+    }
+
+    function updateObsStatus(highlightFirst) {
       const list = getObs();
       el("obsStatus").textContent = `${list.length} observation(s) in Dairy Diary (ready to export & retrain FodderWeatherNet).`;
-      el("diaryFeed").innerHTML = list.slice().reverse().slice(0, 4).map(o => `
-        <div class="check-item pass">
+      el("diaryFeed").innerHTML = list.slice().reverse().slice(0, 4).map((o, idx) => `
+        <div class="check-item pass ${highlightFirst && idx === 0 ? "diary-pop" : ""}">
           <div class="ctitle"><span>${o.crop}</span><span>${o.observed_score}/100</span></div>
           <div style="color:var(--muted); margin-top:0.2rem;">(${Number(o.lat).toFixed(2)}°, ${Number(o.lon).toFixed(2)}°) · ${o.soil} soil${o.note ? " · " + o.note : ""}</div>
         </div>
       `).join("");
     }
+
+    document.querySelectorAll(".outcome-chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        el("obsOutcome").value = btn.dataset.score;
+        document.querySelectorAll(".outcome-chip").forEach(b => b.style.borderColor = "var(--border)");
+        btn.style.borderColor = "var(--good)";
+      });
+    });
+
     el("saveObsBtn").addEventListener("click", () => {
       const list = getObs();
+      const scoreVal = Math.max(1, Math.min(100, +el("obsOutcome").value || 80));
       list.push({
         timestamp: new Date().toISOString(),
         lat: parseFloat(el("lat").value),
@@ -1521,14 +1586,14 @@
         rain: climate.rain,
         solar: climate.solar,
         crop: el("obsCrop").value,
-        observed_score: Math.max(1, Math.min(100, +el("obsOutcome").value || 80))
+        observed_score: scoreVal,
+        note: `NASA T2M ${climate.t2m.toFixed(1)}°C`
       });
       localStorage.setItem("milkyways_obs", JSON.stringify(list));
-      updateObsStatus();
-      el("openDiagBtn").addEventListener("click", () => {
-        el("obsCrop").scrollIntoView({ behavior: "smooth" });
-      });
+      updateObsStatus(true);
+      el("obsStatus").textContent = `Logged! ${list.length} observation(s) now in Dairy Diary.`;
     });
+
     el("exportObsBtn").addEventListener("click", () => {
       const blob = new Blob([JSON.stringify(getObs(), null, 2)], { type: "application/json" });
       const a = document.createElement("a");
@@ -1536,11 +1601,14 @@
       a.download = "milkyways_farm_observations.json";
       a.click();
     });
-    updateObsStatus();
+
+    updateObsStatus(false);
+    runFarmDiagnostic();
     el("openDiagBtn").addEventListener("click", () => {
       const panel = el("logGroundTruthPanel");
       if (panel) panel.open = true;
-      el("obsCrop").scrollIntoView({ behavior: "smooth", block: "center" });
+      runFarmDiagnostic();
+      el("logGroundTruthPanel").scrollIntoView({ behavior: "smooth", block: "center" });
     });
   </script>
 </body>
