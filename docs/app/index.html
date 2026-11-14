@@ -319,6 +319,9 @@
           <option value="44.08,-79.88">Ontario Dairy Region, Canada (44.08, -79.88)</option>
           <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
           <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
+          <option value="43.07,-89.40">Wisconsin Dairy Belt, USA (43.07, -89.40)</option>
+          <option value="-37.79,175.28">Waikato Pasture Dairy, New Zealand (-37.79, 175.28)</option>
+          <option value="-0.30,36.08">Nakuru Highland Dairy, Kenya (-0.30, 36.08)</option>
         </select>
 
         <div class="row2">
@@ -823,177 +826,99 @@
       `;
     }
 
-    let mcdaMap = null, mapLayers = null;
-
-    function initMcdaMap() {
-
-      if (mcdaMap || typeof L === "undefined" || !el("mcdaMap")) return;
-
-      const lat = parseFloat(el("lat").value) || 44.08;
-
-      const lon = parseFloat(el("lon").value) || -79.88;
-
-      mcdaMap = L.map("mcdaMap").setView([lat, lon], 12);
-
-      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-
-        maxZoom: 17,
-
-        attribution: "&copy; OpenTopoMap &amp; OSM"
-
-      });
-
-      const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-
-        maxZoom: 18,
-
-        attribution: "&copy; Esri World Imagery"
-
-      });
-
-      sat.addTo(mcdaMap);
-
-      L.control.layers({ "Satellite": sat, "Topographic (MCDA)": topo }).addTo(mcdaMap);
-
-      mapLayers = L.layerGroup().addTo(mcdaMap);
-
-      mcdaMap.on("click", (e) => {
-
-        el("lat").value = e.latlng.lat.toFixed(2);
-
-        el("lon").value = e.latlng.lng.toFixed(2);
-
-        fetchNasaPower();
-
-      });
-
-    }
-
-
-
-    function updateMcdaMap(score, zoneColor, htstOk, topName, kwh, kw) {
-
-      initMcdaMap();
-
-      if (!mcdaMap || !mapLayers) return;
-
-      const lat = parseFloat(el("lat").value) || 44.08;
-
-      const lon = parseFloat(el("lon").value) || -79.88;
-
-      const dcLat = lat + 0.009;
-
-      const dcLon = lon + 0.014;
-
-      mapLayers.clearLayers();
-
-      L.circle([lat, lon], { radius: 950, color: zoneColor, fillColor: zoneColor, fillOpacity: 0.22, weight: 2 })
-
-        .bindPopup(`<strong>Dairy Farm Parcel</strong><br/>MCDA Suitability: ${score}/100<br/>Top Rotation: ${topName}`)
-
-        .addTo(mapLayers);
-
-      L.circle([lat, lon], { radius: 457, color: "#6366f1", fillOpacity: 0.05, dashArray: "5 5", weight: 1.5 })
-
-        .bindPopup("1,500 ft (457 m) Agricultural Setback &amp; Watershed Buffer")
-
-        .addTo(mapLayers);
-
-      L.polyline([[lat, lon], [dcLat, dcLon]], { color: htstOk ? "#14b8a6" : "#ef4444", weight: 3, dashArray: htstOk ? null : "6 6" })
-
-        .bindPopup(`Closed-Loop Heat Transfer: ${kwh.toLocaleString()} kWh/d (${kw} kW)`)
-
-        .addTo(mapLayers);
-
-      L.circleMarker([lat, lon], { radius: 7, color: "#fff", fillColor: zoneColor, fillOpacity: 1, weight: 2 })
-
-        .bindPopup(`<strong>Dairy Farm</strong> (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`)
-
-        .addTo(mapLayers);
-
-      L.circleMarker([dcLat, dcLon], { radius: 7, color: "#fff", fillColor: htstOk ? "#14b8a6" : "#ef4444", fillOpacity: 1, weight: 2 })
-
-        .bindPopup(`<strong>AI Data Center</strong><br/>${htstOk ? "55–70°C Liquid + Heat Pump (PASS)" : "30–45°C Air Unboosted (FAIL)"}`)
-
-        .addTo(mapLayers);
-
+    let mcdaMap = null, rasterLayer = null, bufferLayer = null;
+    function mcdaColor(val) {
+      if (val >= 75) return "#22c55e";
+      if (val >= 62) return "#eab308";
+      if (val >= 48) return "#f97316";
+      return "#ef4444";
+    }
+
+    function initMcdaMap() {
+      if (mcdaMap || typeof L === "undefined" || !el("mcdaMap")) return;
+      const lat = parseFloat(el("lat").value) || 44.08;
+      const lon = parseFloat(el("lon").value) || -79.88;
+      mcdaMap = L.map("mcdaMap").setView([lat, lon], 12);
+      const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 18,
+        attribution: "&copy; Esri World Imagery"
+      });
+      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        maxZoom: 17,
+        attribution: "&copy; OpenTopoMap &amp; OSM"
+      });
+      sat.addTo(mcdaMap);
+      rasterLayer = L.layerGroup().addTo(mcdaMap);
+      bufferLayer = L.layerGroup().addTo(mcdaMap);
+      L.control.layers(
+        { "Satellite": sat, "Topographic (MCDA)": topo },
+        { "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
+      ).addTo(mcdaMap);
+      mcdaMap.on("click", (e) => {
+        el("lat").value = e.latlng.lat.toFixed(2);
+        el("lon").value = e.latlng.lng.toFixed(2);
+        fetchNasaPower();
+      });
+    }
+
+    function updateMcdaMap(score, zoneColor, htstOk, topName, kwh, kw) {
+      initMcdaMap();
+      if (!mcdaMap || !rasterLayer || !bufferLayer) return;
+      const lat = parseFloat(el("lat").value) || 44.08;
+      const lon = parseFloat(el("lon").value) || -79.88;
+      const dcLat = lat + 0.009;
+      const dcLon = lon + 0.014;
+      rasterLayer.clearLayers();
+      bufferLayer.clearLayers();
+
+      // Dynamic 7x7 NASA MCDA raster grid around farm + data center corridor
+      const stepLat = 0.0065, stepLon = 0.0075;
+      const rainPenalty = climate.rain < 1.8 ? -8 : (climate.rain > 5.5 ? -5 : 4);
+      const heatPenalty = climate.t2m > 26 ? -10 : (climate.t2m < 2 ? -6 : 3);
+      for (let r = -3; r <= 3; r++) {
+        for (let c = -3; c <= 3; c++) {
+          const cLat = lat + r * stepLat;
+          const cLon = lon + c * stepLon;
+          const dFarm = Math.hypot((cLat - lat) * 111, (cLon - lon) * 111 * Math.cos(lat * Math.PI / 180));
+          const dDc = Math.hypot((cLat - dcLat) * 111, (cLon - dcLon) * 111 * Math.cos(lat * Math.PI / 180));
+          // Optimal corridor is 0.45-2.0 km from farm & < 2.5 km from data center heat loop
+          const setbackPen = dFarm < 0.46 ? -26 : 0;
+          const pipeBonus = dDc < 1.6 ? (htstOk ? 6 : -12) : Math.max(-18, -5 * (dDc - 1.6));
+          const cellScore = Math.max(15, Math.min(98, Math.round(score + rainPenalty + heatPenalty + setbackPen + pipeBonus)));
+          const col = mcdaColor(cellScore);
+          const bounds = [[cLat - stepLat / 2, cLon - stepLon / 2], [cLat + stepLat / 2, cLon + stepLon / 2]];
+          L.rectangle(bounds, { color: col, weight: 0.6, opacity: 0.45, fillColor: col, fillOpacity: 0.32 })
+            .bindPopup(`<strong>NASA MCDA Cell</strong><br/>Score: ${cellScore}/100<br/>T2M: ${climate.t2m.toFixed(1)}°C · Rain: ${climate.rain.toFixed(1)} mm/d<br/>Heat Pipe Dist: ${dDc.toFixed(2)} km`)
+            .addTo(rasterLayer);
+        }
+      }
+
+      // Concentric QGIS-style distance/suitability rings
+      L.circle([lat, lon], { radius: 1850, color: "#eab308", fillColor: "#eab308", fillOpacity: 0.08, weight: 1.5 })
+        .bindPopup("Outer Fodder &amp; Heat Corridor (1.85 km)")
+        .addTo(bufferLayer);
+      L.circle([lat, lon], { radius: 1050, color: zoneColor, fillColor: zoneColor, fillOpacity: 0.16, weight: 2 })
+        .bindPopup(`<strong>Dairy Farm Parcel</strong><br/>MCDA Suitability: ${score}/100<br/>Top Rotation: ${topName}`)
+        .addTo(bufferLayer);
+      L.circle([lat, lon], { radius: 457, color: "#ef4444", fillColor: "#ef4444", fillOpacity: 0.18, dashArray: "5 5", weight: 1.5 })
+        .bindPopup("1,500 ft (457 m) Parlor &amp; Watershed Exclusion Setback")
+        .addTo(bufferLayer);
+
+      L.polyline([[lat, lon], [dcLat, dcLon]], { color: htstOk ? "#14b8a6" : "#ef4444", weight: 3, dashArray: htstOk ? null : "6 6" })
+        .bindPopup(`Closed-Loop Heat Transfer: ${kwh.toLocaleString()} kWh/d (${kw} kW)`)
+        .addTo(bufferLayer);
+      L.circleMarker([lat, lon], { radius: 7, color: "#fff", fillColor: zoneColor, fillOpacity: 1, weight: 2 })
+        .bindPopup(`<strong>Dairy Farm</strong> (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`)
+        .addTo(bufferLayer);
+      L.circleMarker([dcLat, dcLon], { radius: 7, color: "#fff", fillColor: htstOk ? "#14b8a6" : "#ef4444", fillOpacity: 1, weight: 2 })
+        .bindPopup(`<strong>AI Data Center</strong><br/>${htstOk ? "55–70°C Liquid + Heat Pump (PASS)" : "30–45°C Air Unboosted (FAIL)"}`)
+        .addTo(bufferLayer);
+
       const dist = mcdaMap.getCenter().distanceTo([lat, lon]);
-      if (dist > 50000) mcdaMap.setView([lat, lon], 13); else mcdaMap.panTo([lat, lon], { animate: true });
-
-    }
-
-
-
-    function renderTuningInsides(topRot, score) {
-
-      const box = el("tuningInsides");
-
-      if (!box || !topRot) return;
-
-      const wSoil = el("wSoilVal").textContent;
-
-      const wWater = el("wWaterVal").textContent;
-
-      const wHeat = el("wHeatVal").textContent;
-
-      const wFeed = el("wFeedVal").textContent;
-
-      const yTon = (+el("yieldTon").value || 18.5).toFixed(1);
-
-      const sN = +el("synthN").value || 110;
-
-      const htst = el("heatMode").value === "boosted" ? "PASS (70-90°C)" : "FAIL (30-45°C)";
-
-      box.innerHTML = `
-
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.45rem; margin-bottom:0.6rem;">
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#14b8a6;">1. Inputs</strong><br/>
-
-            NASA POWER + ${el("soil").value} soil + ${yTon} t/ac + ${sN} kg N/ha
-
-          </div>
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#6366f1;">2. WLC Weights</strong><br/>
-
-            Soil ${wSoil}% · Water ${wWater}% · Heat ${wHeat}% · Feed ${wFeed}%
-
-          </div>
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#f59e0b;">3. FodderWeatherNet</strong><br/>
-
-            PyTorch MLP (12&rarr;32&rarr;16&rarr;3) · R&sup2; = 0.8740
-
-          </div>
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#22c55e;">4. Hard Gates &amp; Verdict</strong><br/>
-
-            HTST: ${htst} &rarr; <strong>${score}/100</strong>
-
-          </div>
-
-        </div>
-
-        <div style="color:var(--muted);">
-
-          <strong>WLC Formula:</strong> (${topRot.sSoil}×${wSoil}% + ${topRot.sWater}×${wWater}% + ${topRot.sHeat}×${wHeat}% + ${topRot.sFeed}×${wFeed}%) = <strong>${score}/100</strong> for <em>${topRot.name}</em>.
-
-        </div>
-
-      `;
-
-    }
-
-
-
+      if (dist > 50000) mcdaMap.setView([lat, lon], 12);
+      else mcdaMap.panTo([lat, lon], { animate: true });
+    }
+
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
@@ -1049,7 +974,10 @@
     const PRESET_FACTS = {
       "44.08,-79.88": { cows: 75, milk: 2500, acres: 600, soil: "loam" },
       "47.36,9.45": { cows: 600, milk: 20000, acres: 950, soil: "loam" },
-      "1.42,103.72": { cows: 40, milk: 1200, acres: 45, soil: "clay" }
+      "1.42,103.72": { cows: 40, milk: 1200, acres: 45, soil: "clay" },
+      "43.07,-89.40": { cows: 350, milk: 11500, acres: 850, soil: "loam" },
+      "-37.79,175.28": { cows: 420, milk: 12000, acres: 700, soil: "loam" },
+      "-0.30,36.08": { cows: 60, milk: 1100, acres: 90, soil: "sandy" }
     };
     el("preset").addEventListener("change", (e) => {
       const [la, lo] = e.target.value.split(",");
