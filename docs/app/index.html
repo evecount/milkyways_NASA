@@ -349,6 +349,16 @@
             <input id="acres" type="number" value="600" step="10" min="5" />
           </div>
         </div>
+        <div class="row2">
+          <div>
+            <label for="yieldTon">Silage Yield (t/ac)</label>
+            <input id="yieldTon" type="number" value="18.5" step="0.5" min="1" />
+          </div>
+          <div>
+            <label for="synthN">Synthetic N (kg/ha)</label>
+            <input id="synthN" type="number" value="110" step="5" min="0" />
+          </div>
+        </div>
         <label for="csvUpload">Upload Farm Facts CSV (Plain-Language)</label>
         <input id="csvUpload" type="file" accept=".csv" style="font-size:0.78rem; padding:0.35rem;" />
         <div class="status" style="margin-top:0.25rem;"><a href="#" id="downloadSampleCsv"
@@ -381,6 +391,20 @@
     </aside>
 
     <main>
+      <div class="card" style="border-color:#14b8a6;">
+        <div class="rot-head" style="margin-bottom:0.4rem;">
+          <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
+          <span class="badge" id="heroSuitabilityBadge">Suitability: --/100</span>
+        </div>
+        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">
+          Zero-install spatial suitability &amp; closed-loop waste-heat view for farms and municipal planners.
+        </div>
+        <svg id="topologySvg" viewBox="0 0 640 190" width="100%" height="190" style="background:#0b1120; border:1px solid var(--border); border-radius:10px; display:block;"></svg>
+        <h3 style="font-size:0.88rem; color:var(--muted); margin:0.85rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
+          (from live NASA POWER)</h3>
+        <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
+      </div>
+
       <div class="card">
         <div class="rot-head" style="margin-bottom:0.65rem;">
           <h2 style="margin:0;">Dairy Diary &mdash; Global Farm &amp; Data Center Logbook</h2>
@@ -409,9 +433,6 @@
           </div>
         </div>
         <div id="diaryFeed" class="checks-grid"></div>
-        <h3 style="font-size:0.88rem; color:var(--muted); margin:0.9rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
-          (from live NASA POWER)</h3>
-        <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
       </div>
       <div class="card">
         <h2>NASA POWER Climate Baseline (<span id="coordLabel">44.08&deg;N, -79.88&deg;E</span>)</h2>
@@ -744,10 +765,51 @@
         el("ffHeat").textContent = `${kwh.toLocaleString()} kWh/d`;
       }
 
+      renderTopology(scored[0], cows, milk, acres, kwh, kw);
       renderChart();
       renderChecks();
       runNeuralInference();
       renderCalendar();
+    }
+
+    function renderTopology(topRot, cows, milk, acres, kwh, kw) {
+      const svg = el("topologySvg");
+      if (!svg || !topRot) return;
+      const htstOk = el("heatMode").value === "boosted";
+      const yTon = +el("yieldTon").value || 18.5;
+      const sN = +el("synthN").value || 110;
+      const score = topRot.total;
+      const zoneFill = score >= 75 ? "rgba(34,197,94,0.18)" : (score >= 55 ? "rgba(245,158,11,0.18)" : "rgba(239,68,68,0.18)");
+      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
+      const badge = el("heroSuitabilityBadge");
+      if (badge) badge.textContent = `MCDA Suitability: ${score}/100`;
+      const pipeStroke = htstOk ? "#14b8a6" : "#ef4444";
+      svg.innerHTML = `
+        <rect x="14" y="16" width="215" height="122" rx="10" fill="${zoneFill}" stroke="${zoneStroke}" stroke-width="2" />
+        <text x="26" y="37" fill="#f8fafc" font-size="12" font-weight="700">Fodder Fields (${acres} ac)</text>
+        <text x="26" y="56" fill="#14b8a6" font-size="11" font-weight="600">${topRot.name.slice(0, 28)}</text>
+        <text x="26" y="75" fill="#94a3b8" font-size="10.5">Silage: ${yTon.toFixed(1)} t/ac · N: ${sN} kg/ha</text>
+        <text x="26" y="93" fill="#94a3b8" font-size="10.5">NASA T2M: ${climate.t2m.toFixed(1)}°C · Rain: ${climate.rain.toFixed(1)} mm/d</text>
+        <text x="26" y="122" fill="${zoneStroke}" font-size="11" font-weight="700">Zone Score: ${score}/100</text>
+
+        <line x1="229" y1="77" x2="262" y2="77" stroke="#6366f1" stroke-width="2" stroke-dasharray="4 3" />
+        <rect x="262" y="26" width="145" height="102" rx="10" fill="#1e293b" stroke="#6366f1" stroke-width="2" />
+        <text x="274" y="47" fill="#f8fafc" font-size="12" font-weight="700">Dairy Plant</text>
+        <text x="274" y="66" fill="#94a3b8" font-size="10.5">${cows} cows · ${milk.toLocaleString()} L/d</text>
+        <text x="274" y="84" fill="#94a3b8" font-size="10.5">Load: ${kwh.toLocaleString()} kWh/d (${kw} kW)</text>
+        <text x="274" y="109" fill="${htstOk ? "#22c55e" : "#ef4444"}" font-size="11" font-weight="700">${htstOk ? "HTST 72-78°C: PASS" : "HTST 72-78°C: FAIL"}</text>
+
+        <line x1="407" y1="77" x2="444" y2="77" stroke="${pipeStroke}" stroke-width="3" />
+        <circle cx="425" cy="77" r="7" fill="#0b1120" stroke="${pipeStroke}" stroke-width="2" />
+        <rect x="444" y="26" width="182" height="102" rx="10" fill="#1e293b" stroke="${pipeStroke}" stroke-width="2" />
+        <text x="456" y="47" fill="#f8fafc" font-size="12" font-weight="700">AI Data Center Loop</text>
+        <text x="456" y="66" fill="#94a3b8" font-size="10.5">${htstOk ? "55-70°C Liquid + HP (70-90°C)" : "30-45°C Air (Unboosted)"}</text>
+        <text x="456" y="84" fill="#14b8a6" font-size="10.5">Double-Wall Heat Exchanger</text>
+        <text x="456" y="109" fill="#94a3b8" font-size="10.5">Zero coolant-milk contact</text>
+
+        <rect x="14" y="150" width="612" height="28" rx="6" fill="rgba(20,184,166,0.08)" stroke="#334155" />
+        <text x="26" y="168" fill="#94a3b8" font-size="10.5">Watershed &amp; Zoning Buffer: 1,500 ft agricultural setback · Auditable farm + municipality MCDA overlay</text>
+      `;
     }
 
     function renderCalendar() {
@@ -823,7 +885,7 @@
     el("fetchBtn").addEventListener("click", fetchNasaPower);
     el("downloadSampleCsv").addEventListener("click", (e) => {
       e.preventDefault();
-      const csv = "farm_name,lat,lon,milking_cows,daily_milk_liters,fodder_acres,soil_type\nOntario_Dairy,44.08,-79.88,75,2500,600,loam\n";
+      const csv = "farm_name,lat,lon,milking_cows,daily_milk_liters,fodder_acres,soil_type,silage_yield_t_ac,synthetic_n_kg_ha\nOntario_Dairy,44.08,-79.88,75,2500,600,loam,18.5,110\n";
       const a = document.createElement("a");
       a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
       a.download = "farm-facts.csv";
@@ -844,12 +906,14 @@
           el("milk").value = cols[4];
           el("acres").value = cols[5];
           if (["loam", "sandy", "clay"].includes(cols[6])) el("soil").value = cols[6];
+          if (cols[7]) el("yieldTon").value = cols[7];
+          if (cols[8]) el("synthN").value = cols[8];
           fetchNasaPower();
         }
       };
       reader.readAsText(file);
     });
-    ["wSoil", "wWater", "wHeat", "wFeed", "soil", "milk", "cows", "acres", "heatMode"].forEach(id => {
+    ["wSoil", "wWater", "wHeat", "wFeed", "soil", "milk", "cows", "acres", "yieldTon", "synthN", "heatMode"].forEach(id => {
       el(id).addEventListener("input", renderAll);
     });
 
