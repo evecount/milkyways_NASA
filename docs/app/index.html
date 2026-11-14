@@ -749,40 +749,44 @@
         <div id="mcdaMap" style="height:clamp(240px, 32vh, 340px); width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
         <div id="topologyBoard"></div>
 
-        <div id="diaryChatBox" style="margin-top:0.55rem; background:#0b1120; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.8rem;">
-
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.45rem;">
-
-            <span style="font-size:0.82rem; font-weight:700; color:var(--accent);">Ask MilkyWays &middot; Dairy Diary Chat (Feeds FodderWeatherNet)</span>
-
-            <div style="display:flex; gap:0.35rem; flex-wrap:wrap;">
-
-              <button type="button" class="outcome-chip chat-q" data-q="What should I plant next here?">What to plant?</button>
-
-              <button type="button" class="outcome-chip chat-q" data-q="Can a data center heat my pasteurizer safely?">Heat loop safe?</button>
-
-              <button type="button" class="outcome-chip chat-q" data-q="Why did I get this suitability score?">Why this score?</button>
-
-              <button type="button" class="outcome-chip chat-q" data-q="Log harvest: 21 t/ac, 89/100">Log harvest</button>
-
+        <div id="diaryChatBox" style="margin-top:0.65rem; background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(11,17,32,0.98)); border:1px solid rgba(20,184,166,0.45); box-shadow:0 0 22px rgba(20,184,166,0.08), inset 0 1px 0 rgba(255,255,255,0.06); border-radius:10px; padding:0.75rem 0.9rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.45rem; margin-bottom:0.5rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+              <span style="font-size:0.86rem; font-weight:800; color:#5eead4; letter-spacing:0.01em;">Ask MilkyWays &middot; Plain-Speaking Siting Copilot</span>
+              <span id="chatModeBadge" style="font-size:0.7rem; padding:0.15rem 0.5rem; border-radius:999px; background:rgba(20,184,166,0.16); color:#5eead4; border:1px solid rgba(20,184,166,0.35); font-weight:700;">Zero-Token Local Engine</span>
             </div>
-
+            <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+              <label for="chatPersona" style="margin:0; font-size:0.72rem; color:#94a3b8;">I am a:</label>
+              <select id="chatPersona" style="width:auto; margin:0; padding:0.2rem 0.45rem; font-size:0.74rem; border-radius:6px; background:#0f172a; color:#f8fafc; border:1px solid #334155;">
+                <option value="farmer">Dairy Farmer</option>
+                <option value="planner">Municipal Planner</option>
+                <option value="dc">Data Center Operator</option>
+                <option value="judge">NASA Judge / Reviewer</option>
+              </select>
+              <button type="button" id="byoKeyToggle" style="width:auto; margin:0; padding:0.22rem 0.55rem; font-size:0.72rem; background:#1e293b; border:1px solid #475569; border-radius:6px; color:#cbd5e1;" title="Optional: paste a Gemini (AIza...) or OpenAI (sk-...) key in session memory for live LLM replies. Falls back cleanly to Zero-Token mode if empty.">BYO API Key</button>
+            </div>
           </div>
 
-          <div id="chatFeed" style="max-height:110px; overflow-y:auto; font-size:0.79rem; display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.45rem;">
+          <div id="byoKeyRow" style="display:none; margin-bottom:0.5rem; padding:0.45rem 0.6rem; background:rgba(30,41,59,0.65); border:1px solid #334155; border-radius:7px; gap:0.45rem; align-items:center; flex-wrap:wrap;">
+            <input id="byoApiKey" type="password" placeholder="Optional Gemini (AIza...) or OpenAI (sk-...) key — session memory only" style="flex:1; min-width:200px; margin:0; padding:0.32rem 0.55rem; font-size:0.76rem; border-radius:5px; background:#0f172a; border:1px solid #475569; color:#f8fafc;" />
+            <button type="button" id="byoKeyClear" style="width:auto; margin:0; padding:0.32rem 0.6rem; font-size:0.74rem; background:#334155; border:none; border-radius:5px; color:#e2e8f0;">Clear</button>
+          </div>
 
-            <div style="color:#cbd5e1;"><strong style="color:#14b8a6;">MilkyWays:</strong> Ask about rotations, waste-heat safety, or type your harvest (e.g. <em>"21 t/ac maize, 89/100"</em>) to train <code>FodderWeatherNet</code>.</div>
+          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.45rem;">
+            <button type="button" class="outcome-chip chat-q" data-q="What should I plant next here?">What to plant?</button>
+            <button type="button" class="outcome-chip chat-q" data-q="Can a data center heat my pasteurizer safely?">Heat loop safe?</button>
+            <button type="button" class="outcome-chip chat-q" data-q="Why did I get this suitability score?">Why this score?</button>
+            <button type="button" class="outcome-chip chat-q" data-q="Log harvest: 21 t/ac, 89/100">Log harvest</button>
+          </div>
 
+          <div id="chatFeed" style="max-height:145px; overflow-y:auto; font-size:0.81rem; line-height:1.45; display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.5rem; padding-right:0.2rem;">
+            <div style="color:#cbd5e1;"><strong style="color:#14b8a6;">MilkyWays:</strong> Hey! Tell me what you're looking at — pick your role above (<strong>Farmer</strong>, <strong>Planner</strong>, <strong>DC Operator</strong>, or <strong>NASA Judge</strong>) or drop your last silage cut like <em>"21 t/ac, 89/100"</em> so I can tune things for your site.</div>
           </div>
 
           <div style="display:flex; gap:0.45rem;">
-
-            <input id="chatInput" type="text" placeholder="Ask a question or log farm data (e.g. 21 t/ac maize, 89/100)..." style="flex:1; padding:0.42rem 0.65rem; border-radius:6px; border:1px solid var(--border); background:#0f172a; color:var(--text); font-size:0.82rem;" />
-
-            <button id="chatSendBtn" type="button" style="width:auto; margin:0; padding:0.42rem 0.85rem; font-size:0.82rem; background:linear-gradient(135deg,#4f46e5,#0d9488);">Ask / Log</button>
-
+            <input id="chatInput" type="text" placeholder="Ask in plain English or log farm data (e.g. 21 t/ac maize, 89/100)..." title="Ask about siting, waste heat, or rotations — or log field yields/observations to feed the FodderWeatherNet calibration loop." style="flex:1; padding:0.45rem 0.7rem; border-radius:7px; border:1px solid #334155; background:#0f172a; color:var(--text); font-size:0.82rem;" />
+            <button id="chatSendBtn" type="button" style="width:auto; margin:0; padding:0.45rem 0.95rem; font-size:0.82rem; font-weight:700; background:linear-gradient(135deg,#4f46e5,#0d9488);">Ask / Log</button>
           </div>
-
         </div>
         <h3 style="font-size:0.88rem; color:var(--muted); margin:0.85rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
           (from live NASA POWER)</h3>
@@ -2050,140 +2054,178 @@
 
 
 
-    function handleDiaryChat(raw) {
+    const PERSONA_INTROS = {
+      farmer: "Hey neighbor! Let's keep it practical: how many tons/acre of silage did you cut last season (e.g. <code>19.5 t/ac</code>), and what's stressing your fields most right now — heat, water, or fertilizer cost?",
+      planner: "Welcome, Planner. Are you trying to permit a new AI data center near rural farms, or protect an existing dairy corridor? Ask me about the <strong>1,500 ft</strong> setback, the <strong>12 km</strong> pipe limit, or hit <strong>Export Report</strong> for your municipal packet.",
+      dc: "Hi Operator! Are you running <strong>55–70 °C liquid cooling</strong> or <strong>30–45 °C air</strong>? Tell me your MW heat load and I'll check if a nearby dairy can absorb it safely through a double-wall heat exchanger.",
+      judge: "Welcome, Judge! Want to test our <strong>Positive vs. Negative Controls</strong>, inspect how we prevent facility hallucinations (IM3 + ATLAS + Cal-FF + NASA CMS), or see how Dairy Diary logs calibrate <code>FodderWeatherNet</code> (R² = 0.8740)?"
+    };
 
+    function updateByoBadge() {
+      const k = (sessionStorage.getItem("milkyways_byo_key") || "").trim();
+      const b = el("chatModeBadge");
+      if (!b) return;
+      if (k) {
+        b.textContent = k.startsWith("AIza") ? "Live BYO-Key AI (Gemini)" : "Live BYO-Key AI";
+        b.style.background = "rgba(99,102,241,0.22)";
+        b.style.color = "#c7d2fe";
+        b.style.borderColor = "rgba(129,140,248,0.5)";
+      } else {
+        b.textContent = "Zero-Token Local Engine";
+        b.style.background = "rgba(20,184,166,0.16)";
+        b.style.color = "#5eead4";
+        b.style.borderColor = "rgba(20,184,166,0.35)";
+      }
+    }
+
+    if (el("byoKeyToggle") && el("byoKeyRow")) {
+      el("byoKeyToggle").addEventListener("click", () => {
+        el("byoKeyRow").style.display = el("byoKeyRow").style.display === "none" ? "flex" : "none";
+      });
+    }
+    if (el("byoApiKey")) {
+      el("byoApiKey").value = sessionStorage.getItem("milkyways_byo_key") || "";
+      el("byoApiKey").addEventListener("input", () => {
+        sessionStorage.setItem("milkyways_byo_key", el("byoApiKey").value.trim());
+        updateByoBadge();
+      });
+    }
+    if (el("byoKeyClear")) {
+      el("byoKeyClear").addEventListener("click", () => {
+        sessionStorage.removeItem("milkyways_byo_key");
+        if (el("byoApiKey")) el("byoApiKey").value = "";
+        updateByoBadge();
+      });
+    }
+    if (el("chatPersona")) {
+      el("chatPersona").addEventListener("change", () => {
+        const pKey = el("chatPersona").value;
+        appendChat("MilkyWays", PERSONA_INTROS[pKey] || PERSONA_INTROS.farmer);
+      });
+    }
+    updateByoBadge();
+
+    async function callByoAi(msg, persona) {
+      const key = (sessionStorage.getItem("milkyways_byo_key") || "").trim();
+      if (!key) return null;
+      const lat = el("lat")?.value || "1.42", lon = el("lon")?.value || "103.72";
+      const badge = el("heroSuitabilityBadge")?.textContent || "Suitability N/A";
+      const sys = `You are MilkyWays, a plain-speaking, warm agricultural & waste-heat siting copilot talking to a ${persona}. Live site: (${lat}, ${lon}), ${badge}, NASA T2M ${climate.t2m.toFixed(1)}°C, rain ${climate.rain.toFixed(1)} mm/d, soil ${el("soil")?.value}, heat loop ${el("heatMode")?.value}. Keep replies under 3 plain-English sentences, never invent coordinates, and end by asking the user one practical follow-up question.`;
+      try {
+        if (key.startsWith("AIza")) {
+          const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: sys + "\n\nUser: " + msg }] }] })
+          });
+          if (!r.ok) return null;
+          const d = await r.json();
+          return d?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+        } else {
+          const r = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${key}` },
+            body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "system", content: sys }, { role: "user", content: msg }], max_tokens: 180 })
+          });
+          if (!r.ok) return null;
+          const d = await r.json();
+          return d?.choices?.[0]?.message?.content || null;
+        }
+      } catch (_) {
+        return null;
+      }
+    }
+
+    async function handleDiaryChat(raw) {
       const msg = (raw || "").trim();
-
       if (!msg) return;
-
       appendChat("You", msg.replace(/</g, "&lt;"));
-
       const low = msg.toLowerCase();
+      const persona = el("chatPersona") ? el("chatPersona").value : "farmer";
 
-
-
-      // Detect harvest / score logging intent to feed FodderWeatherNet
-
+      // 1. Harvest / yield logging always works locally first (feeds FodderWeatherNet)
       const scoreMatch = msg.match(/(\d{1,3})\s*\/\s*100/);
-
       const yieldMatch = msg.match(/(\d+(?:\.\d+)?)\s*t\s*\/\s*ac/i);
-
       if (low.includes("log") || scoreMatch || yieldMatch) {
-
         if (yieldMatch && el("yieldTon")) el("yieldTon").value = yieldMatch[1];
-
         const sc = scoreMatch ? Math.max(1, Math.min(100, +scoreMatch[1])) : (+el("obsOutcome").value || 88);
-
         const crop = low.includes("sorghum") || low.includes("cowpea") ? "Sorghum -> Cowpea" : (low.includes("maize") || low.includes("alfalfa") ? "Maize Silage -> Alfalfa" : el("obsCrop").value);
-
         const list = getObs();
-
         list.push({
-
           timestamp: new Date().toISOString(),
-
           lat: parseFloat(el("lat").value),
-
           lon: parseFloat(el("lon").value),
-
           soil: el("soil").value,
-
           t2m: climate.t2m,
-
           rain: climate.rain,
-
           solar: climate.solar,
-
           crop,
-
-          observed_score: sc,
-
+          score: sc,
           note: `Chat log · ${yieldMatch ? yieldMatch[1] + " t/ac · " : ""}T2M ${climate.t2m.toFixed(1)}°C`
-
         });
-
         localStorage.setItem("milkyways_obs", JSON.stringify(list));
-
         updateObsStatus(true);
-
         renderAll();
-
-        appendChat("MilkyWays", `Logged <strong>${crop} (${sc}/100)</strong> to Dairy Diary (${list.length} total) — ready to retrain <code>FodderWeatherNet</code>!`);
-
+        appendChat("MilkyWays", `Got it — logged <strong>${crop} (${sc}/100)</strong> into your Dairy Diary (${list.length} total) to sharpen <code>FodderWeatherNet</code>. Quick question: did you apply full synthetic nitrogen this season, or did legumes let you cut back?`);
         return;
-
       }
 
+      // 2. Optional BYO API Key live LLM call
+      const byoReply = await callByoAi(msg, persona);
+      if (byoReply) {
+        appendChat("MilkyWays", byoReply.replace(/</g, "&lt;").replace(/\n/g, "<br/>"));
+        return;
+      }
 
-
+      // 3. Zero-Token Multi-Scenario Engine
       if (isWaterSite) {
-
-        appendChat("MilkyWays", `<strong>Open-Water Exclusion:</strong> These coordinates (${el("lat").value}°, ${el("lon").value}°) are offshore. Click on land or pick one of the 13 farms to run siting &amp; rotation checks.`);
-
+        appendChat("MilkyWays", `Heads up — (${el("lat").value}°, ${el("lon").value}°) is in <strong>open water</strong>, so siting is blocked here. Click on land or pick one of the 13 dairy regions so we can test a real parcel!`);
         return;
-
       }
-
-
 
       const htstOk = el("heatMode").value === "boosted";
-
       const milk = Math.max(500, +el("milk").value || 1200);
-
       const kwh = Math.round((milk / 20000) * 817);
 
-      if (low.includes("heat") || low.includes("pasteur") || low.includes("data center") || low.includes("safe")) {
-
+      if (low.includes("heat") || low.includes("pasteur") || low.includes("data center") || low.includes("safe") || low.includes("pipe") || low.includes("beacon")) {
+        const pipeNote = persona === "planner"
+          ? "Any hub beyond <strong>12 km</strong> turns into a Position Beacon (piping gets too pricey, so we co-locate instead)."
+          : "A <strong>double-wall heat exchanger</strong> keeps coolant 100% separate from milk.";
         appendChat("MilkyWays", htstOk
-
-          ? `<strong>PASS:</strong> 55–70°C liquid loop + heat pump (70–90°C) covers your <strong>${kwh.toLocaleString()} kWh/d</strong> HTST pasteurization (72–78°C) via a double-wall heat exchanger (zero coolant-milk contact).`
-
-          : `<strong>FAIL:</strong> Unboosted 30–45°C air waste heat cannot reach 72–78°C HTST pasteurization. Switch to 55–70°C Liquid + Heat Pump.`);
-
+          ? `Yes, safely! 55–70 °C liquid cooling + a heat-pump boost (70–90 °C) covers your <strong>${kwh.toLocaleString()} kWh/d</strong> pasteurizer. ${pipeNote} Are you looking at an existing data center nearby, or co-locating a new one?`
+          : `Not directly — unboosted 30–45 °C air heat falls short of 72–78 °C pasteurization. Switch to 55–70 °C Liquid + Heat Pump in the sidebar, or tell me what cooling temp your facility runs?`);
         return;
-
       }
 
-
-
-      if (low.includes("score") || low.includes("why") || low.includes("wlc")) {
-
-        appendChat("MilkyWays", `${el("heroSuitabilityBadge").textContent} using 6 weights: Soil ${el("wSoilVal").textContent}%, Water ${el("wWaterVal").textContent}%, Heat ${el("wHeatVal").textContent}%, Feed ${el("wFeedVal").textContent}%, Grid ${el("wGridVal").textContent}%, Flood ${el("wFloodVal").textContent}%. NASA T2M is ${climate.t2m.toFixed(1)}°C.`);
-
+      if (low.includes("score") || low.includes("why") || low.includes("wlc") || low.includes("mcda")) {
+        appendChat("MilkyWays", `Your site landed at <strong>${el("heroSuitabilityBadge").textContent}</strong> based on your 6 priorities (Soil ${el("wSoilVal").textContent}%, Water ${el("wWaterVal").textContent}%, Heat ${el("wHeatVal").textContent}%, Feed ${el("wFeedVal").textContent}%, Grid ${el("wGridVal").textContent}%, Flood ${el("wFloodVal").textContent}%) and ${climate.t2m.toFixed(1)} °C NASA temp. Want to drag a slider to match your town's biggest priority, or export the Municipal Report?`);
         return;
-
       }
 
-
-
-      const domainKw = /(crop|plant|fodder|rotat|maize|sorghum|alfalfa|clover|soil|rain|temp|climate|nasa|milk|cow|dairy|pipe|beacon|km|report|export|farm|yield|nitrogen|water|drought|flood|zoning|setback|mcda|help|what|which|how)/;
+      const domainKw = /(crop|plant|fodder|rotat|maize|sorghum|alfalfa|clover|soil|rain|temp|climate|nasa|milk|cow|dairy|km|report|export|farm|yield|nitrogen|water|drought|flood|zoning|setback|help|what|which|how)/;
       if (!domainKw.test(low)) {
-        appendChat("MilkyWays", "I'm MilkyWays' agricultural &amp; thermal siting assistant — ask about <strong>fodder rotations</strong>, <strong>NASA climate</strong>, <strong>waste-heat piping (&le; 12 km)</strong>, or log a yield (e.g. <code>21 t/ac, 89/100</code>).");
+        const fallbackByPersona = {
+          farmer: "Haha, fair stress-test! I only speak dairy, soil, and waste heat though — what did your last silage cut look like (e.g. <code>21 t/ac</code>)?",
+          planner: "Haha, good catch — I stick to zoning, 1,500 ft setbacks, and 12 km thermal corridors. Want me to summarize this parcel's co-location case?",
+          dc: "Haha, strictly cooling loops and dairy heat here! Are you running 55–70 °C liquid cooling or 30–45 °C air?",
+          judge: "Haha, love the sanity check — our domain guard caught that cleanly! Want to test our Negative Controls or ask about our NASA + IM3/Cal-FF data tables?"
+        };
+        appendChat("MilkyWays", fallbackByPersona[persona] || fallbackByPersona.farmer);
         return;
       }
 
       const isWarm = climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy";
-
       const rec = isWarm ? "Sorghum Silage -> Cowpea -> Berseem Clover" : "Maize Silage -> Alfalfa (3 yr) -> Red Clover";
-
-      appendChat("MilkyWays", `At ${climate.t2m.toFixed(1)}°C &amp; ${climate.rain.toFixed(1)} mm/d rain (${el("soil").value} soil), plant <strong>${rec}</strong> — cuts synthetic N 25–30%. (Risk: ${el("dlRisk") ? el("dlRisk").textContent : "--"}).`);
-
+      appendChat("MilkyWays", `In plain terms: at <strong>${climate.t2m.toFixed(1)} °C</strong> and <strong>${climate.rain.toFixed(1)} mm/d</strong> rain on ${el("soil").value} soil, plant <strong>${rec}</strong> — it trims synthetic nitrogen by 25–30% (Stress Risk: ${el("dlRisk") ? el("dlRisk").textContent : "--"}). How many acres of fodder land are you working with?`);
     }
 
-
-
     el("chatSendBtn").addEventListener("click", () => {
-
       handleDiaryChat(el("chatInput").value);
-
       el("chatInput").value = "";
-
     });
 
     el("chatInput").addEventListener("keydown", (e) => {
-
       if (e.key === "Enter") { e.preventDefault(); el("chatSendBtn").click(); }
-
     });
 
     document.querySelectorAll(".chat-q").forEach(btn => {
