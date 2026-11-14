@@ -3,7 +3,21 @@
 **Challenge 7:** *Field Shift: Adapting Farms with NASA Data*
 
 ## What is this?
-**MilkyWays** is a decision-support tool for an industrial dairy farm located next to an AI data center. It helps the farm choose what fodder rotation to plant next using NASA Earth observations, local soil data, crop characteristics, and farmer priorities — while pairing dairy pasteurization and cooling with indirect data center waste heat (*"the coolant never touches the milk"*).
+**MilkyWays** is a zero-install Spatial Decision Support System (SDSS) and predictive diagnostic tool for dairy farms and rural municipalities navigating co-location with AI data centers. It helps farms and planners choose fodder rotations using live NASA Earth observations, local soil data, and **6 Farm & Municipal MCDA priorities** — while pairing dairy pasteurization and cooling with indirect data center waste heat (*"the coolant never touches the milk"*).
+
+- **Live App:** https://evecount.github.io/milkyways_NASA/app/
+- **Project Home & Technical Paper:** https://evecount.github.io/milkyways_NASA/paper/
+- **7-Slide Demo:** https://evecount.github.io/milkyways_NASA/slides/
+
+## Challenge 7 Brief Alignment
+
+| Challenge 7 Goal | What **MilkyWays** Delivers Live |
+| :--- | :--- |
+| **Compare rotations & reveal tradeoffs** | 4 rotations (incl. N-fixing & negative control) + **6 Farm & Municipal MCDA sliders** (Soil, Water, Heat, Feed, Grid Proximity, Flood Buffer) that visibly re-rank winners |
+| **Understand risk & make uncertainty visible** | **4 Mandatory Checks**, **Open-Water Hard Exclusion Gate**, `FodderWeatherNet` Stress Risk, and honest `~50 km` POWER / `2015+` SMAP limits |
+| **Build an AI model** | **PyTorch `FodderWeatherNet`** (`R² = 0.8740` vs. Ridge `0.8553`), running live in browser + transparent **Inside the Tuning** WLC formula |
+| **An interactive map** | **Leaflet Satellite + Topo World View** with **13 global farms**, dynamic **NASA MCDA raster grid**, & **Zoom-Out Synergy Spider** |
+| **Web app & decision support tool** | **Zero-install browser SDSS**, **12-Month Calendar**, **Dairy Diary**, & **Symbiotic Co-Location** (`55–70 °C` data-center loop → `72–78 °C` HTST) |
 
 ## Repository & Folder Structure
 - `01-spec/` — The single source-of-truth product specification (`milkyways-product-spec.md`).
