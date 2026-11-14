@@ -406,6 +406,10 @@
         <h3 style="font-size:0.88rem; color:var(--muted); margin:0.85rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
           (from live NASA POWER)</h3>
         <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
+        <details style="margin-top:0.85rem; background:#0b1120; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.85rem;">
+          <summary style="cursor:pointer; font-size:0.85rem; font-weight:600; color:var(--accent);">Inside the Tuning: MCDA + FodderWeatherNet Pipeline</summary>
+          <div id="tuningInsides" style="margin-top:0.65rem; font-size:0.8rem; color:#cbd5e1;"></div>
+        </details>
       </div>
 
       <div class="card">
@@ -787,7 +791,8 @@
       const badge = el("heroSuitabilityBadge");
       const verdict = score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk");
       if (badge) badge.textContent = `Site Verdict: ${verdict} (${score}/100)`;
-      updateMcdaMap(score, zoneStroke, htstOk, topRot.name, kwh, kw);
+      updateMcdaMap(score, zoneStroke, htstOk, topRot.name, kwh, kw);
+      renderTuningInsides(topRot, score);
       const pipeStroke = htstOk ? "#14b8a6" : "#ef4444";
       svg.innerHTML = `
         <rect x="14" y="16" width="215" height="122" rx="10" fill="${zoneFill}" stroke="${zoneStroke}" stroke-width="2" />
@@ -917,6 +922,41 @@
 
 
 
+    function renderTuningInsides(topRot, score) {
+      const box = el("tuningInsides");
+      if (!box || !topRot) return;
+      const wSoil = el("wSoilVal").textContent;
+      const wWater = el("wWaterVal").textContent;
+      const wHeat = el("wHeatVal").textContent;
+      const wFeed = el("wFeedVal").textContent;
+      const yTon = (+el("yieldTon").value || 18.5).toFixed(1);
+      const sN = +el("synthN").value || 110;
+      const htst = el("heatMode").value === "boosted" ? "PASS (70-90°C)" : "FAIL (30-45°C)";
+      box.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.45rem; margin-bottom:0.6rem;">
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#14b8a6;">1. Inputs</strong><br/>
+            NASA POWER + ${el("soil").value} soil + ${yTon} t/ac + ${sN} kg N/ha
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#6366f1;">2. WLC Weights</strong><br/>
+            Soil ${wSoil}% · Water ${wWater}% · Heat ${wHeat}% · Feed ${wFeed}%
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#f59e0b;">3. FodderWeatherNet</strong><br/>
+            PyTorch MLP (12&rarr;32&rarr;16&rarr;3) · R&sup2; = 0.8740
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#22c55e;">4. Hard Gates &amp; Verdict</strong><br/>
+            HTST: ${htst} &rarr; <strong>${score}/100</strong>
+          </div>
+        </div>
+        <div style="color:var(--muted);">
+          <strong>WLC Formula:</strong> (${topRot.sSoil}×${wSoil}% + ${topRot.sWater}×${wWater}% + ${topRot.sHeat}×${wHeat}% + ${topRot.sFeed}×${wFeed}%) = <strong>${score}/100</strong> for <em>${topRot.name}</em>.
+        </div>
+      `;
+    }
+
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
