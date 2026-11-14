@@ -817,56 +817,106 @@
       `;
     }
 
-    let mcdaMap = null, mapLayers = null;
-    function initMcdaMap() {
-      if (mcdaMap || typeof L === "undefined" || !el("mcdaMap")) return;
-      const lat = parseFloat(el("lat").value) || 44.08;
-      const lon = parseFloat(el("lon").value) || -79.88;
-      mcdaMap = L.map("mcdaMap").setView([lat, lon], 12);
-      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-        maxZoom: 17,
-        attribution: "&copy; OpenTopoMap &amp; OSM"
-      });
-      const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-        maxZoom: 18,
-        attribution: "&copy; Esri World Imagery"
-      });
-      topo.addTo(mcdaMap);
-      L.control.layers({ "Topographic (MCDA)": topo, "Satellite": sat }).addTo(mcdaMap);
-      mapLayers = L.layerGroup().addTo(mcdaMap);
-      mcdaMap.on("click", (e) => {
-        el("lat").value = e.latlng.lat.toFixed(2);
-        el("lon").value = e.latlng.lng.toFixed(2);
-        fetchNasaPower();
-      });
-    }
-
-    function updateMcdaMap(score, zoneColor, htstOk, topName, kwh, kw) {
-      initMcdaMap();
-      if (!mcdaMap || !mapLayers) return;
-      const lat = parseFloat(el("lat").value) || 44.08;
-      const lon = parseFloat(el("lon").value) || -79.88;
-      const dcLat = lat + 0.009;
-      const dcLon = lon + 0.014;
-      mapLayers.clearLayers();
-      L.circle([lat, lon], { radius: 950, color: zoneColor, fillColor: zoneColor, fillOpacity: 0.22, weight: 2 })
-        .bindPopup(`<strong>Dairy Farm Parcel</strong><br/>MCDA Suitability: ${score}/100<br/>Top Rotation: ${topName}`)
-        .addTo(mapLayers);
-      L.circle([lat, lon], { radius: 457, color: "#6366f1", fillOpacity: 0.05, dashArray: "5 5", weight: 1.5 })
-        .bindPopup("1,500 ft (457 m) Agricultural Setback &amp; Watershed Buffer")
-        .addTo(mapLayers);
-      L.polyline([[lat, lon], [dcLat, dcLon]], { color: htstOk ? "#14b8a6" : "#ef4444", weight: 3, dashArray: htstOk ? null : "6 6" })
-        .bindPopup(`Closed-Loop Heat Transfer: ${kwh.toLocaleString()} kWh/d (${kw} kW)`)
-        .addTo(mapLayers);
-      L.circleMarker([lat, lon], { radius: 7, color: "#fff", fillColor: zoneColor, fillOpacity: 1, weight: 2 })
-        .bindPopup(`<strong>Dairy Farm</strong> (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`)
-        .addTo(mapLayers);
-      L.circleMarker([dcLat, dcLon], { radius: 7, color: "#fff", fillColor: htstOk ? "#14b8a6" : "#ef4444", fillOpacity: 1, weight: 2 })
-        .bindPopup(`<strong>AI Data Center</strong><br/>${htstOk ? "55–70°C Liquid + Heat Pump (PASS)" : "30–45°C Air Unboosted (FAIL)"}`)
-        .addTo(mapLayers);
-      mcdaMap.panTo([lat, lon], { animate: true });
-    }
-
+    let mcdaMap = null, mapLayers = null;
+
+    function initMcdaMap() {
+
+      if (mcdaMap || typeof L === "undefined" || !el("mcdaMap")) return;
+
+      const lat = parseFloat(el("lat").value) || 44.08;
+
+      const lon = parseFloat(el("lon").value) || -79.88;
+
+      mcdaMap = L.map("mcdaMap").setView([lat, lon], 12);
+
+      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+
+        maxZoom: 17,
+
+        attribution: "&copy; OpenTopoMap &amp; OSM"
+
+      });
+
+      const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+
+        maxZoom: 18,
+
+        attribution: "&copy; Esri World Imagery"
+
+      });
+
+      sat.addTo(mcdaMap);
+
+      L.control.layers({ "Satellite": sat, "Topographic (MCDA)": topo }).addTo(mcdaMap);
+
+      mapLayers = L.layerGroup().addTo(mcdaMap);
+
+      mcdaMap.on("click", (e) => {
+
+        el("lat").value = e.latlng.lat.toFixed(2);
+
+        el("lon").value = e.latlng.lng.toFixed(2);
+
+        fetchNasaPower();
+
+      });
+
+    }
+
+
+
+    function updateMcdaMap(score, zoneColor, htstOk, topName, kwh, kw) {
+
+      initMcdaMap();
+
+      if (!mcdaMap || !mapLayers) return;
+
+      const lat = parseFloat(el("lat").value) || 44.08;
+
+      const lon = parseFloat(el("lon").value) || -79.88;
+
+      const dcLat = lat + 0.009;
+
+      const dcLon = lon + 0.014;
+
+      mapLayers.clearLayers();
+
+      L.circle([lat, lon], { radius: 950, color: zoneColor, fillColor: zoneColor, fillOpacity: 0.22, weight: 2 })
+
+        .bindPopup(`<strong>Dairy Farm Parcel</strong><br/>MCDA Suitability: ${score}/100<br/>Top Rotation: ${topName}`)
+
+        .addTo(mapLayers);
+
+      L.circle([lat, lon], { radius: 457, color: "#6366f1", fillOpacity: 0.05, dashArray: "5 5", weight: 1.5 })
+
+        .bindPopup("1,500 ft (457 m) Agricultural Setback &amp; Watershed Buffer")
+
+        .addTo(mapLayers);
+
+      L.polyline([[lat, lon], [dcLat, dcLon]], { color: htstOk ? "#14b8a6" : "#ef4444", weight: 3, dashArray: htstOk ? null : "6 6" })
+
+        .bindPopup(`Closed-Loop Heat Transfer: ${kwh.toLocaleString()} kWh/d (${kw} kW)`)
+
+        .addTo(mapLayers);
+
+      L.circleMarker([lat, lon], { radius: 7, color: "#fff", fillColor: zoneColor, fillOpacity: 1, weight: 2 })
+
+        .bindPopup(`<strong>Dairy Farm</strong> (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`)
+
+        .addTo(mapLayers);
+
+      L.circleMarker([dcLat, dcLon], { radius: 7, color: "#fff", fillColor: htstOk ? "#14b8a6" : "#ef4444", fillOpacity: 1, weight: 2 })
+
+        .bindPopup(`<strong>AI Data Center</strong><br/>${htstOk ? "55–70°C Liquid + Heat Pump (PASS)" : "30–45°C Air Unboosted (FAIL)"}`)
+
+        .addTo(mapLayers);
+
+      mcdaMap.panTo([lat, lon], { animate: true });
+
+    }
+
+
+
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
