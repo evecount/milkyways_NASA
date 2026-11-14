@@ -2802,12 +2802,34 @@
       });
     }
 
-    // 20-Second Idle Judge Autopilot Show (cancels instantly on any user interaction)
+    // 3s + 5s + 20s Idle Judge Progression (cancels instantly on any user interaction)
+    let idle3sTimer = null;
+    let idle5sTimer = null;
     let idleTimer = null;
     let autopilotTimers = [];
     let autopilotActive = false;
+    let hasShownEarlyNudge = false;
+
+    function run3sNudge() {
+      if (hasShownEarlyNudge || autopilotActive) return;
+      if (el("capcomLatest")) {
+        el("capcomLatest").innerHTML = `<strong style="color:#14b8a6;">CAPCOM:</strong> Click any map pin (or land) to test siting, drag a priority slider, or click <strong>Moo!</strong> (3x hops the globe).`;
+      }
+    }
+
+    function run5sNudge() {
+      if (hasShownEarlyNudge || autopilotActive) return;
+      hasShownEarlyNudge = true;
+      if (typeof bufferLayer !== "undefined" && bufferLayer) {
+        bufferLayer.eachLayer(l => {
+          if (typeof l.openPopup === "function" && l.getPopup && l.getPopup()) l.openPopup();
+        });
+      }
+    }
 
     function stopJudgeAutopilot() {
+      if (idle3sTimer) clearTimeout(idle3sTimer);
+      if (idle5sTimer) clearTimeout(idle5sTimer);
       if (idleTimer) clearTimeout(idleTimer);
       autopilotTimers.forEach(t => clearTimeout(t));
       autopilotTimers = [];
@@ -2815,7 +2837,13 @@
         autopilotActive = false;
         if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
       }
-      idleTimer = setTimeout(startJudgeAutopilot, 20000);
+      if (!hasShownEarlyNudge) {
+        idle3sTimer = setTimeout(run3sNudge, 3000);
+        idle5sTimer = setTimeout(run5sNudge, 5000);
+      }
+      idle3sTimer = setTimeout(run3sNudge, 3000);
+    idle5sTimer = setTimeout(run5sNudge, 5000);
+    idleTimer = setTimeout(startJudgeAutopilot, 20000);
     }
 
     function startJudgeAutopilot() {
