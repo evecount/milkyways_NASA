@@ -485,7 +485,8 @@
         <h2>1. Farm Location (NASA POWER)</h2>
         <label for="preset">Preset Region</label>
         <select id="preset">
-          <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
+          <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
+
           <option value="2.03,103.32">Kluang Dairy Valley, Johor, Malaysia (2.03, 103.32)</option>
           <option value="44.08,-79.88">Ontario Dairy Region, Canada (44.08, -79.88)</option>
           <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
@@ -1056,18 +1057,16 @@
 
       const sN = +el("synthN").value || 110;
 
-      const score = topRot.total;
-
-      const zoneFill = score >= 75 ? "rgba(34,197,94,0.12)" : (score >= 55 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)");
-
-      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
-
-      const badge = el("heroSuitabilityBadge");
-
-      const verdict = score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk");
-
-      if (badge) badge.textContent = `Site Verdict: ${verdict} (${score}/100)`;
-
+      const score = isWaterSite ? 0 : topRot.total;
+      const zoneFill = score >= 75 ? "rgba(34,197,94,0.12)" : (score >= 55 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.18)");
+      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
+      const badge = el("heroSuitabilityBadge");
+      const verdict = isWaterSite ? "Water Exclusion (Offshore)" : (score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk"));
+      if (badge) {
+        badge.textContent = isWaterSite ? `Site Verdict: ${verdict}` : `Site Verdict: ${verdict} (${score}/100)`;
+        badge.style.background = isWaterSite ? "rgba(239,68,68,0.22)" : "";
+        badge.style.color = isWaterSite ? "#fca5a5" : "";
+      }
       updateMcdaMap(score, zoneStroke, htstOk, topRot.name, kwh, kw);
 
       renderTuningInsides(topRot, score);
@@ -1092,7 +1091,7 @@
 
             </div>
 
-            <div style="margin-top:0.45rem; font-weight:700; color:${zoneStroke};">Zone Score: <span class="flap" data-target="${score}/100">${score}/100</span></div>
+            <div style="margin-top:0.45rem; font-weight:700; color:${zoneStroke};">${isWaterSite ? "Hard Exclusion: Open Water (0/100)" : `Zone Score: <span class="flap" data-target="${score}/100">${score}/100</span>`}</div>
 
           </div>
 
@@ -1148,15 +1147,20 @@
 
 
 
-    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, spiderLayer = null, hasUserPickedRegion = false;
+    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, spiderLayer = null, hasUserPickedRegion = false, isWaterSite = false;
 
     const REGIONAL_SYNERGIES = {
 
-      "2.03,103.32": [
-        { name: "Sedenak Tech Park (Johor DC Hub)", type: "dc", lat: 1.67, lon: 103.56, cap: "200 MW heat" },
-        { name: "Nusajaya Tech Park", type: "dc", lat: 1.44, lon: 103.62, cap: "150 MW heat" },
-        { name: "Kranji Singapore Dairy Hub", type: "farm", lat: 1.42, lon: 103.72, cap: "Cross-Border Dairy" }
-      ],
+      "2.03,103.32": [
+
+        { name: "Sedenak Tech Park (Johor DC Hub)", type: "dc", lat: 1.67, lon: 103.56, cap: "200 MW heat" },
+
+        { name: "Nusajaya Tech Park", type: "dc", lat: 1.44, lon: 103.62, cap: "150 MW heat" },
+
+        { name: "Kranji Singapore Dairy Hub", type: "farm", lat: 1.42, lon: 103.72, cap: "Cross-Border Dairy" }
+
+      ],
+
       "1.42,103.72": [
 
         { name: "Woodlands / Sungei Kadut DC Hub", type: "dc", lat: 1.44, lon: 103.76, cap: "60 MW heat" },
@@ -1283,7 +1287,8 @@
 
     const GLOBAL_FARMS = [
 
-      { key: "1.42,103.72", name: "Singapore Tropical Dairy Demo", lat: 1.42, lon: 103.72 },
+      { key: "1.42,103.72", name: "Singapore Tropical Dairy Demo", lat: 1.42, lon: 103.72 },
+
       { key: "2.03,103.32", name: "Kluang Dairy Valley, Johor, Malaysia", lat: 2.03, lon: 103.32 },
 
       { key: "44.08,-79.88", name: "Ontario Dairy Region, Canada", lat: 44.08, lon: -79.88 },
@@ -1452,7 +1457,7 @@
 
           const pipeBonus = dDc < 1.6 ? (htstOk ? 6 : -12) : Math.max(-18, -5 * (dDc - 1.6));
 
-          const cellScore = Math.max(15, Math.min(98, Math.round(score + rainPenalty + heatPenalty + setbackPen + pipeBonus)));
+          const cellScore = isWaterSite ? 0 : Math.max(15, Math.min(98, Math.round(score + rainPenalty + heatPenalty + setbackPen + pipeBonus)));
 
           const col = mcdaColor(cellScore);
 
@@ -1667,9 +1672,25 @@
       }).join("");
     }
 
+    async function checkLandMask(lat, lon) {
+      const isPreset = GLOBAL_FARMS.some(g => Math.abs(g.lat - lat) < 0.02 && Math.abs(g.lon - lon) < 0.02);
+      if (isPreset) { isWaterSite = false; return; }
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=10`);
+        if (!res.ok) { isWaterSite = false; return; }
+        const data = await res.json();
+        const cat = (data.category || "").toLowerCase();
+        const typ = (data.type || data.addresstype || "").toLowerCase();
+        isWaterSite = Boolean(data.error) || cat === "waterway" || ["water", "sea", "ocean", "bay", "strait", "reef"].includes(typ);
+      } catch {
+        isWaterSite = false;
+      }
+    }
+
     async function fetchNasaPower() {
       const lat = parseFloat(el("lat").value);
       const lon = parseFloat(el("lon").value);
+      await checkLandMask(lat, lon);
       el("coordLabel").textContent = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
       el("apiStatus").textContent = "Querying live NASA POWER API...";
       try {
@@ -1703,7 +1724,8 @@
     const PRESET_FACTS = {
       "44.08,-79.88": { cows: 75, milk: 2500, acres: 600, soil: "loam" },
       "47.36,9.45": { cows: 600, milk: 20000, acres: 950, soil: "loam" },
-      "1.42,103.72": { cows: 40, milk: 1200, acres: 45, soil: "clay" },
+      "1.42,103.72": { cows: 40, milk: 1200, acres: 45, soil: "clay" },
+
       "2.03,103.32": { cows: 500, milk: 14000, acres: 1200, soil: "clay" },
       "43.07,-89.40": { cows: 350, milk: 11500, acres: 850, soil: "loam" },
       "-37.79,175.28": { cows: 420, milk: 12000, acres: 700, soil: "loam" },
