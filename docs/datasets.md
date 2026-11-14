@@ -29,7 +29,10 @@ At least one NASA dataset is mandatory for Global Awards eligibility. **MilkyWay
 | **NASA GPM IMERG** | Satellite precipitation rate | Resolves rainfall onset and planting-window timing where 50 km POWER is too coarse | ~10 km satellite rainfall | [gpm.nasa.gov](https://gpm.nasa.gov/data/imerg) |
 | **NASA SMAP** (`SPL3SMP_E` L3 / L4) | Surface & root-zone soil moisture (`m³/m³`) | Flags current soil moisture deficit before seeding deep-rooted legumes vs. shallow silage | 9 km daily (2015–present) | [Earthdata Agriculture](https://www.earthdata.nasa.gov/topics/human-dimensions/agriculture-production/data-access-tools) |
 | **MODIS `MOD13Q1`** | 16-day NDVI / EVI | Tracks multi-season crop vigor to verify whether legume breaks improve subsequent silage greenness | 250 m, 16-day (2000–present) | [Earthdata Agriculture](https://www.earthdata.nasa.gov/topics/human-dimensions/agriculture-production/data-access-tools) |
-| **Landsat / HLS** | 30 m surface reflectance | Field-level bare-ground, residue cover, and paddock-scale verification | 30 m | [Earthdata Agriculture](https://www.earthdata.nasa.gov/topics/human-dimensions/agriculture-production/data-access-tools) |
+| **Landsat / HLS** | 30 m surface reflectance | Field-level bare-ground, residue cover, and active cropland vs. industrial parcel mapping | 30 m | [Earthdata Agriculture](https://www.earthdata.nasa.gov/topics/human-dimensions/agriculture-production/data-access-tools) |
+| **NASA GRACE & GRACE-FO** | Groundwater storage anomaly | Flags aquifers already stressed by dairy irrigation before high-water data centers site nearby | Regional (~300 km) | [grace.jpl.nasa.gov](https://grace.jpl.nasa.gov/) |
+| **NASA ECOSTRESS** | Land surface temp & evapotranspiration | Models thermal exhaust heat islands and pasture moisture stress around co-located facilities | ~70 m | [ecostress.jpl.nasa.gov](https://ecostress.jpl.nasa.gov/) |
+| **NASA VIIRS Black Marble** | Nighttime lights radiance | Infers existing electrical grid and industrial corridors for **Grid & Heat Proximity** scoring | 500 m | [blackmarble.gsfc.nasa.gov](https://blackmarble.gsfc.nasa.gov/) |
 | **ISRIC SoilGrids** *(non-NASA)* | Clay/sand/silt %, organic carbon, pH | Local soil texture & water-holding capacity combined with farmer priorities | 250 m global soil grid | [soilgrids.org](https://soilgrids.org/) |
 
 ---
