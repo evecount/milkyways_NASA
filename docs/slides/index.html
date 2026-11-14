@@ -51,6 +51,20 @@
       cursor: pointer;
     }
 
+    .toolbar a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .toolbar a:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
     .deck {
       max-width: 960px;
       margin: 1.5rem auto;
@@ -177,7 +191,12 @@
 <body>
   <div class="toolbar">
     <div><strong>MilkyWays</strong> &mdash; 7-Slide Demo Deck (NASA Space Apps 2026)</div>
-    <button onclick="window.print()">Print / Save as PDF</button>
+    <div style="display:flex; gap:0.5rem; align-items:center;">
+      <a href="../app/">Live App</a>
+      <a href="../paper/">Paper</a>
+      <a href="../">Home</a>
+      <button onclick="window.print()">Print / Save as PDF</button>
+    </div>
   </div>
 
   <div class="deck">
@@ -188,7 +207,7 @@
         <h1>MilkyWays &mdash; Data Center Dairy Diary</h1>
         <p style="font-size:1.3rem; color:var(--accent); font-weight:600; margin-top:0.25rem;">
           The decision tool that learns from farms and data centers around the world &mdash; NASA-guided fodder rotation
-          &amp; circular waste heat for dairy farms.
+          &amp; circular waste heat for farms and municipalities.
         </p>
         <div class="grid2" style="margin-top:1.75rem;">
           <div class="box">
@@ -209,19 +228,20 @@
     <!-- SLIDE 2 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 2 of 7 &middot; The Problem</div>
-        <h2>Two Pressures on One Industrial Dairy Farm</h2>
+        <div class="slide-num">Slide 2 of 7 &middot; The Problem &amp; Gap</div>
+        <h2>Rural Farms &amp; Data Centers Collide &mdash; And GIS Tools Miss the Farm</h2>
         <div class="grid2">
           <div class="box">
-            <h3>1. In the Field</h3>
-            <p>Shifting temperatures, erratic rainfall, and soil degradation make fodder crop rotation high-stakes.
-              Continuous cereal monocrops deplete soil nitrogen and raise drought/heat risk.</p>
+            <h3>1. Field + Plant Pressure</h3>
+            <p>Shifting temperatures and erratic rainfall make fodder rotation high-stakes (continuous monocrops deplete
+              soil nitrogen). Meanwhile, dairy processing is <strong>~70% thermal energy</strong> (pasteurization
+              72&ndash;78 &deg;C, CIP washing 40&ndash;60 &deg;C) while nearby AI data centers reject heat 24/7.</p>
           </div>
           <div class="box">
-            <h3>2. In the Dairy Plant</h3>
-            <p>Dairy processing is <strong>~70% thermal energy</strong> (pasteurization 72&ndash;78 &deg;C, CIP washing
-              40&ndash;60 &deg;C) and 30% electricity (chilling &lt;5 &deg;C) &mdash; while nearby AI data centers
-              reject low-grade heat 24/7.</p>
+            <h3>2. The GIS / MCDA Gap</h3>
+            <p>Enterprise SDSS/MCDA tools (Esri ArcGIS, QGIS MCDA, LUCIS) require specialist desktop workflows and stop at
+              <em>pre-construction parcel siting</em>. Neither farmers nor small municipalities have a zero-install,
+              auditable tool for <strong>post-siting co-location</strong>.</p>
           </div>
         </div>
       </div>
@@ -269,6 +289,11 @@
             </tr>
           </tbody>
         </table>
+        <div class="box" style="margin-top:0.85rem; padding:0.75rem 1rem;">
+          <strong>Live Browser Model (<code>FodderWeatherNet</code>):</strong> 3-layer PyTorch MLP trained on 10 years
+          of daily NASA POWER data (2016&ndash;2025, 6 global dairy regions) &mdash; out-of-sample
+          <code>R&sup2; = 0.8740 | MAE = 5.27</code>, running locally in the browser with no GIS install.
+        </div>
       </div>
       <div class="foot"><span>MilkyWays &middot; Best Use of Data</span><span>3 / 7</span></div>
     </section>
@@ -277,26 +302,26 @@
     <section class="slide">
       <div>
         <div class="slide-num">Slide 4 of 7 &middot; User Experience</div>
-        <h2>How the Farmer Uses MilkyWays</h2>
+        <h2>Zero-Install SDSS + Dairy Diary in One Browser Screen</h2>
         <div class="grid2">
           <div class="box">
-            <h3>Inputs</h3>
+            <h3>Farm Facts &amp; Inputs</h3>
             <ul>
-              <li>Select farm coordinates or preset region (e.g. Ontario Dairy Region
-                <code>44.08&deg;N, -79.88&deg;E</code>)
+              <li>Pick a global preset (Ontario, Gais, Singapore) or upload plain-language <code>farm-facts.csv</code>
               </li>
-              <li>Choose local soil profile (Clay Loam, Sandy Loam, Heavy Clay)</li>
-              <li>Enter daily milk volume (e.g. <code>20,000 L/day</code>)</li>
-              <li>Adjust priority sliders: Soil Health, Water Efficiency, Heat Resilience, Feed Quality</li>
+              <li>Auto-calculates <code>Milking Herd</code>, <code>Yield/Cow</code>, and <code>Pasteurization Need</code>
+              </li>
+              <li>Choose soil profile (Clay Loam, Sandy Loam, Heavy Clay) &amp; data-center heat source</li>
+              <li>Adjust MCDA priority sliders: Soil Health, Water Efficiency, Heat Resilience, Feed Quality</li>
             </ul>
           </div>
           <div class="box">
-            <h3>Outputs</h3>
+            <h3>Dairy Diary &amp; Outputs</h3>
             <ul>
-              <li>Live Jan&ndash;Dec NASA POWER seasonal chart</li>
+              <li>Live Jan&ndash;Dec NASA POWER chart + <strong>12-Month Crop &amp; Heat Calendar</strong></li>
               <li>4 Mandatory Agronomy &amp; Thermodynamics Checks (PASS/FAIL)</li>
-              <li>Ranked fodder rotations (Maize/Sorghum silage &harr; Alfalfa/Clover/Cowpea legumes)</li>
-              <li>Matched dairy thermal demand (<code>817 kWh/day</code>)</li>
+              <li>Ranked fodder rotations (Maize/Sorghum &harr; Alfalfa/Clover/Cowpea)</li>
+              <li>Auditable JSON/CSV logbook export for farms &amp; local planners</li>
             </ul>
           </div>
         </div>
@@ -368,15 +393,17 @@
     <!-- SLIDE 7 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 7 of 7 &middot; Impact &amp; Future</div>
-        <h2>Impact: Resilient Fields, Circular Dairy Heat</h2>
+        <div class="slide-num">Slide 7 of 7 &middot; Impact &amp; Tandem Governance</div>
+        <h2>Impact: Farms &amp; Municipalities Arguing in Tandem</h2>
         <ul>
-          <li><strong>For Farmers:</strong> Plain-language, zero-login decision tool using live NASA data to cut N
-            fertilizer 25&ndash;30% and protect soil health.</li>
-          <li><strong>For Data Centers:</strong> Turns wasted low-grade heat into a measurable community thermal
-            resource for nearby food processing.</li>
-          <li><strong>Next Horizon:</strong> Expand the same closed-loop heat + NASA climate-stress pattern to a second
-            farm type (broiler poultry houses needing 32&ndash;34 &deg;C brooding heat &amp; heat-stress alerts).</li>
+          <li><strong>For Farmers:</strong> Zero-login browser SDSS + Dairy Diary using live NASA data to cut synthetic N
+            fertilizer 25&ndash;30% and track 12-month crop &amp; heat cycles without QGIS expertise.</li>
+          <li><strong>For Farms + Municipalities Together:</strong> Exports auditable, non-black-box climate and
+            thermal-balance evidence so farms and local planners can argue <em>in tandem</em> for closed-loop
+            co-location zoning rather than farmland conversion.</li>
+          <li><strong>For Data Centers &amp; Next Horizon:</strong> Turns rejected low-grade heat into a measurable
+            community asset &mdash; and scales next to broiler poultry houses needing 32&ndash;34 &deg;C brooding heat.
+          </li>
         </ul>
       </div>
       <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>7 / 7</span></div>
