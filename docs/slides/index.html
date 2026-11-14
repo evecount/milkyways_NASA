@@ -196,7 +196,7 @@
 
 <body>
   <div class="toolbar">
-    <div><strong>MilkyWays</strong> &mdash; 8-Slide Demo Deck (NASA Space Apps 2026)</div>
+    <div><strong>MilkyWays</strong> &mdash; 7-Slide Demo Deck (NASA Space Apps 2026)</div>
     <div style="display:flex; gap:0.5rem; align-items:center;">
       <a href="../app/">Live App</a>
       <a href="../paper/">Paper</a>
@@ -209,7 +209,7 @@
     <!-- SLIDE 1 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 1 of 8 &middot; Title</div>
+        <div class="slide-num">Slide 1 of 7 &middot; Title</div>
         <h1>MilkyWays &mdash; Data Center Dairy Diary</h1>
         <p style="font-size:1.3rem; color:var(--accent); font-weight:600; margin-top:0.25rem;">
           The decision tool that learns from farms and data centers around the world &mdash; NASA-guided fodder rotation
@@ -234,7 +234,7 @@
     <!-- SLIDE 2 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 2 of 8 &middot; The Problem &amp; Gap</div>
+        <div class="slide-num">Slide 2 of 7 &middot; The Problem &amp; Gap</div>
         <h2>Rural Farms &amp; Data Centers Collide &mdash; And GIS Tools Miss the Farm</h2>
         <div class="grid2">
           <div class="box">
@@ -251,13 +251,13 @@
           </div>
         </div>
       </div>
-      <div class="foot"><span>MilkyWays &middot; Challenge 7: Field Shift</span><span>2 / 8</span></div>
+      <div class="foot"><span>MilkyWays &middot; Challenge 7: Field Shift</span><span>2 / 7</span></div>
     </section>
 
     <!-- SLIDE 3 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 3 of 8 &middot; NASA Open Data</div>
+        <div class="slide-num">Slide 3 of 7 &middot; NASA Open Data</div>
         <h2>Data-to-Decision Pipeline (Explainable, Not a Black Box)</h2>
         <table>
           <thead>
@@ -311,106 +311,14 @@
           <code>R&sup2; = 0.8740 | MAE = 5.27</code>, running locally in the browser with no GIS install.
         </div>
       </div>
-      <div class="foot"><span>MilkyWays &middot; Best Use of Data</span><span>3 / 8</span></div>
+      <div class="foot"><span>MilkyWays &middot; Best Use of Data</span><span>3 / 7</span></div>
     </section>
 
     <!-- SLIDE 4 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 4 of 8 &middot; User Experience</div>
-        <h2>Zero-Install SDSS + Dairy Diary in One Browser Screen</h2>
-        <div class="grid2">
-          <div class="box">
-            <h3>Farm Facts &amp; Inputs</h3>
-            <ul>
-              <li>Pick a global preset (Ontario, Gais, Singapore) or upload plain-language <code>farm-facts.csv</code>
-              </li>
-              <li>Auto-calculates <code>Milking Herd</code>, <code>Yield/Cow</code>, and <code>Pasteurization Need</code>
-              </li>
-              <li>Choose soil profile (Clay Loam, Sandy Loam, Heavy Clay) &amp; data-center heat source</li>
-              <li>Adjust MCDA priority sliders: Soil Health, Water Efficiency, Heat Resilience, Feed Quality</li>
-            </ul>
-          </div>
-          <div class="box">
-            <h3>MCDA Map, Diary &amp; Outputs</h3>
-            <ul>
-              <li>Satellite World View (<strong>13 global farms</strong>) + live <strong>NASA MCDA Raster Grid</strong></li>
-              <li><strong>6 Farm &amp; Municipal Criteria</strong> (Soil, Water, Heat, Feed, Grid Proximity, Flood Buffer)</li>
-              <li>Zoom-out <strong>Synergy Spider</strong> + <strong>Open-Water Hard Exclusion Gate</strong></li>
-              <li><strong>12-Month Crop &amp; Heat Calendar</strong> + auditable JSON/CSV logbook export</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>4 / 8</span></div>
-    </section>
-
-    <!-- SLIDE 5 -->
-    <section class="slide">
-      <div>
-        <div class="slide-num">Slide 5 of 8 &middot; Validation &amp; Controls</div>
-        <h2>4 Mandatory Checks + Positive &amp; Negative Controls</h2>
-        <div class="grid2">
-          <div class="box pos">
-            <h3>Positive Controls (PASS)</h3>
-            <ul>
-              <li><strong>Maize &rarr; Alfalfa &rarr; Red Clover:</strong> Cuts synthetic nitrogen fertilizer by
-                <strong>25&ndash;30%</strong> and builds soil organic matter.
-              </li>
-              <li><strong>55&ndash;70 &deg;C Liquid + Heat Pump (70&ndash;90 &deg;C):</strong> Meets
-                <code>72&ndash;78 &deg;C</code> HTST pasteurization &amp; drives <code>~7.2 &deg;C</code> absorption
-                chilling.
-              </li>
-              <li><strong>Commercial Proof:</strong> Gais, Switzerland cheese dairy (<code>1.5 GWh/year</code>,
-                <code>20 &deg;C &rarr; 14 &deg;C</code>).
-              </li>
-            </ul>
-          </div>
-          <div class="box neg">
-            <h3>Negative Controls (FAIL)</h3>
-            <ul>
-              <li><strong>Continuous Maize Monocrop:</strong> Fails nitrogen-fixation cycle check; depletes soil N and
-                increases erosion/heat risk.</li>
-              <li><strong>Unboosted 30&ndash;45 &deg;C Air Waste Heat:</strong> Explicitly flagged as insufficient for
-                <code>72&ndash;78 &deg;C</code> HTST without a heat pump boost.
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="foot"><span>MilkyWays &middot; Deterministic Validation</span><span>5 / 8</span></div>
-    </section>
-
-    <!-- SLIDE 6 -->
-    <section class="slide">
-      <div>
-        <div class="slide-num">Slide 6 of 8 &middot; Food Safety &amp; Architecture</div>
-        <h2>&ldquo;The Coolant Never Touches the Milk&rdquo;</h2>
-        <div class="box" style="margin-top:0.75rem;">
-          <p style="font-size:1.15rem; text-align:center; margin:0.5rem 0;">
-            <strong>AI Data Center Closed Coolant Loop</strong> (30&ndash;45 &deg;C Air / 55&ndash;70 &deg;C
-            Liquid)<br />
-            &darr; <em>Double-Wall Heat Exchanger (Zero Mixing)</em> &darr;<br />
-            <strong>Food-Grade Water Loop + Heat Pump Boost</strong> (70&ndash;90 &deg;C)<br />
-            &darr;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &darr;<br />
-            <strong>HTST Pasteurization (72&ndash;78 &deg;C)</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-            <strong>Absorption Chilling (~7.2 &deg;C)</strong>
-          </p>
-        </div>
-        <p style="margin-top:1rem;"><strong>Honest limits stated:</strong> NASA POWER is a ~50 km regional grid (paired
-          with 9 km SMAP &amp; 250 m MODIS for field refinement); SMAP records start in 2015 (current conditions only).
-        </p>
-      </div>
-      <div class="foot"><span>MilkyWays &middot; Safe Circular Symbiosis</span><span>6 / 8</span></div>
-    </section>
-
-    <!-- SLIDE 7 -->
-    <section class="slide">
-      <div>
-        <div class="slide-num">Slide 7 of 8 &middot; Platform Capabilities</div>
-        <h2>Complete Feature &amp; Capability Matrix</h2>
+        <div class="slide-num">Slide 4 of 7 &middot; Platform Features &amp; UX</div>
+        <h2>Complete Feature &amp; Capability Matrix (Zero-Install Browser SDSS)</h2>
         <div class="grid3" style="margin-top:0.75rem;">
           <div class="box">
             <h3>Spatial &amp; GIS Engine</h3>
@@ -441,13 +349,74 @@
           </div>
         </div>
       </div>
-      <div class="foot"><span>MilkyWays &middot; End-to-End Decision Architecture</span><span>7 / 8</span></div>
+      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>4 / 7</span></div>
     </section>
 
-    <!-- SLIDE 8 -->
+    <!-- SLIDE 5 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 8 of 8 &middot; Government &amp; Civic Impact</div>
+        <div class="slide-num">Slide 5 of 7 &middot; Validation &amp; Controls</div>
+        <h2>4 Mandatory Checks + Positive &amp; Negative Controls</h2>
+        <div class="grid2">
+          <div class="box pos">
+            <h3>Positive Controls (PASS)</h3>
+            <ul>
+              <li><strong>Maize &rarr; Alfalfa &rarr; Red Clover:</strong> Cuts synthetic nitrogen fertilizer by
+                <strong>25&ndash;30%</strong> and builds soil organic matter.
+              </li>
+              <li><strong>55&ndash;70 &deg;C Liquid + Heat Pump (70&ndash;90 &deg;C):</strong> Meets
+                <code>72&ndash;78 &deg;C</code> HTST pasteurization &amp; drives <code>~7.2 &deg;C</code> absorption
+                chilling.
+              </li>
+              <li><strong>Commercial Proof:</strong> Gais, Switzerland cheese dairy (<code>1.5 GWh/year</code>,
+                <code>20 &deg;C &rarr; 14 &deg;C</code>).
+              </li>
+            </ul>
+          </div>
+          <div class="box neg">
+            <h3>Negative Controls (FAIL)</h3>
+            <ul>
+              <li><strong>Continuous Maize Monocrop:</strong> Fails nitrogen-fixation cycle check; depletes soil N and
+                increases erosion/heat risk.</li>
+              <li><strong>Unboosted 30&ndash;45 &deg;C Air Waste Heat:</strong> Explicitly flagged as insufficient for
+                <code>72&ndash;78 &deg;C</code> HTST without a heat pump boost.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; Deterministic Validation</span><span>5 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 6 of 7 &middot; Food Safety &amp; Architecture</div>
+        <h2>&ldquo;The Coolant Never Touches the Milk&rdquo;</h2>
+        <div class="box" style="margin-top:0.75rem;">
+          <p style="font-size:1.15rem; text-align:center; margin:0.5rem 0;">
+            <strong>AI Data Center Closed Coolant Loop</strong> (30&ndash;45 &deg;C Air / 55&ndash;70 &deg;C
+            Liquid)<br />
+            &darr; <em>Double-Wall Heat Exchanger (Zero Mixing)</em> &darr;<br />
+            <strong>Food-Grade Water Loop + Heat Pump Boost</strong> (70&ndash;90 &deg;C)<br />
+            &darr;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &darr;<br />
+            <strong>HTST Pasteurization (72&ndash;78 &deg;C)</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+            <strong>Absorption Chilling (~7.2 &deg;C)</strong>
+          </p>
+        </div>
+        <p style="margin-top:1rem;"><strong>Honest limits stated:</strong> NASA POWER is a ~50 km regional grid (paired
+          with 9 km SMAP &amp; 250 m MODIS for field refinement); SMAP records start in 2015 (current conditions only).
+        </p>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; Safe Circular Symbiosis</span><span>6 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 7 of 7 &middot; Government &amp; Civic Impact</div>
         <h2>Civic &amp; Municipal Impact: Resolving Land, Water &amp; Energy Conflicts</h2>
         <ul>
           <li><strong>For Rural Planners &amp; Local Government:</strong> Connects NASA satellite data with real-world
@@ -461,7 +430,7 @@
           </li>
         </ul>
       </div>
-      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>8 / 8</span></div>
+      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>7 / 7</span></div>
     </section>
   </div>
 </body>
