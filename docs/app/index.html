@@ -1544,57 +1544,90 @@
 
       renderSynergySpider();
 
-      if (hasUserPickedRegion) {
+    }
+
+    function flyToSelectedFarm(lat, lon) {
+      initMcdaMap();
+      if (!mcdaMap) return;
+      hasUserPickedRegion = true;
+      mcdaMap.stop();
+      mcdaMap.flyTo([lat, lon], 12, { duration: 1.0, easeLinearity: 0.35 });
+    }
+
+    function renderTuningInsides(topRot, score) {
 
-        const dist = mcdaMap.getCenter().distanceTo([lat, lon]);
+      const box = el("tuningInsides");
 
-        if (dist > 50000 || mcdaMap.getZoom() < 8) mcdaMap.flyTo([lat, lon], 12, { duration: 1.1 });
+      if (!box || !topRot) return;
 
-        else mcdaMap.panTo([lat, lon], { animate: true });
+      const wSoil = el("wSoilVal").textContent;
 
-      }
+      const wWater = el("wWaterVal").textContent;
+
+      const wHeat = el("wHeatVal").textContent;
+
+      const wFeed = el("wFeedVal").textContent;
+
+      const wGrid = el("wGridVal").textContent;
+
+      const wFlood = el("wFloodVal").textContent;
+
+      const yTon = (+el("yieldTon").value || 18.5).toFixed(1);
+
+      const sN = +el("synthN").value || 110;
+
+      const htst = el("heatMode").value === "boosted" ? "PASS (70-90°C)" : "FAIL (30-45°C)";
+
+      box.innerHTML = `
+
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.45rem; margin-bottom:0.6rem;">
+
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+
+            <strong style="color:#14b8a6;">1. Inputs</strong><br/>
+
+            NASA POWER + ${el("soil").value} soil + ${yTon} t/ac + ${sN} kg N/ha
+
+          </div>
+
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+
+            <strong style="color:#6366f1;">2. WLC Weights (6)</strong><br/>
+
+            Soil ${wSoil}% · Water ${wWater}% · Heat ${wHeat}% · Feed ${wFeed}% · Grid ${wGrid}% · Flood ${wFlood}%
+
+          </div>
+
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+
+            <strong style="color:#f59e0b;">3. FodderWeatherNet</strong><br/>
+
+            PyTorch MLP (12&rarr;32&rarr;16&rarr;3) · R&sup2; = 0.8740
+
+          </div>
+
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+
+            <strong style="color:#22c55e;">4. Hard Gates &amp; Verdict</strong><br/>
+
+            HTST: ${htst} &rarr; <strong>${score}/100</strong>
+
+          </div>
+
+        </div>
+
+        <div style="color:var(--muted);">
+
+          <strong>WLC Formula:</strong> (${topRot.sSoil}×${wSoil}% + ${topRot.sWater}×${wWater}% + ${topRot.sHeat}×${wHeat}% + ${topRot.sFeed}×${wFeed}% + ${topRot.sGrid}×${wGrid}% + ${topRot.sFlood}×${wFlood}%) = <strong>${score}/100</strong> for <em>${topRot.name}</em>.
+
+        </div>
+
+      `;
 
     }
 
 
 
-    function renderTuningInsides(topRot, score) {
-      const box = el("tuningInsides");
-      if (!box || !topRot) return;
-      const wSoil = el("wSoilVal").textContent;
-      const wWater = el("wWaterVal").textContent;
-      const wHeat = el("wHeatVal").textContent;
-      const wFeed = el("wFeedVal").textContent;
-      const wGrid = el("wGridVal").textContent;
-      const wFlood = el("wFloodVal").textContent;
-      const yTon = (+el("yieldTon").value || 18.5).toFixed(1);
-      const sN = +el("synthN").value || 110;
-      const htst = el("heatMode").value === "boosted" ? "PASS (70-90°C)" : "FAIL (30-45°C)";
-      box.innerHTML = `
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.45rem; margin-bottom:0.6rem;">
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-            <strong style="color:#14b8a6;">1. Inputs</strong><br/>
-            NASA POWER + ${el("soil").value} soil + ${yTon} t/ac + ${sN} kg N/ha
-          </div>
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-            <strong style="color:#6366f1;">2. WLC Weights (6)</strong><br/>
-            Soil ${wSoil}% · Water ${wWater}% · Heat ${wHeat}% · Feed ${wFeed}% · Grid ${wGrid}% · Flood ${wFlood}%
-          </div>
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-            <strong style="color:#f59e0b;">3. FodderWeatherNet</strong><br/>
-            PyTorch MLP (12&rarr;32&rarr;16&rarr;3) · R&sup2; = 0.8740
-          </div>
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-            <strong style="color:#22c55e;">4. Hard Gates &amp; Verdict</strong><br/>
-            HTST: ${htst} &rarr; <strong>${score}/100</strong>
-          </div>
-        </div>
-        <div style="color:var(--muted);">
-          <strong>WLC Formula:</strong> (${topRot.sSoil}×${wSoil}% + ${topRot.sWater}×${wWater}% + ${topRot.sHeat}×${wHeat}% + ${topRot.sFeed}×${wFeed}% + ${topRot.sGrid}×${wGrid}% + ${topRot.sFlood}×${wFlood}%) = <strong>${score}/100</strong> for <em>${topRot.name}</em>.
-        </div>
-      `;
-    }
-
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
@@ -1690,8 +1723,8 @@
       if (mcdaMap) mcdaMap.flyTo([20, 15], 2, { duration: 1.0 });
     });
     el("preset").addEventListener("change", (e) => {
-      hasUserPickedRegion = true;
       const [la, lo] = e.target.value.split(",");
+      flyToSelectedFarm(parseFloat(la), parseFloat(lo));
       el("lat").value = la;
       el("lon").value = lo;
       const f = PRESET_FACTS[e.target.value];
@@ -1703,7 +1736,7 @@
       }
       fetchNasaPower();
     });
-    el("fetchBtn").addEventListener("click", () => { hasUserPickedRegion = true; fetchNasaPower(); });
+    el("fetchBtn").addEventListener("click", () => { flyToSelectedFarm(parseFloat(el("lat").value), parseFloat(el("lon").value)); fetchNasaPower(); });
     el("downloadSampleCsv").addEventListener("click", (e) => {
       e.preventDefault();
       const csv = "farm_name,lat,lon,milking_cows,daily_milk_liters,fodder_acres,soil_type,silage_yield_t_ac,synthetic_n_kg_ha\nOntario_Dairy,44.08,-79.88,75,2500,600,loam,18.5,110\n";
