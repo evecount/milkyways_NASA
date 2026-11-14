@@ -1647,7 +1647,7 @@
             .bindTooltip(`${n.name} (${km} km · ${n.cap} · Viable Pipe)`)
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span>`)
+            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><br/><small>Export Municipal Feasibility Report for the <b>Eval &rarr; Pilot &rarr; Result</b> packet.</small>`)
             .addTo(spiderLayer);
         } else {
           // Beyond 12 km: no pipe line — render a Position Beacon only
@@ -1655,7 +1655,7 @@
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 5, color: "#fff", fillColor: "#f59e0b", fillOpacity: 0.95, weight: 1.5 })
             .bindTooltip(`${n.name} — Position Beacon (${km} km > ${MAX_PIPE_KM} km pipe limit)`)
-            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}`)
+            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<br/><small>Export Municipal Feasibility Report for the <b>Eval &rarr; Pilot &rarr; Result</b> packet.</small>`)
             .addTo(spiderLayer);
         }
       });
@@ -2230,6 +2230,15 @@
         colocationDetail = `${viableFarm.name} lies ${viableFarm.distKm} from this coordinate, whereas the nearest Data Center beacon${nearestDc ? " (" + nearestDc.name + " at " + nearestDc.distKm + ")" : ""} exceeds the ${MAX_PIPE_KM} km pipe cutoff. Zoning a new liquid-cooled Edge Data Center inside this ${MAX_PIPE_KM} km agricultural cluster unlocks shared waste heat without nonsensical long-distance piping.`;
       }
 
+      const stageEval = viableDc
+        ? `Confirm 1,500 ft setback, survey insulated pipe corridor to ${viableDc.name} (${viableDc.distKm}), and log baseline soil-nitrate & silage facts in the Dairy Diary.`
+        : `Confirm > ${MAX_PIPE_KM} km pipe cutoff precludes remote piping; screen this parcel for on-site modular Edge Data Center co-location (or siting a new dairy plant within ${MAX_PIPE_KM} km of ${nearestDc ? nearestDc.name : "the nearest grid beacon"}).`;
+      const stagePilot = viableDc
+        ? `Deploy double-wall food-grade heat exchanger + heat pump boost (70–90 °C) along the ${viableDc.distKm} link, meter kWh/d HTST offset, and calibrate FodderWeatherNet with season-1 Dairy Diary yields.`
+        : `Permit a co-located liquid-cooled Edge Data Center (55–70 °C) paired directly with the dairy's double-wall heat exchanger (~0 km pipe loss), meter HTST offset, and log season-1 Dairy Diary yields.`;
+      const stageResult = viableDc
+        ? `Execute long-term waste-heat offtake (${hDemand} demand), lock in 25–30% synthetic N reduction via legume rotations, and cascade residual 30–45 °C heat to nearby greenhouses or poultry.`
+        : `Operate zero-transport-loss circular symbiosis (HTST 72–78 °C + ~7.2 °C chilling, 25–30% synthetic N cut) and cascade residual 30–45 °C heat to neighboring greenhouses or aquaculture.`;
       const timestamp = new Date().toISOString();
       const reportHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -2335,7 +2344,15 @@
       ${escHtml(colocationDetail)}
     </div>
 
-    <h2>5. Data Provenance, Deep Learning Proxy &amp; Verification Limits</h2>
+    <h2>5. Staged Implementation Proposal (Eval &rarr; Pilot &rarr; Result)</h2>
+    <table>
+      <tr><th>Stage</th><th>Horizon</th><th>Action Plan (${viableDc ? "Thermal Pipe Connector &le; 12 km" : "Position Beacon / On-Site Co-Location"})</th></tr>
+      <tr><td><strong>Stage 1: Eval</strong></td><td>Weeks 1&ndash;4</td><td>${escHtml(stageEval)}</td></tr>
+      <tr><td><strong>Stage 2: Pilot</strong></td><td>Months 1&ndash;6</td><td>${escHtml(stagePilot)}</td></tr>
+      <tr><td><strong>Stage 3: Result</strong></td><td>Months 6&ndash;18+</td><td>${escHtml(stageResult)}</td></tr>
+    </table>
+
+    <h2>6. Data Provenance, Deep Learning Proxy &amp; Verification Limits</h2>
     <table>
       <tr><th>Source / Model</th><th>Observed Values / Role</th><th>Spatial &amp; Temporal Scope</th></tr>
       <tr>
