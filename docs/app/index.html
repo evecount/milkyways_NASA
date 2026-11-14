@@ -566,18 +566,24 @@
       </div>
 
       <div class="card">
-        <h2>2. Farmer Priorities</h2>
-        <label>Soil Health &amp; N-Fixation (<span id="wSoilVal">40</span>%)</label>
-        <input id="wSoil" type="range" min="0" max="100" value="40" />
+        <h2>2. Farm &amp; Municipal MCDA Priorities</h2>
+        <label>Soil Health &amp; N-Fixation (<span id="wSoilVal">30</span>%)</label>
+        <input id="wSoil" type="range" min="0" max="100" value="30" />
 
-        <label>Water Efficiency (<span id="wWaterVal">25</span>%)</label>
-        <input id="wWater" type="range" min="0" max="100" value="25" />
+        <label>Water Efficiency (<span id="wWaterVal">20</span>%)</label>
+        <input id="wWater" type="range" min="0" max="100" value="20" />
 
         <label>Heat Resilience (<span id="wHeatVal">15</span>%)</label>
         <input id="wHeat" type="range" min="0" max="100" value="15" />
 
-        <label>Dairy Feed Quality (<span id="wFeedVal">20</span>%)</label>
-        <input id="wFeed" type="range" min="0" max="100" value="20" />
+        <label>Dairy Feed Quality (<span id="wFeedVal">15</span>%)</label>
+        <input id="wFeed" type="range" min="0" max="100" value="15" />
+
+        <label>Grid &amp; Heat Proximity (<span id="wGridVal">10</span>%)</label>
+        <input id="wGrid" type="range" min="0" max="100" value="10" />
+
+        <label>Flood &amp; Zoning Buffer (<span id="wFloodVal">10</span>%)</label>
+        <input id="wFlood" type="range" min="0" max="100" value="10" />
       </div>
     </aside>
 
@@ -918,27 +924,36 @@
       const wWater = +el("wWater").value;
       const wHeat = +el("wHeat").value;
       const wFeed = +el("wFeed").value;
-      const wSum = Math.max(1, wSoil + wWater + wHeat + wFeed);
+      const wGrid = +el("wGrid").value;
+      const wFlood = +el("wFlood").value;
+      const wSum = Math.max(1, wSoil + wWater + wHeat + wFeed + wGrid + wFlood);
 
       el("wSoilVal").textContent = Math.round((wSoil / wSum) * 100);
       el("wWaterVal").textContent = Math.round((wWater / wSum) * 100);
       el("wHeatVal").textContent = Math.round((wHeat / wSum) * 100);
       el("wFeedVal").textContent = Math.round((wFeed / wSum) * 100);
+      el("wGridVal").textContent = Math.round((wGrid / wSum) * 100);
+      el("wFloodVal").textContent = Math.round((wFlood / wSum) * 100);
 
       const soilType = el("soil").value;
       const isWarm = climate.t2m >= 18;
       const isDry = climate.rain < 2.2 || soilType === "sandy";
+      const htstOk = el("heatMode").value === "boosted";
+      const sGridBase = htstOk ? 92 : 42;
+      const sFloodBase = Math.max(35, Math.min(95, 88 - (climate.rain > 5.0 ? 18 : 0) - (soilType === "clay" ? 12 : 0)));
 
       const scored = ROTATIONS.map(r => {
         let sSoil = r.soil;
         let sWater = r.water + (isDry ? r.dryBonus : 0);
         let sHeat = r.heat + (isWarm ? r.dryBonus : r.coolBonus);
         let sFeed = r.feed;
+        let sGrid = Math.max(10, Math.min(100, sGridBase + (r.controlClass === "neg" ? -18 : 0)));
+        let sFlood = Math.max(10, Math.min(100, sFloodBase + (r.controlClass === "neg" ? -15 : 4)));
         sSoil = Math.max(10, Math.min(100, sSoil));
         sWater = Math.max(10, Math.min(100, sWater));
         sHeat = Math.max(10, Math.min(100, sHeat));
-        const total = Math.round((sSoil * wSoil + sWater * wWater + sHeat * wHeat + sFeed * wFeed) / wSum);
-        return { ...r, sSoil, sWater, sHeat, sFeed, total };
+        const total = Math.round((sSoil * wSoil + sWater * wWater + sHeat * wHeat + sFeed * wFeed + sGrid * wGrid + sFlood * wFlood) / wSum);
+        return { ...r, sSoil, sWater, sHeat, sFeed, sGrid, sFlood, total };
       }).sort((a, b) => b.total - a.total);
 
       el("rotationsList").innerHTML = scored.map((r, i) => `
@@ -1057,16 +1072,26 @@
 
       const sN = +el("synthN").value || 110;
 
-      const score = isWaterSite ? 0 : topRot.total;
-      const zoneFill = score >= 75 ? "rgba(34,197,94,0.12)" : (score >= 55 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.18)");
-      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
-      const badge = el("heroSuitabilityBadge");
-      const verdict = isWaterSite ? "Water Exclusion (Offshore)" : (score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk"));
-      if (badge) {
-        badge.textContent = isWaterSite ? `Site Verdict: ${verdict}` : `Site Verdict: ${verdict} (${score}/100)`;
-        badge.style.background = isWaterSite ? "rgba(239,68,68,0.22)" : "";
-        badge.style.color = isWaterSite ? "#fca5a5" : "";
-      }
+      const score = isWaterSite ? 0 : topRot.total;
+
+      const zoneFill = score >= 75 ? "rgba(34,197,94,0.12)" : (score >= 55 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.18)");
+
+      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
+
+      const badge = el("heroSuitabilityBadge");
+
+      const verdict = isWaterSite ? "Water Exclusion (Offshore)" : (score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk"));
+
+      if (badge) {
+
+        badge.textContent = isWaterSite ? `Site Verdict: ${verdict}` : `Site Verdict: ${verdict} (${score}/100)`;
+
+        badge.style.background = isWaterSite ? "rgba(239,68,68,0.22)" : "";
+
+        badge.style.color = isWaterSite ? "#fca5a5" : "";
+
+      }
+
       updateMcdaMap(score, zoneStroke, htstOk, topRot.name, kwh, kw);
 
       renderTuningInsides(topRot, score);
@@ -1453,9 +1478,9 @@
 
           // Optimal corridor is 0.45-2.0 km from farm & < 2.5 km from data center heat loop
 
-          const setbackPen = dFarm < 0.46 ? -26 : 0;
+          const gridScale = (+el("wGridVal").textContent || 10) / 10; const floodScale = (+el("wFloodVal").textContent || 10) / 10; const setbackPen = dFarm < 0.46 ? Math.round(-22 * floodScale) : 0;
 
-          const pipeBonus = dDc < 1.6 ? (htstOk ? 6 : -12) : Math.max(-18, -5 * (dDc - 1.6));
+          const pipeBonus = dDc < 1.6 ? Math.round((htstOk ? 6 : -12) * gridScale) : Math.max(-22, Math.round(-5 * (dDc - 1.6) * gridScale));
 
           const cellScore = isWaterSite ? 0 : Math.max(15, Math.min(98, Math.round(score + rainPenalty + heatPenalty + setbackPen + pipeBonus)));
 
@@ -1533,126 +1558,43 @@
 
 
 
-    function renderTuningInsides(topRot, score) {
-
-      const box = el("tuningInsides");
-
-      if (!box || !topRot) return;
-
-      const wSoil = el("wSoilVal").textContent;
-
-      const wWater = el("wWaterVal").textContent;
-
-      const wHeat = el("wHeatVal").textContent;
-
-      const wFeed = el("wFeedVal").textContent;
-
-      const yTon = (+el("yieldTon").value || 18.5).toFixed(1);
-
-      const sN = +el("synthN").value || 110;
-
-      const htst = el("heatMode").value === "boosted" ? "PASS (70-90°C)" : "FAIL (30-45°C)";
-
-      box.innerHTML = `
-
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.45rem; margin-bottom:0.6rem;">
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#14b8a6;">1. Inputs</strong><br/>
-
-            NASA POWER + ${el("soil").value} soil + ${yTon} t/ac + ${sN} kg N/ha
-
-          </div>
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#6366f1;">2. WLC Weights</strong><br/>
-
-            Soil ${wSoil}% · Water ${wWater}% · Heat ${wHeat}% · Feed ${wFeed}%
-
-          </div>
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#f59e0b;">3. FodderWeatherNet</strong><br/>
-
-            PyTorch MLP (12&rarr;32&rarr;16&rarr;3) · R&sup2; = 0.8740
-
-          </div>
-
-          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
-
-            <strong style="color:#22c55e;">4. Hard Gates &amp; Verdict</strong><br/>
-
-            HTST: ${htst} &rarr; <strong>${score}/100</strong>
-
-          </div>
-
-        </div>
-
-        <div style="color:var(--muted);">
-
-          <strong>WLC Formula:</strong> (${topRot.sSoil}×${wSoil}% + ${topRot.sWater}×${wWater}% + ${topRot.sHeat}×${wHeat}% + ${topRot.sFeed}×${wFeed}%) = <strong>${score}/100</strong> for <em>${topRot.name}</em>.
-
-        </div>
-
-      `;
-
-    }
-
-
-
-    function renderSynergySpider() {
-
-      if (!mcdaMap || !spiderLayer) return;
-
-      spiderLayer.clearLayers();
-
-      const z = mcdaMap.getZoom();
-
-      if (z > 11 || z < 4) return;
-
-      const lat = parseFloat(el("lat").value) || 1.42;
-
-      const lon = parseFloat(el("lon").value) || 103.72;
-
-      const presetKey = el("preset").value;
-
-      const nodes = REGIONAL_SYNERGIES[presetKey] || [
-
-        { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
-
-        { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
-
-        { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
-
-      ];
-
-      nodes.forEach(n => {
-
-        const km = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1);
-
-        const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
-
-        L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
-
-          .bindTooltip(`${n.name} (${km} km · ${n.cap})`)
-
-          .addTo(spiderLayer);
-
-        L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-
-          .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}`)
-
-          .addTo(spiderLayer);
-
-      });
-
-    }
-
-
-
+    function renderTuningInsides(topRot, score) {
+      const box = el("tuningInsides");
+      if (!box || !topRot) return;
+      const wSoil = el("wSoilVal").textContent;
+      const wWater = el("wWaterVal").textContent;
+      const wHeat = el("wHeatVal").textContent;
+      const wFeed = el("wFeedVal").textContent;
+      const wGrid = el("wGridVal").textContent;
+      const wFlood = el("wFloodVal").textContent;
+      const yTon = (+el("yieldTon").value || 18.5).toFixed(1);
+      const sN = +el("synthN").value || 110;
+      const htst = el("heatMode").value === "boosted" ? "PASS (70-90°C)" : "FAIL (30-45°C)";
+      box.innerHTML = `
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.45rem; margin-bottom:0.6rem;">
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#14b8a6;">1. Inputs</strong><br/>
+            NASA POWER + ${el("soil").value} soil + ${yTon} t/ac + ${sN} kg N/ha
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#6366f1;">2. WLC Weights (6)</strong><br/>
+            Soil ${wSoil}% · Water ${wWater}% · Heat ${wHeat}% · Feed ${wFeed}% · Grid ${wGrid}% · Flood ${wFlood}%
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#f59e0b;">3. FodderWeatherNet</strong><br/>
+            PyTorch MLP (12&rarr;32&rarr;16&rarr;3) · R&sup2; = 0.8740
+          </div>
+          <div style="background:#1e293b; border:1px solid #334155; border-radius:6px; padding:0.45rem;">
+            <strong style="color:#22c55e;">4. Hard Gates &amp; Verdict</strong><br/>
+            HTST: ${htst} &rarr; <strong>${score}/100</strong>
+          </div>
+        </div>
+        <div style="color:var(--muted);">
+          <strong>WLC Formula:</strong> (${topRot.sSoil}×${wSoil}% + ${topRot.sWater}×${wWater}% + ${topRot.sHeat}×${wHeat}% + ${topRot.sFeed}×${wFeed}% + ${topRot.sGrid}×${wGrid}% + ${topRot.sFlood}×${wFlood}%) = <strong>${score}/100</strong> for <em>${topRot.name}</em>.
+        </div>
+      `;
+    }
+
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
@@ -1792,7 +1734,7 @@
       };
       reader.readAsText(file);
     });
-    ["wSoil", "wWater", "wHeat", "wFeed", "soil", "milk", "cows", "acres", "yieldTon", "synthN", "heatMode"].forEach(id => {
+    ["wSoil", "wWater", "wHeat", "wFeed", "wGrid", "wFlood", "soil", "milk", "cows", "acres", "yieldTon", "synthN", "heatMode"].forEach(id => {
       el(id).addEventListener("input", renderAll);
     });
 
