@@ -37,6 +37,19 @@ At least one NASA dataset is mandatory for Global Awards eligibility. **MilkyWay
 
 ---
 
+## 2b. Open-Source AI Data Center & Infrastructure Datasets (Anti-Hallucination Grounding)
+
+Because hyperscale AI infrastructure is proprietary, no single government registry lists every facility. To prevent hallucinated locations, **MilkyWays** grounds its regional waste-heat & co-location workflow in four public, satellite-verified open datasets:
+
+| Dataset | Coverage & Focus | Available Formats | Best Use in MilkyWays | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **IM3 Open Source Data Center Atlas** (PNNL / DOE) | U.S. existing & projected facilities (`250,000+ sq ft` hyperscale AI filter), transmission lines, public water service areas | GeoPackage (`GPKG`), CSV | U.S. rural farm-conflict modeling with water & grid overlays | [immm-sfa.github.io/datacenter-atlas](https://immm-sfa.github.io/datacenter-atlas/) |
+| **Data Center Atlas** (`kiankyars/datacenter-atlas`) | Global AI & hyperscale construction (announced, under-construction, operating) with dated evidence | CSV, GeoJSON, SQLite, KML, JSON API | Tracking upcoming AI builds before they appear on standard maps | [github.com/kiankyars/datacenter-atlas](https://github.com/kiankyars/datacenter-atlas) |
+| **ATLAS** (`Ringmast4r/Global-Data-Center-Map`) | Global directory (`18,110+` facilities across `116` countries; `6,100+` exact GPS coords) | GeoJSON, CSV, JSON, Parquet, SQLite | Global hyperscaler filtering (AWS, Google, Microsoft, Meta) | [github.com/Ringmast4r/Global-Data-Center-Map](https://github.com/ringmast4r/Global-Data-Center-Map) |
+| **PeeringDB Facility Exports** | Global colocation & interconnection hubs (`5,200+` facilities) | Daily `.KMZ`, REST API (JSON) | Dynamic facility coordinate queries in live web apps | [docs.peeringdb.com](https://docs.peeringdb.com/blog/peeringdb_map_with_kmz/) |
+
+---
+
 ## 3. Honest Limits & Validation
 
 To avoid black-box overclaiming, **MilkyWays** states its data and engineering boundaries explicitly:

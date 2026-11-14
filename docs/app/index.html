@@ -2156,6 +2156,12 @@
 
 
 
+      const domainKw = /(crop|plant|fodder|rotat|maize|sorghum|alfalfa|clover|soil|rain|temp|climate|nasa|milk|cow|dairy|pipe|beacon|km|report|export|farm|yield|nitrogen|water|drought|flood|zoning|setback|mcda|help|what|which|how)/;
+      if (!domainKw.test(low)) {
+        appendChat("MilkyWays", "I'm MilkyWays' agricultural &amp; thermal siting assistant — ask about <strong>fodder rotations</strong>, <strong>NASA climate</strong>, <strong>waste-heat piping (&le; 12 km)</strong>, or log a yield (e.g. <code>21 t/ac, 89/100</code>).");
+        return;
+      }
+
       const isWarm = climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy";
 
       const rec = isWarm ? "Sorghum Silage -> Cowpea -> Berseem Clover" : "Maize Silage -> Alfalfa (3 yr) -> Red Clover";
@@ -2446,6 +2452,11 @@
         <td><strong>Complementary NASA Layers</strong></td>
         <td>GPM IMERG (rainfall), SMAP (root-zone moisture), MODIS/HLS (NDVI vigor), GRACE-FO (aquifer trend), ECOSTRESS (heat stress), VIIRS Black Marble (nighttime grid proximity), ISRIC SoilGrids (texture/pH).</td>
         <td>Multi-resolution regional screening overlay</td>
+      </tr>
+      <tr>
+        <td><strong>Open-Source AI Data Center Registries</strong></td>
+        <td>IM3 Open Source Data Center Atlas (PNNL/DOE, &ge;250k sq ft filter), Data Center Atlas (kiankyars), ATLAS Global Directory (18,110+ facilities), PeeringDB Facility Exports (5,200+ hubs).</td>
+        <td>Anti-hallucination facility &amp; corridor grounding</td>
       </tr>
     </table>
     <ul>
