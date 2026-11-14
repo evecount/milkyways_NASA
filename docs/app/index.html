@@ -671,7 +671,7 @@
       <a href="../paper/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Technical Paper</a>
       <a href="../datasets/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">NASA Datasets</a>
       <a href="../slides/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">7-Slide Demo</a>
-      <button id="mooBtn" type="button" title="Test the MilkyWays cow-moo telemetry chime (Web Audio API, zero external files)" style="background:#1e293b; border:1px solid #334155; color:#fde68a; padding:0.35rem 0.6rem; border-radius:6px; font-size:0.8rem; cursor:pointer;">🐄 Moo <span id="mooCount" style="background:rgba(253,230,138,0.18); padding:0 6px; border-radius:999px; font-size:0.72rem; margin-left:3px;">0</span></button>
+      <button id="mooBtn" type="button" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." style="background:transparent; border:none; padding:0; display:inline-flex; align-items:center; gap:5px; cursor:pointer;"><img src="moo_button.png" alt="Moo!" style="height:32px; width:auto; display:block; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35));" /><span id="mooCount" style="background:rgba(253,230,138,0.18); border:1px solid rgba(253,230,138,0.4); color:#fde68a; padding:2px 7px; border-radius:999px; font-size:0.72rem; font-weight:700;">0</span></button>
     </div>
   </header>
 
@@ -789,6 +789,7 @@
           <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
           <div style="display:flex; gap:0.45rem; align-items:center;">
             <span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span>
+            <span id="autopilotBadge" style="display:none; font-size:0.7rem; padding:0.16rem 0.5rem; border-radius:999px; background:rgba(99,102,241,0.22); color:#c7d2fe; border:1px solid rgba(129,140,248,0.55); font-weight:700;">▶ Autopilot Demo (Move mouse to stop)</span>
             <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (13 Farms)</button>
             <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
           </div>
@@ -2716,9 +2717,82 @@
       } catch (_) {}
     }
 
+    let mooHopIdx = 0;
+    const MOO_FACTS = [
+      "Gais Cheese Dairy (Switzerland) already recovers 1.5 GWh/yr of data-center waste heat!",
+      "Rotating maize silage with alfalfa & red clover cuts synthetic nitrogen by 25–30%.",
+      "Double-wall heat exchangers keep cooling loops 100% isolated from milk pasteurization (72–78 °C).",
+      "Beyond 12 km, hot-water piping loses viability — Position Beacons flag on-site co-location instead."
+    ];
+
     if (el("mooBtn")) {
-      el("mooBtn").addEventListener("click", playMooSound);
+      el("mooBtn").addEventListener("click", () => {
+        playMooSound();
+        if (mooCount % 3 === 0 && typeof GLOBAL_FARMS !== "undefined" && GLOBAL_FARMS.length) {
+          mooHopIdx = (mooHopIdx + 1) % GLOBAL_FARMS.length;
+          const gf = GLOBAL_FARMS[mooHopIdx];
+          if (el("preset")) {
+            el("preset").value = gf.val;
+            el("preset").dispatchEvent(new Event("change"));
+          } else {
+            flyToSelectedFarm(gf.lat, gf.lon);
+          }
+          const fact = MOO_FACTS[(Math.floor(mooCount / 3) - 1) % MOO_FACTS.length];
+          if (el("capcomLatest")) {
+            el("capcomLatest").innerHTML = `<strong style="color:#fde68a;">🐄 MOO #${mooCount}:</strong> Hopped to <strong>${gf.name}</strong> — ${fact}`;
+          }
+        }
+      });
     }
+
+    // 20-Second Idle Judge Autopilot Show (cancels instantly on any user interaction)
+    let idleTimer = null;
+    let autopilotTimers = [];
+    let autopilotActive = false;
+
+    function stopJudgeAutopilot() {
+      if (idleTimer) clearTimeout(idleTimer);
+      autopilotTimers.forEach(t => clearTimeout(t));
+      autopilotTimers = [];
+      if (autopilotActive) {
+        autopilotActive = false;
+        if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+      }
+      idleTimer = setTimeout(startJudgeAutopilot, 20000);
+    }
+
+    function startJudgeAutopilot() {
+      if (autopilotActive) return;
+      autopilotActive = true;
+      if (el("autopilotBadge")) el("autopilotBadge").style.display = "inline-flex";
+
+      // Beat 1: Fly to Gais, Switzerland (1.5 GWh/yr proof)
+      if (el("preset")) {
+        el("preset").value = "47.36,9.45";
+        el("preset").dispatchEvent(new Event("change"));
+      }
+      // Beat 2: Nudge Soil Health slider
+      autopilotTimers.push(setTimeout(() => {
+        if (!autopilotActive || !el("wSoil")) return;
+        el("wSoil").value = 55;
+        el("wSoil").dispatchEvent(new Event("input"));
+      }, 4000));
+      // Beat 3: Zoom to 10 to show 12 km Pipe & Position Beacons
+      autopilotTimers.push(setTimeout(() => {
+        if (!autopilotActive || typeof mcdaMap === "undefined" || !mcdaMap) return;
+        mcdaMap.setZoom(10);
+      }, 8000));
+      // Beat 4: Ping CAPCOM so judge sees plain-speaking safety reply
+      autopilotTimers.push(setTimeout(() => {
+        if (!autopilotActive) return;
+        handleDiaryChat("Can a data center heat my pasteurizer safely?");
+      }, 12000));
+    }
+
+    ["pointermove", "keydown", "wheel", "touchstart", "mousedown"].forEach(evt => {
+      window.addEventListener(evt, stopJudgeAutopilot, { passive: true });
+    });
+    idleTimer = setTimeout(startJudgeAutopilot, 20000);
 
     if (el("topExportReportBtn")) {
       el("topExportReportBtn").addEventListener("click", generateMunicipalReport);
