@@ -485,6 +485,56 @@
       border-color: rgba(52, 211, 153, 0.8);
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
+    .hud-card {
+      position: relative;
+      border-color: rgba(20, 184, 166, 0.55) !important;
+      background-image:
+        linear-gradient(#2dd4bf, #2dd4bf), linear-gradient(#2dd4bf, #2dd4bf),
+        linear-gradient(#2dd4bf, #2dd4bf), linear-gradient(#2dd4bf, #2dd4bf),
+        linear-gradient(#2dd4bf, #2dd4bf), linear-gradient(#2dd4bf, #2dd4bf),
+        linear-gradient(#2dd4bf, #2dd4bf), linear-gradient(#2dd4bf, #2dd4bf);
+      background-repeat: no-repeat;
+      background-size: 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px;
+      background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+    }
+    .hud-lock {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.7rem;
+      color: #5eead4;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      padding: 0.18rem 0.5rem;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      letter-spacing: 0.03em;
+    }
+    .hud-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      display: inline-block;
+      animation: hudPulse 2s infinite;
+    }
+    @keyframes hudPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    .capcom-latest {
+      font-size: 0.79rem;
+      color: #e2e8f0;
+      background: rgba(15, 23, 42, 0.8);
+      border-left: 3px solid #14b8a6;
+      padding: 0.35rem 0.6rem;
+      border-radius: 4px;
+      margin-bottom: 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .map-key {
       background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(6px);
@@ -734,10 +784,11 @@
     </aside>
 
     <main>
-      <div class="card" style="border-color:#14b8a6;">
+      <div class="card hud-card">
         <div class="rot-head" style="margin-bottom:0.4rem;">
           <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
           <div style="display:flex; gap:0.45rem; align-items:center;">
+            <span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span>
             <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (13 Farms)</button>
             <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
           </div>
@@ -749,47 +800,46 @@
         <div id="mcdaMap" style="height:clamp(240px, 32vh, 340px); width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
         <div id="topologyBoard"></div>
 
-        <div id="diaryChatBox" style="margin-top:0.5rem; background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(11,17,32,0.98)); border:1px solid rgba(20,184,166,0.45); box-shadow:0 0 16px rgba(20,184,166,0.07); border-radius:9px; padding:0.5rem 0.75rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.45rem; margin-bottom:0.5rem;">
-            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-              <span style="font-size:0.86rem; font-weight:800; color:#5eead4; letter-spacing:0.01em;">Ask MilkyWays &middot; Plain-Speaking Siting Copilot</span>
-              <span id="chatModeBadge" style="font-size:0.7rem; padding:0.15rem 0.5rem; border-radius:999px; background:rgba(20,184,166,0.16); color:#5eead4; border:1px solid rgba(20,184,166,0.35); font-weight:700;">Zero-Token Local Engine</span>
+        <div id="diaryChatBox" style="margin-top:0.45rem; background:rgba(11,17,32,0.95); border:1px solid rgba(45,212,191,0.38); border-radius:8px; padding:0.45rem 0.7rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.35rem;">
+            <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+              <span class="hud-dot"></span>
+              <span style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:0.78rem; font-weight:800; color:#5eead4; letter-spacing:0.04em;">CAPCOM // DAIRY DIARY</span>
+              <span id="chatModeBadge" style="font-size:0.68rem; padding:0.1rem 0.45rem; border-radius:999px; background:rgba(20,184,166,0.16); color:#5eead4; border:1px solid rgba(20,184,166,0.35); font-weight:700;">Zero-Token Local Engine</span>
             </div>
-            <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
-              <label for="chatPersona" style="margin:0; font-size:0.72rem; color:#94a3b8;">I am a:</label>
-              <select id="chatPersona" style="width:auto; margin:0; padding:0.2rem 0.45rem; font-size:0.74rem; border-radius:6px; background:#0f172a; color:#f8fafc; border:1px solid #334155;">
-                <option value="farmer">Dairy Farmer</option>
-                <option value="planner">Municipal Planner</option>
-                <option value="dc">Data Center Operator</option>
-                <option value="judge">NASA Judge / Reviewer</option>
+            <div style="display:flex; align-items:center; gap:0.35rem; flex-wrap:wrap;">
+              <button type="button" class="outcome-chip chat-q" style="padding:0.15rem 0.45rem; font-size:0.7rem;" data-q="What should I plant next here?">Plant?</button>
+              <button type="button" class="outcome-chip chat-q" style="padding:0.15rem 0.45rem; font-size:0.7rem;" data-q="Can a data center heat my pasteurizer safely?">Heat Safe?</button>
+              <button type="button" class="outcome-chip chat-q" style="padding:0.15rem 0.45rem; font-size:0.7rem;" data-q="Why did I get this suitability score?">Score?</button>
+              <button type="button" class="outcome-chip chat-q" style="padding:0.15rem 0.45rem; font-size:0.7rem;" data-q="Log harvest: 21 t/ac, 89/100">Log Yield</button>
+              <select id="chatPersona" style="width:auto; margin:0; padding:0.16rem 0.4rem; font-size:0.72rem; border-radius:5px; background:#0f172a; color:#f8fafc; border:1px solid #334155;" title="Select your role">
+                <option value="farmer">Farmer</option>
+                <option value="planner">Planner</option>
+                <option value="dc">DC Operator</option>
+                <option value="judge">NASA Judge</option>
               </select>
-              <button type="button" id="byoKeyToggle" style="width:auto; margin:0; padding:0.22rem 0.55rem; font-size:0.72rem; background:#1e293b; border:1px solid #475569; border-radius:6px; color:#cbd5e1;" title="Optional: paste a Gemini (AIza...) or OpenAI (sk-...) key in session memory for live LLM replies. Falls back cleanly to Zero-Token mode if empty.">BYO API Key</button>
+              <button type="button" id="byoKeyToggle" style="width:auto; margin:0; padding:0.16rem 0.45rem; font-size:0.7rem; background:#1e293b; border:1px solid #475569; border-radius:5px; color:#cbd5e1;" title="Optional session-only Gemini or OpenAI key">BYO Key</button>
             </div>
           </div>
 
-          <div id="byoKeyRow" style="display:none; margin-bottom:0.5rem; padding:0.45rem 0.6rem; background:rgba(30,41,59,0.65); border:1px solid #334155; border-radius:7px; gap:0.45rem; align-items:center; flex-wrap:wrap;">
-            <input id="byoApiKey" type="password" placeholder="Optional Gemini (AIza...) or OpenAI (sk-...) key — session memory only" style="flex:1; min-width:200px; margin:0; padding:0.32rem 0.55rem; font-size:0.76rem; border-radius:5px; background:#0f172a; border:1px solid #475569; color:#f8fafc;" />
-            <button type="button" id="byoKeyClear" style="width:auto; margin:0; padding:0.32rem 0.6rem; font-size:0.74rem; background:#334155; border:none; border-radius:5px; color:#e2e8f0;">Clear</button>
+          <div id="byoKeyRow" style="display:none; margin-bottom:0.4rem; padding:0.35rem 0.5rem; background:rgba(30,41,59,0.65); border:1px solid #334155; border-radius:6px; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+            <input id="byoApiKey" type="password" placeholder="Optional Gemini (AIza...) or OpenAI (sk-...) key — session memory only" style="flex:1; min-width:200px; margin:0; padding:0.28rem 0.5rem; font-size:0.74rem; border-radius:5px; background:#0f172a; border:1px solid #475569; color:#f8fafc;" />
+            <button type="button" id="byoKeyClear" style="width:auto; margin:0; padding:0.28rem 0.55rem; font-size:0.72rem; background:#334155; border:none; border-radius:5px; color:#e2e8f0;">Clear</button>
           </div>
 
-          <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.45rem;">
-            <button type="button" class="outcome-chip chat-q" data-q="What should I plant next here?">What to plant?</button>
-            <button type="button" class="outcome-chip chat-q" data-q="Can a data center heat my pasteurizer safely?">Heat loop safe?</button>
-            <button type="button" class="outcome-chip chat-q" data-q="Why did I get this suitability score?">Why this score?</button>
-            <button type="button" class="outcome-chip chat-q" data-q="Log harvest: 21 t/ac, 89/100">Log harvest</button>
+          <div id="capcomLatest" class="capcom-latest"><strong style="color:#14b8a6;">CAPCOM:</strong> Pick your role or drop a silage cut (e.g. <em>"21 t/ac, 89/100"</em>) to tune your site.</div>
+
+          <div style="display:flex; gap:0.4rem; align-items:center;">
+            <input id="chatInput" type="text" placeholder="> Ask CAPCOM in plain English or log farm data (e.g. 21 t/ac, 89/100)..." title="Ask about siting, waste heat, or rotations — or log field yields/observations to feed the FodderWeatherNet calibration loop." style="flex:1; margin:0; padding:0.36rem 0.6rem; border-radius:6px; border:1px solid #334155; background:#0f172a; color:var(--text); font-size:0.8rem;" />
+            <button id="chatSendBtn" type="button" style="width:auto; margin:0; padding:0.36rem 0.85rem; font-size:0.78rem; font-weight:700; background:linear-gradient(135deg,#0d9488,#4f46e5);">Transmit</button>
           </div>
 
-          <details id="chatDrawerDetails" style="margin-bottom:0.35rem;">
-            <summary style="cursor:pointer; font-size:0.75rem; color:#94a3b8; margin-bottom:0.3rem;">Show conversation log ▾</summary>
-            <div id="chatFeed" style="max-height:92px; overflow-y:auto; font-size:0.81rem; line-height:1.45; display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.5rem; padding-right:0.2rem;">
-            <div style="color:#cbd5e1;"><strong style="color:#14b8a6;">MilkyWays:</strong> Hey! Tell me what you're looking at — pick your role above (<strong>Farmer</strong>, <strong>Planner</strong>, <strong>DC Operator</strong>, or <strong>NASA Judge</strong>) or drop your last silage cut like <em>"21 t/ac, 89/100"</em> so I can tune things for your site.</div>
-          </div>
+          <details id="chatDrawerDetails" style="margin-top:0.3rem;">
+            <summary style="cursor:pointer; font-size:0.71rem; color:#64748b;">Comms Log ▾</summary>
+            <div id="chatFeed" style="max-height:92px; overflow-y:auto; font-size:0.78rem; line-height:1.4; display:flex; flex-direction:column; gap:0.3rem; margin-top:0.3rem; padding-right:0.2rem;">
+              <div style="color:#cbd5e1;"><strong style="color:#14b8a6;">MilkyWays:</strong> Ready on CAPCOM channel.</div>
+            </div>
           </details>
-
-          <div style="display:flex; gap:0.45rem;">
-            <input id="chatInput" type="text" placeholder="Ask in plain English or log farm data (e.g. 21 t/ac maize, 89/100)..." title="Ask about siting, waste heat, or rotations — or log field yields/observations to feed the FodderWeatherNet calibration loop." style="flex:1; padding:0.45rem 0.7rem; border-radius:7px; border:1px solid #334155; background:#0f172a; color:var(--text); font-size:0.82rem;" />
-            <button id="chatSendBtn" type="button" style="width:auto; margin:0; padding:0.45rem 0.95rem; font-size:0.82rem; font-weight:700; background:linear-gradient(135deg,#4f46e5,#0d9488);">Ask / Log</button>
-          </div>
         </div>
         <h3 style="font-size:0.88rem; color:var(--muted); margin:0.85rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
           (from live NASA POWER)</h3>
@@ -1643,6 +1693,8 @@
       initMcdaMap();
       if (!mcdaMap || !rasterLayer || !bufferLayer) return;
       const lat = parseFloat(el("lat").value) || 44.08;
+      const lonVal = parseFloat(el("lon").value) || -79.88;
+      if (el("hudLockReadout")) el("hudLockReadout").innerHTML = `<span class="hud-dot"></span><span>NASA LOCK · ${lat.toFixed(2)}°, ${lonVal.toFixed(2)}°</span>`;
       const lon = parseFloat(el("lon").value) || -79.88;
       rasterLayer.clearLayers();
       bufferLayer.clearLayers();
@@ -2052,6 +2104,9 @@
       feed.appendChild(div);
 
       feed.scrollTop = feed.scrollHeight;
+      if (role === "MilkyWays" && el("capcomLatest")) {
+        el("capcomLatest").innerHTML = `<strong style="color:#14b8a6;">CAPCOM:</strong> ${html}`;
+      }
 
     }
 
@@ -2149,8 +2204,7 @@
       const now = Date.now();
       if (now - lastChatTs < 900) return; // Anti-bot cooldown
       lastChatTs = now;
-      if (el("chatDrawerDetails")) el("chatDrawerDetails").open = true;
-      appendChat("You", msg.replace(/</g, "&lt;"));
+            appendChat("You", msg.replace(/</g, "&lt;"));
       const low = msg.toLowerCase();
       const persona = el("chatPersona") ? el("chatPersona").value : "farmer";
 
