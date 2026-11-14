@@ -402,7 +402,10 @@
       <div class="card" style="border-color:#14b8a6;">
         <div class="rot-head" style="margin-bottom:0.4rem;">
           <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
-          <span class="badge" id="heroSuitabilityBadge">Suitability: --/100</span>
+          <div style="display:flex; gap:0.45rem; align-items:center;">
+            <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (6 Farms)</button>
+            <span class="badge" id="heroSuitabilityBadge">Suitability: --/100</span>
+          </div>
         </div>
         <div class="status" style="margin-top:0; margin-bottom:0.65rem;">
           Interactive NASA MCDA suitability map &amp; closed-loop heat topology. <strong>Click anywhere on the map</strong> to test siting a dairy farm at those coordinates.
@@ -833,76 +836,61 @@
       `;
     }
 
-    let mcdaMap = null, rasterLayer = null, bufferLayer = null;
-
-    function mcdaColor(val) {
-
-      if (val >= 75) return "#22c55e";
-
-      if (val >= 62) return "#eab308";
-
-      if (val >= 48) return "#f97316";
-
-      return "#ef4444";
-
-    }
-
-
-
-    function initMcdaMap() {
-
-      if (mcdaMap || typeof L === "undefined" || !el("mcdaMap")) return;
-
-      const lat = parseFloat(el("lat").value) || 44.08;
-
-      const lon = parseFloat(el("lon").value) || -79.88;
-
-      mcdaMap = L.map("mcdaMap").setView([lat, lon], 12);
-
-      const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
-
-        maxZoom: 18,
-
-        attribution: "&copy; Esri World Imagery"
-
-      });
-
-      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-
-        maxZoom: 17,
-
-        attribution: "&copy; OpenTopoMap &amp; OSM"
-
-      });
-
-      sat.addTo(mcdaMap);
-
-      rasterLayer = L.layerGroup().addTo(mcdaMap);
-
-      bufferLayer = L.layerGroup().addTo(mcdaMap);
-
-      L.control.layers(
-
-        { "Satellite": sat, "Topographic (MCDA)": topo },
-
-        { "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
-
-      ).addTo(mcdaMap);
-
-      mcdaMap.on("click", (e) => {
-
-        el("lat").value = e.latlng.lat.toFixed(2);
-
-        el("lon").value = e.latlng.lng.toFixed(2);
-
-        fetchNasaPower();
-
-      });
-
-    }
-
-
-
+    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, hasUserPickedRegion = false;
+    const GLOBAL_FARMS = [
+      { key: "1.42,103.72", name: "Singapore Tropical Dairy Demo", lat: 1.42, lon: 103.72 },
+      { key: "44.08,-79.88", name: "Ontario Dairy Region, Canada", lat: 44.08, lon: -79.88 },
+      { key: "47.36,9.45", name: "Gais Dairy Reference, Switzerland", lat: 47.36, lon: 9.45 },
+      { key: "43.07,-89.40", name: "Wisconsin Dairy Belt, USA", lat: 43.07, lon: -89.40 },
+      { key: "-37.79,175.28", name: "Waikato Pasture Dairy, New Zealand", lat: -37.79, lon: 175.28 },
+      { key: "-0.30,36.08", name: "Nakuru Highland Dairy, Kenya", lat: -0.30, lon: 36.08 }
+    ];
+
+    function mcdaColor(val) {
+      if (val >= 75) return "#22c55e";
+      if (val >= 62) return "#eab308";
+      if (val >= 48) return "#f97316";
+      return "#ef4444";
+    }
+
+    function initMcdaMap() {
+      if (mcdaMap || typeof L === "undefined" || !el("mcdaMap")) return;
+      mcdaMap = L.map("mcdaMap").setView([20, 15], 2);
+      const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        maxZoom: 18,
+        attribution: "&copy; Esri World Imagery"
+      });
+      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        maxZoom: 17,
+        attribution: "&copy; OpenTopoMap &amp; OSM"
+      });
+      sat.addTo(mcdaMap);
+      globalFarmsLayer = L.layerGroup().addTo(mcdaMap);
+      rasterLayer = L.layerGroup().addTo(mcdaMap);
+      bufferLayer = L.layerGroup().addTo(mcdaMap);
+      GLOBAL_FARMS.forEach(gf => {
+        L.circleMarker([gf.lat, gf.lon], { radius: 6, color: "#fff", fillColor: "#14b8a6", fillOpacity: 0.95, weight: 2 })
+          .bindTooltip(`${gf.name} (Click to fly in)`)
+          .on("click", (ev) => {
+            L.DomEvent.stopPropagation(ev);
+            hasUserPickedRegion = true;
+            el("preset").value = gf.key;
+            el("preset").dispatchEvent(new Event("change"));
+          })
+          .addTo(globalFarmsLayer);
+      });
+      L.control.layers(
+        { "Satellite": sat, "Topographic (MCDA)": topo },
+        { "Global 6-Farm Network": globalFarmsLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
+      ).addTo(mcdaMap);
+      mcdaMap.on("click", (e) => {
+        hasUserPickedRegion = true;
+        el("lat").value = e.latlng.lat.toFixed(2);
+        el("lon").value = e.latlng.lng.toFixed(2);
+        fetchNasaPower();
+      });
+    }
+
     function updateMcdaMap(score, zoneColor, htstOk, topName, kwh, kw) {
 
       initMcdaMap();
@@ -1009,16 +997,13 @@
 
 
 
-      const dist = mcdaMap.getCenter().distanceTo([lat, lon]);
-
-      if (dist > 50000) mcdaMap.setView([lat, lon], 12);
-
-      else mcdaMap.panTo([lat, lon], { animate: true });
-
-    }
-
-
-
+      if (hasUserPickedRegion) {
+        const dist = mcdaMap.getCenter().distanceTo([lat, lon]);
+        if (dist > 50000 || mcdaMap.getZoom() < 8) mcdaMap.flyTo([lat, lon], 12, { duration: 1.1 });
+        else mcdaMap.panTo([lat, lon], { animate: true });
+      }
+    }
+
     function renderTuningInsides(topRot, score) {
 
       const box = el("tuningInsides");
@@ -1149,7 +1134,12 @@
       "-37.79,175.28": { cows: 420, milk: 12000, acres: 700, soil: "loam" },
       "-0.30,36.08": { cows: 60, milk: 1100, acres: 90, soil: "sandy" }
     };
+    el("worldViewBtn").addEventListener("click", () => {
+      hasUserPickedRegion = false;
+      if (mcdaMap) mcdaMap.flyTo([20, 15], 2, { duration: 1.0 });
+    });
     el("preset").addEventListener("change", (e) => {
+      hasUserPickedRegion = true;
       const [la, lo] = e.target.value.split(",");
       el("lat").value = la;
       el("lon").value = lo;
@@ -1162,7 +1152,7 @@
       }
       fetchNasaPower();
     });
-    el("fetchBtn").addEventListener("click", fetchNasaPower);
+    el("fetchBtn").addEventListener("click", () => { hasUserPickedRegion = true; fetchNasaPower(); });
     el("downloadSampleCsv").addEventListener("click", (e) => {
       e.preventDefault();
       const csv = "farm_name,lat,lon,milking_cows,daily_milk_liters,fodder_acres,soil_type,silage_yield_t_ac,synthetic_n_kg_ha\nOntario_Dairy,44.08,-79.88,75,2500,600,loam,18.5,110\n";
