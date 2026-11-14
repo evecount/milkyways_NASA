@@ -588,30 +588,30 @@
         </select>
         </details>
 
-        <button id="fetchBtn">Fetch Live NASA POWER &amp; Rank</button>
+        <button id="fetchBtn" title="Queries live NASA POWER daily climatology (T2M, rain, solar, wind) for these coordinates and re-ranks all fodder rotations.">Fetch Live NASA POWER &amp; Rank</button>
         <div class="status" id="apiStatus">Ready. Querying NASA POWER climatology...</div>
-        <button id="exportReportBtn" class="export-report-btn" type="button">Export Municipal Feasibility Report</button>
+        <button id="exportReportBtn" title="Generates a print-to-PDF municipal packet with siting verdict, 12 km pipe vs. Position Beacon co-location plan, Eval → Pilot → Result roadmap, and NASA provenance." class="export-report-btn" type="button">Export Municipal Feasibility Report</button>
       </div>
 
       <div class="card">
         <h2>2. Farm &amp; Municipal MCDA Priorities</h2>
         <label>Soil Health &amp; N-Fixation (<span id="wSoilVal">30</span>%)</label>
-        <input id="wSoil" type="range" min="0" max="100" value="30" />
+        <input id="wSoil" title="Prioritizes legume N-fixation (25–30% synthetic N reduction) and soil organic carbon protection." type="range" min="0" max="100" value="30" />
 
         <label>Water Efficiency (<span id="wWaterVal">20</span>%)</label>
-        <input id="wWater" type="range" min="0" max="100" value="20" />
+        <input id="wWater" title="Penalizes water-intensive crops under low NASA POWER rainfall or drought stress." type="range" min="0" max="100" value="20" />
 
         <label>Heat Resilience (<span id="wHeatVal">15</span>%)</label>
-        <input id="wHeat" type="range" min="0" max="100" value="15" />
+        <input id="wHeat" title="Favors heat-tolerant C4 rotations (e.g., Sorghum + Cowpea) when NASA T2M exceeds C3 thermal limits." type="range" min="0" max="100" value="15" />
 
         <label>Dairy Feed Quality (<span id="wFeedVal">15</span>%)</label>
-        <input id="wFeed" type="range" min="0" max="100" value="15" />
+        <input id="wFeed" title="Weights digestible energy and crude protein for consistent dairy herd milk yield." type="range" min="0" max="100" value="15" />
 
         <label>Grid &amp; Heat Proximity (<span id="wGridVal">10</span>%)</label>
-        <input id="wGrid" type="range" min="0" max="100" value="10" />
+        <input id="wGrid" title="Weights proximity to AI data-center waste-heat corridors (12 km thermal pipe cutoff) and grid infrastructure." type="range" min="0" max="100" value="10" />
 
         <label>Flood &amp; Zoning Buffer (<span id="wFloodVal">10</span>%)</label>
-        <input id="wFlood" type="range" min="0" max="100" value="10" />
+        <input id="wFlood" title="Enforces 1,500 ft agricultural/watershed setback and flood-zone resilience." type="range" min="0" max="100" value="10" />
       </div>
     </aside>
 
@@ -621,7 +621,7 @@
           <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
           <div style="display:flex; gap:0.45rem; align-items:center;">
             <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (13 Farms)</button>
-            <span class="badge" id="heroSuitabilityBadge">Suitability: --/100</span>
+            <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
           </div>
         </div>
         <div style="margin:0.15rem 0 0.7rem; padding:0.5rem 0.8rem; background:rgba(20,184,166,0.10); border:1px solid rgba(20,184,166,0.35); border-radius:8px; font-size:0.9rem; color:#e2e8f0; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
@@ -819,7 +819,7 @@
           </div>
           <div class="metric">
             <div class="k">HTST Pasteurization</div>
-            <div class="v" id="hHtst">72&ndash;78 &deg;C (PASS)</div>
+            <div class="v" id="hHtst" title="High-Temperature Short-Time milk pasteurization (72–78 °C) via double-wall food-grade heat exchanger + heat pump boost.">72&ndash;78 &deg;C (PASS)</div>
           </div>
           <div class="metric">
             <div class="k">Absorption Chilling</div>
