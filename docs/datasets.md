@@ -1,6 +1,6 @@
 # Best Use of Data: NASA Earth Observations & Domain-First Pipeline
 
-> **Design principle:** Like 2025 *Best Use of Data* winner *Resonant Exoplanets* (which paired NASA photometry with orbital resonance physics instead of a black-box ML model), **MilkyWays** pairs **NASA Earth observations** with **explainable agronomy and dairy thermodynamics** — so every recommendation is traceable from satellite measurement to field and milk-plant decision.
+> **Design principle:** **MilkyWays** pairs **NASA Earth observations** with **explainable agronomy and dairy thermodynamics**—so every recommendation is traceable from satellite measurement to field and milk-plant decision.
 
 ---
 

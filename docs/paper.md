@@ -16,7 +16,8 @@ We present **MilkyWays**, an explainable decision-support system for an industri
 
 Agricultural decision-support tools frequently fail farmers in two ways: generic crop calendars ignore local climate shifts, while opaque black-box machine learning recommenders cannot explain *why* a rotation is recommended or verify physical safety constraints.
 
-Following the validation-first principle demonstrated by 2025 *Best Use of Data* winner *Resonant Exoplanets*, **MilkyWays** couples open NASA Earth observations with deterministic domain constraints:
+**MilkyWays** couples open NASA Earth observations with deterministic domain constraints:
+
 1. **In the field:** Evaluate candidate dairy fodder rotations—balancing C4 energy silage (maize, sorghum) with C3 nitrogen-fixing legumes (alfalfa/lucerne, red clover, cowpea, berseem)—against live climate, soil drainage, and farmer priority weights.
 2. **In the dairy plant:** Model daily thermal pasteurization demand (`~817 kWh/day` or `~82 kW` averaged for a `20,000 L/day` reference plant) and absorption chilling (`~7.2 °C`) powered by indirect AI data center waste heat.
 
@@ -25,7 +26,7 @@ Following the validation-first principle demonstrated by 2025 *Best Use of Data*
 ## 2. NASA Earth Observations & Data Pipeline
 
 | Dataset | Exact Variables | Spatial / Temporal Scope | Role in MilkyWays |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **NASA POWER** (`community=AG`) | `T2M`, `T2M_MAX`, `T2M_MIN`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M` | `~50 km` grid, daily & Jan–Dec climatology | Queried live in-browser to score growing-season heat stress, solar PAR proxy, and precipitation balance |
 | **NASA GPM IMERG** | Satellite precipitation rate | `~10 km` grid | Resolves rainfall onset and planting-window timing where 50 km POWER is coarse |
 | **NASA SMAP** (`SPL3SMP_E` L3/L4) | Surface & root-zone soil moisture (`m³/m³`) | `9 km` daily (`2015–present`) | Current moisture deficit check prior to seeding deep-rooted legumes *(not used for 20-year trends)* |
@@ -34,6 +35,7 @@ Following the validation-first principle demonstrated by 2025 *Best Use of Data*
 | **ISRIC SoilGrids** *(non-NASA)* | Texture (clay/sand/silt), organic carbon, pH | `250 m` global grid | Local water-holding capacity combined with farmer priority sliders |
 
 ### Live Verified Baseline (`44.08°N, 79.88°W`, Ontario Dairy Region)
+
 - **Mean Annual Temperature (`T2M`):** `7.00 °C` (Jan `-7.25 °C`, May `11.67 °C`, Jul `21.20 °C`, Oct `8.84 °C`; extreme range `-28.42 °C` to `35.71 °C`)
 - **Annual Precipitation (`PRECTOTCORR`):** `2.16 mm/day` (Jan `1.83`, May `2.35`, Jul `2.24`, Oct `2.50`)
 - **Solar Irradiance (`ALLSKY_SFC_SW_DWN`):** `13.05 MJ/m²/day` (Jan `4.84`, May `19.84`, Jul `21.93`, Oct `8.59`)
@@ -55,7 +57,7 @@ Every candidate configuration in **MilkyWays** must pass four explicit checks:
 ## 4. Validation with Positive & Negative Controls
 
 | Control Case | Configuration | Outcome | Benchmark Reference |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Positive Control 1 (Field)** | `Maize Silage → Alfalfa (3 yr) → Red Clover` | **PASS** — Highest soil health (`92/100`) & feed quality (`94/100`), `25–30%` N reduction | Irrigated fodder rotation literature |
 | **Positive Control 2 (Thermal)** | `55–70 °C` liquid cooling + heat pump (`70–90 °C`) + double-wall HX | **PASS** — Meets `72–78 °C` HTST & `~7.2 °C` absorption chilling; zero coolant contact | Gais, Switzerland cheese dairy (`1.5 GWh/yr`, `20 °C → 14 °C`) |
 | **Negative Control 1 (Field)** | `Continuous Maize Monocrop` | **FAIL (Flagged)** — Soil score `32/100`; fails N-fixation cycle & increases erosion risk | Monoculture baseline |
@@ -86,8 +88,10 @@ To make **MilkyWays** a predictive decision-support tool rather than a static lo
 ---
 
 ## References
+
 1. NASA POWER Agroclimatology API: `https://power.larc.nasa.gov/api/temporal/daily/point`
 2. NASA Earthdata Agriculture Production: `https://www.earthdata.nasa.gov/topics/human-dimensions/agriculture-production/data-access-tools`
 3. Bytes2Heat Best-Practice Overview (Gais, Switzerland Cheese Dairy, `1.5 GWh/yr`): `https://www.bytes2heat.de/static/files/20240403_BP%C3%9C_V2404_eng.pdf`
 4. Sunniva Encon Milk Pasteurization (`20,000 L/day`, `817 kWh/day`): `https://www.sunnivaencon.com/applications/milk-pasteurisation`
 5. Dairy Fodder Rotation Legume Nitrogen Reduction (`25–30%`): `https://agriculture.institute/livestock-pasture-management/best-practices-growing-irrigated-fodder-crops/`
+6. Control-validation methodology inspired by NASA Space Apps 2025 *Best Use of Data* winner *Resonant Exoplanets*: `https://www.spaceappschallenge.org/2025/find-a-team/resonant-exoplanets/`
