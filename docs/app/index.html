@@ -672,7 +672,6 @@
       <a href="../datasets/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">NASA Datasets</a>
       <a href="../slides/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">7-Slide Demo</a>
       <button id="mooBtn" type="button" title="Test the MilkyWays cow-moo telemetry chime (Web Audio API, zero external files)" style="background:#1e293b; border:1px solid #334155; color:#fde68a; padding:0.35rem 0.6rem; border-radius:6px; font-size:0.8rem; cursor:pointer;">🐄 Moo</button>
-      <button id="topExportReportBtn" class="top-export-btn" type="button" title="Export print-to-PDF Municipal Feasibility Report with site map, co-location plan, Eval → Pilot → Result roadmap, and NASA provenance.">Export Report</button>
     </div>
   </header>
 
@@ -2655,6 +2654,7 @@
       setTimeout(() => URL.revokeObjectURL(url), 1500);
 
       markJourneyStep(3);
+      playMooSound();
       if (el("apiStatus")) {
         el("apiStatus").textContent = `Municipal feasibility packet exported for (${lat.toFixed(3)}, ${lon.toFixed(3)}).`;
       }
