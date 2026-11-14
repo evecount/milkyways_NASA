@@ -1,0 +1,21 @@
+# Private & internal working folders (excluded from public repo)
+05-comms/
+99-archive-internal/
+02-brand/archive/
+
+# Secrets & environment
+.env
+.env.*
+*.key
+*.pem
+credentials.json
+token*.json
+
+# OS & editor artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
