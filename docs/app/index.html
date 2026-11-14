@@ -36,7 +36,13 @@
     header {
       background: #0b1120;
       border-bottom: 1px solid var(--border);
-      padding: 1rem 1.5rem;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: min(1640px, 96vw);
+      margin: 0 auto;
+      padding: 0.9rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -661,17 +667,19 @@
 
 <body>
   <header>
+    <div class="header-inner">
     <div>
       <h1>MilkyWays &mdash; Dairy Fodder &amp; Waste-Heat Decision Tool</h1>
       <div style="font-size:0.8rem; color:var(--muted);">NASA Space Apps Challenge 2026 &middot; Challenge 7: Field
         Shift</div>
     </div>
-    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
       <a href="../" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Project Home</a>
       <a href="../paper/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Technical Paper</a>
       <a href="../datasets/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">NASA Datasets</a>
       <a href="../slides/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">7-Slide Demo</a>
-      <button id="mooBtn" type="button" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." style="background:transparent; border:none; padding:0; display:inline-flex; align-items:center; gap:5px; cursor:pointer;"><img src="moo_button.png" alt="Moo!" style="height:32px; width:auto; display:block; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35));" /><span id="mooCount" style="background:rgba(253,230,138,0.18); border:1px solid rgba(253,230,138,0.4); color:#fde68a; padding:2px 7px; border-radius:999px; font-size:0.72rem; font-weight:700;">0</span></button>
+      <button id="mooBtn" type="button" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." style="width:auto; margin:0; background:transparent; border:none; padding:0; display:inline-flex; align-items:center; gap:5px; cursor:pointer;"><img src="moo_button.png" alt="Moo!" style="height:32px; width:auto; display:block; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35));" /><span id="mooCount" style="background:rgba(253,230,138,0.18); border:1px solid rgba(253,230,138,0.4); color:#fde68a; padding:2px 7px; border-radius:999px; font-size:0.72rem; font-weight:700;">0</span></button>
+    </div>
     </div>
   </header>
 
