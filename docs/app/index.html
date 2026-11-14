@@ -671,7 +671,7 @@
       <a href="../paper/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Technical Paper</a>
       <a href="../datasets/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">NASA Datasets</a>
       <a href="../slides/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">7-Slide Demo</a>
-      <button id="mooBtn" type="button" title="Test the MilkyWays cow-moo telemetry chime (Web Audio API, zero external files)" style="background:#1e293b; border:1px solid #334155; color:#fde68a; padding:0.35rem 0.6rem; border-radius:6px; font-size:0.8rem; cursor:pointer;">🐄 Moo</button>
+      <button id="mooBtn" type="button" title="Test the MilkyWays cow-moo telemetry chime (Web Audio API, zero external files)" style="background:#1e293b; border:1px solid #334155; color:#fde68a; padding:0.35rem 0.6rem; border-radius:6px; font-size:0.8rem; cursor:pointer;">🐄 Moo <span id="mooCount" style="background:rgba(253,230,138,0.18); padding:0 6px; border-radius:999px; font-size:0.72rem; margin-left:3px;">0</span></button>
     </div>
   </header>
 
@@ -2668,7 +2668,13 @@
       if (step >= 3) { s2.classList.add("done"); s3.classList.add("done"); s3.classList.remove("active"); s3.textContent = "③ Packet Exported ✓"; }
     }
 
+    let mooCount = parseInt(localStorage.getItem("milkyways_moo_count") || "0", 10) || 0;
+    if (el("mooCount")) el("mooCount").textContent = mooCount;
+
     function playMooSound() {
+      mooCount += 1;
+      localStorage.setItem("milkyways_moo_count", String(mooCount));
+      if (el("mooCount")) el("mooCount").textContent = mooCount;
       try {
         const Ctx = window.AudioContext || window.webkitAudioContext;
         if (!Ctx) return;
