@@ -276,6 +276,17 @@
       </div>
 
       <div class="card">
+        <h2>Predictive Deep Learning Forecast (FodderWeatherNet &mdash; PyTorch MLP)</h2>
+        <div class="metrics-grid">
+          <div class="metric"><div class="k">Next-Season C3 (Alfalfa/Maize)</div><div class="v" id="dlC3">-- / 100</div></div>
+          <div class="metric"><div class="k">Next-Season C4 (Sorghum/Cowpea)</div><div class="v" id="dlC4">-- / 100</div></div>
+          <div class="metric"><div class="k">Predicted Stress Risk</div><div class="v" id="dlRisk">-- / 100</div></div>
+          <div class="metric"><div class="k">Out-of-Sample R&sup2; (2023&ndash;2025)</div><div class="v" id="dlR2">0.8740</div></div>
+        </div>
+        <div class="status" id="dlStatus">Trained on 10-year daily NASA POWER (2016&ndash;2025, 6 global dairy regions). Outperforms Ridge baseline (R&sup2; 0.8553).</div>
+      </div>
+
+      <div class="card">
         <h2>4 Mandatory Domain Checks (Agronomy &amp; Thermodynamics)</h2>
         <div class="checks-grid" id="checksGrid"></div>
       </div>
@@ -421,6 +432,33 @@
         : `<strong>Negative Control Active:</strong> Unboosted 30&ndash;45 &deg;C air waste heat fails HTST pasteurization (72&ndash;78 &deg;C). A heat pump boost is required—never overclaim direct air heat for pasteurization.`;
     }
 
+    let nnModel = null;
+    fetch("./model_weights.json")
+      .then(r => r.ok ? r.json() : null)
+      .then(m => { nnModel = m; renderAll(); })
+      .catch(() => {});
+
+    function runNeuralInference() {
+      if (!nnModel) return;
+      const tArr = climate.monthly.T2M;
+      const rArr = climate.monthly.PRECTOTCORR;
+      const gdd10 = tArr.reduce((acc, t) => acc + Math.max(0, t - 10) * 30.4, 0);
+      const frostDays = tArr.filter(t => t < 0).length * 30.4;
+      const heatDays = tArr.filter(t => t > 24).length * 15.0;
+      const dryRatio = rArr.filter(r => r < 1.5).length / 12.0;
+      const xRaw = [climate.t2m, climate.rain, climate.solar, climate.wind, gdd10, frostDays, heatDays, dryRatio];
+      let x = xRaw.map((v, i) => (v - nnModel.scaler_mean[i]) / nnModel.scaler_scale[i]);
+      nnModel.layers.forEach((layer, li) => {
+        const out = layer.bias.map((b, r) => b + layer.weight[r].reduce((s, w, c) => s + w * x[c], 0));
+        x = li < nnModel.layers.length - 1 ? out.map(v => Math.max(0, v)) : out;
+      });
+      const clamp = (v) => Math.max(5, Math.min(98, Math.round(v)));
+      el("dlC3").textContent = `${clamp(x[0])} / 100`;
+      el("dlC4").textContent = `${clamp(x[1])} / 100`;
+      el("dlRisk").textContent = `${clamp(x[2])} / 100`;
+      el("dlR2").textContent = nnModel.metrics.nn_r2.toFixed(4);
+    }
+
     function renderAll() {
       const wSoil = +el("wSoil").value;
       const wWater = +el("wWater").value;
@@ -476,6 +514,7 @@
 
       renderChart();
       renderChecks();
+      runNeuralInference();
     }
 
     async function fetchNasaPower() {

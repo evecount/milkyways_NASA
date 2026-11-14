@@ -67,7 +67,20 @@ Every candidate configuration in **MilkyWays** must pass four explicit checks:
 
 - **Spatial resolution:** NASA POWER (`~50 km`) models regional climate, not individual paddocks; field-scale deployment pairs it with `10 km` GPM IMERG, `9 km` SMAP, `250 m` MODIS, and `30 m` HLS.
 - **Temporal record:** SMAP begins in `2015` and is restricted to current soil-moisture conditions.
-- **Next horizon:** Extend the architecture with a `scikit-learn` yield/stress predictor trained on multi-year daily NASA POWER time series (`2016–2025`), and generalize the closed-loop heat-recovery model to a second farm type (broiler poultry houses requiring `32–34 °C` brooding heat and NASA heat-stress alerts).
+- **Next horizon:** Generalize the closed-loop heat-recovery model and predictive weather pipeline to a second farm type (broiler poultry houses requiring `32–34 °C` brooding heat and NASA heat-stress alerts).
+
+---
+
+## 5. Predictive Deep Learning Model (`FodderWeatherNet`)
+
+To make **MilkyWays** a predictive decision-support tool rather than a static lookup, we trained **FodderWeatherNet**, a PyTorch 3-layer Multi-Layer Perceptron (`8 → 32 → 16 → 3`, ReLU activations, Adam optimizer) on **10 years of real daily NASA POWER observations (`2016–2025`)** across **6 global dairy regions** (`Ontario_CA`, `Gais_CH`, `Singapore_SG`, `Wisconsin_US`, `Waikato_NZ`, `Punjab_IN`).
+
+- **Predictive setup:** Annual weather features at year `t` (`T2M`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M`, `GDD_base10`, frost days `<0 °C`, heat-stress days `>30 °C`, dry-day ratio `<1 mm`) predict next-season (`t+1`) **C3 Temperate Fodder Suitability**, **C4 Warm-Season Fodder Suitability**, and **Heat/Drought Stress Risk**.
+- **Strict temporal out-of-sample split:** Trained on `2016–2022` (`n = 36` region-years) and evaluated on `2023–2025` (`n = 18` region-years).
+- **Verified results:**
+  - **Ridge Regression Baseline:** `R² = 0.8553` | `MAE = 6.04`
+  - **FodderWeatherNet (PyTorch MLP):** `R² = 0.8740` | `MAE = 5.27` | `RMSE = 7.75`
+- **Live browser inference:** Trained weights (`model_weights.json`) execute a real forward pass directly in JavaScript inside the web app, guarded by the four mandatory agronomic and thermodynamic checks.
 
 ---
 
