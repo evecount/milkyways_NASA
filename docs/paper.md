@@ -87,6 +87,21 @@ To make **MilkyWays** a predictive decision-support tool rather than a static lo
 
 ---
 
+## 6. Municipal Replicability & Next-Horizon Agricultural Extensions
+
+While **MilkyWays** keeps its validated baseline focused on **dairy farms** (where `55–70 °C` liquid cooling + heat pump boost meets `72–78 °C` HTST pasteurization and `~7.2 °C` chilling), the underlying **NASA Earth-observation + 6-criterion MCDA + Double-Wall Heat Exchanger + Municipal Feasibility Packet** architecture is modular. Other municipalities can adapt the same siting workflow to additional high-heat agricultural verticals:
+
+| Agricultural Vertical | Target Thermal Band | Data-Center Waste-Heat Match | Municipal Land/Water/Energy Synergy |
+| :--- | :--- | :--- | :--- |
+| **Dairy Processing & Fodder** *(Validated Baseline)* | `72–78 °C` HTST + `~7.2 °C` chill | `55–70 °C` liquid + heat pump boost | Cuts synthetic N `25–30%` via legume rotations; year-round milk cooling & pasteurization |
+| **Heated Greenhouses & Glasshouses** | `18–25 °C` space & root-zone | Direct `30–55 °C` (no HP needed) | Highest total thermal sink per hectare; extends local vegetable seasons |
+| **Warm-Water Aquaculture (RAS)** | `26–30 °C` tank water | Direct `35–55 °C` via plate HX | High thermal mass baseload; pairs well with peri-urban water treatment |
+| **Broiler Poultry & Hatcheries** | `32–34 °C` brooding / `37.5 °C` | Direct `35–50 °C` hydronic floor | Continuous 24/7 brooding heat; lowers fossil propane/LPG use |
+| **Swine Farrowing & Nursery** | `30–35 °C` creep / floor | Direct `35–45 °C` radiant loops | Targeted zone heating while keeping sow housing cool |
+| **Grain, Hay & Forage Drying** | `40–65 °C` warm dry air | Direct `40–45 °C` or light boost | Seasonal harvest load reduction for maize, paddy, and silage |
+
+---
+
 ## References
 
 1. NASA POWER Agroclimatology API: `https://power.larc.nasa.gov/api/temporal/daily/point`
