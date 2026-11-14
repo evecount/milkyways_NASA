@@ -967,38 +967,70 @@
       renderCalendar();
     }
 
-    let flapAnimId = 0, prevFlapTargets = [];
-    function whizzBoardNumbers(container) {
-      if (!container) return;
-      if (flapAnimId) cancelAnimationFrame(flapAnimId);
-      const allFlaps = Array.from(container.querySelectorAll(".flap[data-target]"));
-      const nextTargets = allFlaps.map(f => f.dataset.target);
-      const flaps = allFlaps.filter((f, idx) => prevFlapTargets[idx] !== nextTargets[idx]);
-      prevFlapTargets = nextTargets;
-      if (!flaps.length) return;
-      const start = performance.now();
-      const duration = 460;
-      function frame(now) {
-        const p = Math.min(1, (now - start) / duration);
-        flaps.forEach((el, idx) => {
-          const target = el.dataset.target || "";
-          const revealCount = Math.floor(p * target.length + (p > 0.85 ? target.length : 0));
-          let out = "";
-          for (let i = 0; i < target.length; i++) {
-            const ch = target[i];
-            if (i < revealCount || !/[0-9]/.test(ch)) {
-              out += ch;
-            } else {
-              out += Math.floor((Math.random() * 10 + idx) % 10);
-            }
-          }
-          el.textContent = out;
-        });
-        if (p < 1) flapAnimId = requestAnimationFrame(frame);
-      }
-      flapAnimId = requestAnimationFrame(frame);
-    }
-
+    let flapAnimId = 0, prevFlapTargets = [];
+
+    function whizzBoardNumbers(container) {
+
+      if (!container) return;
+
+      if (flapAnimId) cancelAnimationFrame(flapAnimId);
+
+      const allFlaps = Array.from(container.querySelectorAll(".flap[data-target]"));
+
+      const nextTargets = allFlaps.map(f => f.dataset.target);
+
+      const flaps = allFlaps.filter((f, idx) => prevFlapTargets[idx] !== nextTargets[idx]);
+
+      prevFlapTargets = nextTargets;
+
+      if (!flaps.length) return;
+
+      const start = performance.now();
+
+      const duration = 460;
+
+      function frame(now) {
+
+        const p = Math.min(1, (now - start) / duration);
+
+        flaps.forEach((el, idx) => {
+
+          const target = el.dataset.target || "";
+
+          const revealCount = Math.floor(p * target.length + (p > 0.85 ? target.length : 0));
+
+          let out = "";
+
+          for (let i = 0; i < target.length; i++) {
+
+            const ch = target[i];
+
+            if (i < revealCount || !/[0-9]/.test(ch)) {
+
+              out += ch;
+
+            } else {
+
+              out += Math.floor((Math.random() * 10 + idx) % 10);
+
+            }
+
+          }
+
+          el.textContent = out;
+
+        });
+
+        if (p < 1) flapAnimId = requestAnimationFrame(frame);
+
+      }
+
+      flapAnimId = requestAnimationFrame(frame);
+
+    }
+
+
+
     function renderTopology(topRot, cows, milk, acres, kwh, kw) {
 
       const board = el("topologyBoard");
@@ -1103,7 +1135,40 @@
 
 
 
-    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, hasUserPickedRegion = false;
+    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, spiderLayer = null, hasUserPickedRegion = false;
+    const REGIONAL_SYNERGIES = {
+      "1.42,103.72": [
+        { name: "Woodlands / Sungei Kadut DC Hub", type: "dc", lat: 1.44, lon: 103.76, cap: "60 MW heat" },
+        { name: "Jurong / Tuas Industrial Corridor", type: "dc", lat: 1.33, lon: 103.65, cap: "120 MW heat" },
+        { name: "Johor Sedenak Tech Park", type: "dc", lat: 1.67, lon: 103.56, cap: "200 MW heat" },
+        { name: "Lim Chu Kang Agri-Cluster", type: "farm", lat: 1.43, lon: 103.70, cap: "Fodder / Dairy" }
+      ],
+      "44.08,-79.88": [
+        { name: "Markham / Vaughan DC Corridor", type: "dc", lat: 43.85, lon: -79.35, cap: "95 MW heat" },
+        { name: "Brampton Cloud Hub", type: "dc", lat: 43.73, lon: -79.76, cap: "70 MW heat" },
+        { name: "Guelph Dairy Research Belt", type: "farm", lat: 43.54, lon: -80.25, cap: "Fodder / Dairy" }
+      ],
+      "47.36,9.45": [
+        { name: "St. Gallen Data Hub", type: "dc", lat: 47.42, lon: 9.37, cap: "25 MW heat" },
+        { name: "Zurich Cloud Campus", type: "dc", lat: 47.38, lon: 8.54, cap: "110 MW heat" },
+        { name: "Appenzell Alpine Pastures", type: "farm", lat: 47.33, lon: 9.41, cap: "Cheese Dairy" }
+      ],
+      "43.07,-89.40": [
+        { name: "Madison Tech & Cloud Hub", type: "dc", lat: 43.09, lon: -89.32, cap: "80 MW heat" },
+        { name: "Mount Pleasant AI Campus", type: "dc", lat: 42.71, lon: -87.89, cap: "250 MW heat" },
+        { name: "Dane County Dairy Cluster", type: "farm", lat: 43.18, lon: -89.55, cap: "Silage / Dairy" }
+      ],
+      "-37.79,175.28": [
+        { name: "Hamilton Cloud Node", type: "dc", lat: -37.76, lon: 175.25, cap: "40 MW heat" },
+        { name: "Auckland Hyperscale Zone", type: "dc", lat: -36.82, lon: 174.63, cap: "140 MW heat" },
+        { name: "Matamata Pasture Belt", type: "farm", lat: -37.81, lon: 175.77, cap: "Pasture Dairy" }
+      ],
+      "-0.30,36.08": [
+        { name: "Naivasha Geothermal DC Zone", type: "dc", lat: -0.72, lon: 36.43, cap: "50 MW heat" },
+        { name: "Nairobi East Africa Cloud Hub", type: "dc", lat: -1.29, lon: 36.82, cap: "90 MW heat" },
+        { name: "Rift Valley Fodder Co-op", type: "farm", lat: -0.25, lon: 36.15, cap: "Sorghum / Dairy" }
+      ]
+    };
 
     const GLOBAL_FARMS = [
 
@@ -1165,7 +1230,8 @@
 
       rasterLayer = L.layerGroup().addTo(mcdaMap);
 
-      bufferLayer = L.layerGroup().addTo(mcdaMap);
+      bufferLayer = L.layerGroup().addTo(mcdaMap);
+      spiderLayer = L.layerGroup().addTo(mcdaMap);
 
       GLOBAL_FARMS.forEach(gf => {
 
@@ -1193,10 +1259,11 @@
 
         { "Satellite": sat, "Topographic (MCDA)": topo },
 
-        { "Global 6-Farm Network": globalFarmsLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
+        { "Global 6-Farm Network": globalFarmsLayer, "Synergy Spider (Zoom Out)": spiderLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
 
       ).addTo(mcdaMap);
 
+      mcdaMap.on("zoomend", renderSynergySpider);
       mcdaMap.on("click", (e) => {
 
         hasUserPickedRegion = true;
@@ -1319,6 +1386,7 @@
 
 
 
+      renderSynergySpider();
       if (hasUserPickedRegion) {
 
         const dist = mcdaMap.getCenter().distanceTo([lat, lon]);
@@ -1403,6 +1471,31 @@
 
 
 
+    function renderSynergySpider() {
+      if (!mcdaMap || !spiderLayer) return;
+      spiderLayer.clearLayers();
+      const z = mcdaMap.getZoom();
+      if (z > 11 || z < 4) return;
+      const lat = parseFloat(el("lat").value) || 1.42;
+      const lon = parseFloat(el("lon").value) || 103.72;
+      const presetKey = el("preset").value;
+      const nodes = REGIONAL_SYNERGIES[presetKey] || [
+        { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
+        { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
+        { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
+      ];
+      nodes.forEach(n => {
+        const km = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1);
+        const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
+        L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
+          .bindTooltip(`${n.name} (${km} km · ${n.cap})`)
+          .addTo(spiderLayer);
+        L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
+          .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}`)
+          .addTo(spiderLayer);
+      });
+    }
+
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
