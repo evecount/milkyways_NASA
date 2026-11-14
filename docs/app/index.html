@@ -1544,14 +1544,49 @@
 
       renderSynergySpider();
 
-    }
-
-    function flyToSelectedFarm(lat, lon) {
-      initMcdaMap();
-      if (!mcdaMap) return;
-      hasUserPickedRegion = true;
-      mcdaMap.stop();
-      mcdaMap.flyTo([lat, lon], 12, { duration: 1.0, easeLinearity: 0.35 });
+    }
+
+
+
+    function flyToSelectedFarm(lat, lon) {
+
+      initMcdaMap();
+
+      if (!mcdaMap) return;
+
+      hasUserPickedRegion = true;
+
+      mcdaMap.stop();
+
+      mcdaMap.flyTo([lat, lon], 12, { duration: 1.0, easeLinearity: 0.35 });
+
+    }
+
+
+
+    function renderSynergySpider() {
+      if (!mcdaMap || !spiderLayer) return;
+      spiderLayer.clearLayers();
+      const z = mcdaMap.getZoom();
+      if (z > 11 || z < 4) return;
+      const lat = parseFloat(el("lat").value) || 1.42;
+      const lon = parseFloat(el("lon").value) || 103.72;
+      const presetKey = el("preset").value;
+      const nodes = REGIONAL_SYNERGIES[presetKey] || [
+        { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
+        { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
+        { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
+      ];
+      nodes.forEach(n => {
+        const km = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1);
+        const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
+        L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
+          .bindTooltip(`${n.name} (${km} km · ${n.cap})`)
+          .addTo(spiderLayer);
+        L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
+          .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}`)
+          .addTo(spiderLayer);
+      });
     }
 
     function renderTuningInsides(topRot, score) {
