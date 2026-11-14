@@ -109,6 +109,7 @@ While **MilkyWays** keeps its validated baseline focused on **dairy farms** (whe
 | **Broiler Poultry & Hatcheries** | `32–34 °C` brooding / `37.5 °C` | Direct `35–50 °C` hydronic floor | Continuous 24/7 brooding heat; lowers fossil propane/LPG use |
 | **Swine Farrowing & Nursery** | `30–35 °C` creep / floor | Direct `35–45 °C` radiant loops | Targeted zone heating while keeping sow housing cool |
 | **Grain, Hay & Forage Drying** | `40–65 °C` warm dry air | Direct `40–45 °C` or light boost | Seasonal harvest load reduction for maize, paddy, and silage |
+| **Mining & Industrial Compression** *(Arid / North Africa)* | `~7.2 °C` chilling + `72–78 °C` HTST | Direct `80–150 °C` compression heat | Replaces `2.8–4.0 MW` electric chillers (per `10 MW` heat) with absorption chilling + desalination |
 
 ---
 

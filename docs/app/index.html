@@ -754,6 +754,7 @@
           <option value="-24.79,-50.01">Castro Parana Dairy, Brazil (-24.79, -50.01)</option>
 
           <option value="-38.16,146.53">Gippsland Dairy Valley, Australia (-38.16, 146.53)</option>
+          <option value="30.40,-9.55">Souss-Massa Dairy Belt, Morocco (30.40, -9.55)</option>
         </select>
 
         <details style="margin-top:0.65rem;">
@@ -843,13 +844,13 @@
           <div style="display:flex; gap:0.45rem; align-items:center;">
             <span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span>
             <span id="autopilotBadge" style="display:none; font-size:0.7rem; padding:0.16rem 0.5rem; border-radius:999px; background:rgba(99,102,241,0.22); color:#c7d2fe; border:1px solid rgba(129,140,248,0.55); font-weight:700;">▶ Autopilot Demo (Move mouse to stop)</span>
-            <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (13 Farms)</button>
+            <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (14 Farms)</button>
             <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
           </div>
         </div>
         <div style="margin:0.15rem 0 0.7rem; padding:0.5rem 0.8rem; background:rgba(20,184,166,0.10); border:1px solid rgba(20,184,166,0.35); border-radius:8px; font-size:0.9rem; color:#e2e8f0; display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center;">
           <span style="color:#14b8a6; font-weight:700;">Interactive Map:</span>
-          <span><strong>Click anywhere on the map</strong> (or any of the 13 pins) to test siting a dairy farm &middot; <strong>Zoom out</strong> for regional <strong>Synergy Spider</strong></span>
+          <span><strong>Click anywhere on the map</strong> (or any of the 14 pins) to test siting a dairy farm &middot; <strong>Zoom out</strong> for regional <strong>Synergy Spider</strong></span>
         </div>
         <div id="mcdaMap" style="height:clamp(240px, 32vh, 340px); width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
         <div id="topologyBoard"></div>
@@ -1594,8 +1595,12 @@
 
         { name: "Latrobe Pasture Belt", type: "farm", lat: -38.18, lon: 146.60, cap: "Alfalfa / Dairy" }
 
+      ],
+      "30.40,-9.55": [
+        { name: "Agadir Compressor & Solar Hub", type: "dc", lat: 30.43, lon: -9.50, cap: "65 MW compression/solar heat" },
+        { name: "Ben Guerir Phosphate & Compute Hub", type: "dc", lat: 32.23, lon: -7.95, cap: "110 MW compression/AI" },
+        { name: "Taroudant Irrigated Dairy Belt", type: "farm", lat: 30.47, lon: -8.88, cap: "Sorghum / Alfalfa" }
       ]
-
     };
 
     const GLOBAL_FARMS = [
@@ -1624,7 +1629,8 @@
 
       { key: "-24.79,-50.01", name: "Castro Parana Dairy, Brazil", lat: -24.79, lon: -50.01 },
 
-      { key: "-38.16,146.53", name: "Gippsland Dairy Valley, Australia", lat: -38.16, lon: 146.53 }
+      { key: "-38.16,146.53", name: "Gippsland Dairy Valley, Australia", lat: -38.16, lon: 146.53 },
+      { key: "30.40,-9.55", name: "Souss-Massa Dairy Belt, Morocco", lat: 30.40, lon: -9.55 }
 
     ];
 
@@ -1994,7 +2000,8 @@
 
       "-24.79,-50.01": { cows: 310, milk: 9600, acres: 520, soil: "clay" },
 
-      "-38.16,146.53": { cows: 380, milk: 10800, acres: 640, soil: "loam" }
+      "-38.16,146.53": { cows: 380, milk: 10800, acres: 640, soil: "loam" },
+      "30.40,-9.55": { cows: 180, milk: 4500, acres: 220, soil: "sandy" }
     };
     el("worldViewBtn").addEventListener("click", () => {
       hasUserPickedRegion = false;
@@ -2311,7 +2318,7 @@
 
       // 3. Zero-Token Multi-Scenario Engine
       if (isWaterSite) {
-        appendChat("MilkyWays", `Heads up — (${el("lat").value}°, ${el("lon").value}°) is in <strong>open water</strong>, so siting is blocked here. Click on land or pick one of the 13 dairy regions so we can test a real parcel!`);
+        appendChat("MilkyWays", `Heads up — (${el("lat").value}°, ${el("lon").value}°) is in <strong>open water</strong>, so siting is blocked here. Click on land or pick one of the 14 dairy regions so we can test a real parcel!`);
         return;
       }
 
@@ -2823,7 +2830,7 @@
           mooHopIdx = (mooHopIdx + 1) % GLOBAL_FARMS.length;
           const gf = GLOBAL_FARMS[mooHopIdx];
           if (el("preset")) {
-            el("preset").value = gf.val;
+            el("preset").value = gf.key || gf.val;
             el("preset").dispatchEvent(new Event("change"));
           } else {
             flyToSelectedFarm(gf.lat, gf.lon);
