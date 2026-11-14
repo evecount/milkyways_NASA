@@ -10,7 +10,7 @@
 
 ## Summary
 
-MilkyWays is a decision-support tool that ingests live NASA Earth observations to help an industrial dairy farm located next to an AI data center decide what fodder crop rotation to plant next. Unlike generic crop calendars or black-box ML recommenders, our system pairs satellite climate, rainfall, and soil-moisture data with deterministic agronomic rules and dairy thermodynamics—testing growing-season heat stress, water balance, nitrogen-fixation cycles, and indirect waste-heat recovery without opaque guesswork. We built an end-to-end browser pipeline: fetching live NASA POWER agroclimatology data, combining it with GPM IMERG, SMAP, MODIS MOD13Q1, Landsat/HLS, and local soil profiles, scoring candidate fodder rotations against farmer-chosen priorities, and matching dairy plant thermal loads with closed-loop data center waste heat. Results are presented in an interactive web interface with trade-off bars and an explicit double-wall heat-exchanger safety model (*"the coolant never touches the milk"*). This matters because dairy farms face shifting weather and high thermal energy demand (~70% thermal, ~30% electricity), while nearby data centers reject low-grade heat continuously; combining NASA open data in the field with circular heat in the plant cuts synthetic nitrogen fertilizer needs by 25–30% and turns wasted heat into safe pasteurization and cold storage.
+MilkyWays is a decision-support tool that queries **live NASA POWER 25-year agroclimatology (`2001–2025`, `~50 km` grid)** in the browser to help an industrial dairy farm located next to an AI data center decide what fodder crop rotation to plant next. Unlike generic crop calendars or black-box ML recommenders, our system pairs NASA POWER climate data with deterministic agronomic rules, dairy thermodynamics, and a transparent PyTorch-trained MLP (`FodderWeatherNet`, exported to `model_weights.json` for client-side JS inference)—testing growing-season heat stress, water balance, nitrogen-fixation cycles, and indirect waste-heat recovery without opaque guesswork. We built an end-to-end browser pipeline: querying NASA POWER (`2001–2025` climatology) live in the browser (with GPM IMERG, SMAP, MODIS MOD13Q1, Landsat/HLS, and ISRIC SoilGrids documented as planned field-scale integration layers), scoring candidate fodder rotations against farmer-chosen priorities, and matching dairy plant thermal loads with closed-loop data center waste heat. Results are presented in an interactive web interface with trade-off bars and an explicit double-wall heat-exchanger safety model (*"the coolant never touches the milk"*). This matters because dairy farms face shifting weather and high thermal energy demand (~70% thermal, ~30% electricity), while nearby data centers reject low-grade heat continuously; combining NASA open data in the field with circular heat in the plant cuts synthetic nitrogen fertilizer needs by 25–30% and turns wasted heat into safe pasteurization and cold storage.
 
 ## Project Demonstration
 
@@ -31,10 +31,10 @@ We built the project with HTML5, CSS3, and Vanilla JavaScript calling the live `
 
 The project is creative because it bridges space-based Earth observation with a real industrial symbiosis—cows and servers, milk and heat—turning complex climate, soil, and thermodynamic constraints into an interactive, plain-language workflow accessible to any farmer without logins or API keys.
 
-## Use of Artificial Intelligence (AI) / Super Intelligence (SI)
+## Use of Artificial Intelligence (AI)
 
 - We used AI-assisted coding and documentation tools during the hackathon to accelerate `MkDocs Material` scaffolding, frontend layout boilerplate, and submission copy drafting.
-- The core rotation-scoring engine and thermodynamic heat-balance model are deterministic and rule-based (no black-box ML inference in the tool).
+- The core rotation-scoring engine and thermodynamic heat-balance model are deterministic and rule-based, paired with `FodderWeatherNet` (a PyTorch-trained MLP exported to `model_weights.json` executing a client-side JS forward pass, documented in `docs/model-card.md`) that is always guarded by our four mandatory deterministic checks.
 - Any AI-generated code or documentation was reviewed, tested, and refined by the team before integration.
 - No AI-generated images, logos, or NASA branding were used or modified.
 - All AI involvement is documented transparently in the repository.
@@ -52,6 +52,6 @@ The project is creative because it bridges space-based Earth observation with a 
 - [ESA Sentinel-2 (via Harmonized Landsat Sentinel-2)](https://sentinel.esa.int/web/sentinel/missions/sentinel-2)
 - [ISRIC SoilGrids (250m Global Soil Information)](https://soilgrids.org/)
 - [Bytes2Heat Best-Practice Overview (Gais, Switzerland Cheese Dairy, 1.5 GWh/yr)](https://www.bytes2heat.de/static/files/20240403_BP%C3%9C_V2404_eng.pdf)
-- [Sunniva Encon Milk Pasteurization Thermal Benchmark (20,000 L/day, 817 kWh/day)](https://www.sunnivaencon.com/applications/milk-pasteurization)
+- [Sunniva Encon Milk Pasteurization Thermal Benchmark (20,000 L/day, 817 kWh/day)](https://www.sunnivaencon.com/)
 - [MkDocs Material (Static Documentation Framework)](https://squidfunk.github.io/mkdocs-material/)
 - [Mermaid.js (Architecture & Loop Diagrams)](https://mermaid.js.org/)

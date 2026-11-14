@@ -811,8 +811,8 @@
         </select>
         </details>
 
-        <button id="fetchBtn" title="Queries live NASA POWER daily climatology (T2M, rain, solar, wind) for these coordinates and re-ranks all fodder rotations.">Fetch Live NASA POWER &amp; Rank</button>
-        <div class="status" id="apiStatus">Ready. Querying NASA POWER climatology...</div>
+        <button id="fetchBtn" title="Queries live NASA POWER daily climatology (T2M, rain, solar, wind) for these coordinates and re-ranks all fodder rotations.">Fetch NASA POWER Climatology &amp; Rank</button>
+        <div class="status" id="apiStatus">Ready. Querying NASA POWER 2001–2025 climatology (~50 km)...</div>
       </div>
 
       <div class="card">
@@ -845,6 +845,7 @@
             <span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span>
             <span id="autopilotBadge" style="display:none; font-size:0.7rem; padding:0.16rem 0.5rem; border-radius:999px; background:rgba(99,102,241,0.22); color:#c7d2fe; border:1px solid rgba(129,140,248,0.55); font-weight:700;">▶ Autopilot Demo (Move mouse to stop)</span>
             <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (14 Farms)</button>
+            <button type="button" id="topExportReportBtn" style="width:auto; margin:0; padding:0.25rem 0.65rem; font-size:0.75rem; background:#0d9488; color:#fff; border:1px solid #14b8a6; font-weight:700;">Export Municipal Report</button>
             <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
           </div>
         </div>
@@ -1102,11 +1103,11 @@
     ];
 
     let climate = {
-      t2m: 7.0, rain: 2.16, solar: 13.05, wind: 2.98,
+      t2m: 27.1, rain: 6.5, solar: 16.5, wind: 2.3,
       monthly: {
-        T2M: [-7.25, -6.1, -1.0, 6.1, 11.67, 17.3, 21.2, 20.1, 15.8, 8.84, 2.8, -3.5],
-        PRECTOTCORR: [1.83, 1.6, 1.9, 2.2, 2.35, 2.4, 2.24, 2.3, 2.5, 2.5, 2.3, 2.0],
-        ALLSKY_SFC_SW_DWN: [4.84, 7.6, 11.5, 15.8, 19.84, 21.6, 21.93, 19.1, 14.2, 8.59, 5.1, 3.9]
+        T2M: [26.3, 26.8, 27.4, 27.8, 28.0, 27.9, 27.6, 27.5, 27.3, 27.1, 26.6, 26.2],
+        PRECTOTCORR: [6.4, 4.9, 5.8, 6.2, 6.5, 5.7, 5.9, 6.1, 6.4, 7.2, 8.5, 8.9],
+        ALLSKY_SFC_SW_DWN: [15.4, 17.5, 17.8, 17.1, 16.6, 16.3, 16.4, 16.5, 16.6, 16.2, 15.1, 14.3]
       }
     };
 
@@ -1232,7 +1233,8 @@
 
       const soilType = el("soil").value;
       const isWarm = climate.t2m >= 18;
-      const isDry = climate.rain < 2.2 || soilType === "sandy";
+      const isTropical = climate.t2m >= 24;
+      const isDry = climate.rain < 1.6 || soilType === "sandy";
       const htstOk = el("heatMode").value === "boosted";
       const sGridBase = htstOk ? 92 : 42;
       const sFloodBase = Math.max(35, Math.min(95, 88 - (climate.rain > 5.0 ? 18 : 0) - (soilType === "clay" ? 12 : 0)));
@@ -1242,6 +1244,16 @@
         let sWater = r.water + (isDry ? r.dryBonus : 0);
         let sHeat = r.heat + (isWarm ? r.dryBonus : r.coolBonus);
         let sFeed = r.feed;
+        if (isTropical && r.controlClass !== "neg") {
+          if (r.coolBonus > 0) {
+            sSoil -= 18;
+            sHeat -= 14;
+            sFeed -= 16;
+          } else {
+            sSoil += 12;
+            sFeed += 10;
+          }
+        }
         let sGrid = Math.max(10, Math.min(100, sGridBase + (r.controlClass === "neg" ? -18 : 0)));
         let sFlood = Math.max(10, Math.min(100, sFloodBase + (r.controlClass === "neg" ? -15 : 4)));
         sSoil = Math.max(10, Math.min(100, sSoil));
@@ -1703,7 +1715,7 @@
 
       GLOBAL_FARMS.forEach(gf => {
 
-        L.circleMarker([gf.lat, gf.lon], { radius: 6, color: "#fff", fillColor: "#14b8a6", fillOpacity: 0.95, weight: 2 })
+        L.circleMarker([gf.lat, gf.lon], { radius: 8, color: "#fff", fillColor: "#14b8a6", fillOpacity: 0.95, weight: 2 })
 
           .bindTooltip(`${gf.name} (Click to fly in)`)
 
@@ -1713,7 +1725,7 @@
 
             hasUserPickedRegion = true;
 
-            el("preset").value = gf.key;
+            el("preset").value = gf.key || gf.val;
 
             el("preset").dispatchEvent(new Event("change"));
 
@@ -1727,7 +1739,7 @@
 
         { "Satellite": sat, "Topographic (MCDA)": topo },
 
-        { "Global 13-Farm Network": globalFarmsLayer, "Synergy Spider (Zoom Out)": spiderLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
+        { "Global 14-Farm Network": globalFarmsLayer, "Synergy Spider (Zoom Out)": spiderLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
 
       ).addTo(mcdaMap);
 
@@ -2005,7 +2017,9 @@
     };
     el("worldViewBtn").addEventListener("click", () => {
       hasUserPickedRegion = false;
-      if (mcdaMap) mcdaMap.flyTo([20, 15], 2, { duration: 1.0 });
+      const la = parseFloat(el("lat").value) || 47.36;
+      const lo = parseFloat(el("lon").value) || 9.45;
+      if (mcdaMap) mcdaMap.flyTo([la, lo], 3, { duration: 1.0 });
     });
     el("preset").addEventListener("change", (e) => {
       const [la, lo] = e.target.value.split(",");
@@ -2631,7 +2645,7 @@
     <h2>3. Mandatory Regulatory &amp; Engineering Checks</h2>
     <table>
       <tr><th>Check</th><th>Observed Evaluation</th></tr>
-      ${checkCards.length ? checkCards.map(c => `<tr><td><strong>${escHtml(c.title)}</strong></td><td>${escHtml(c.body)}</td></tr>`).join("") : "<tr><td colspan='2'>Run Fetch Live NASA POWER to populate checks.</td></tr>"}
+      ${checkCards.length ? checkCards.map(c => `<tr><td><strong>${escHtml(c.title)}</strong></td><td>${escHtml(c.body)}</td></tr>`).join("") : "<tr><td colspan='2'>Run Fetch NASA POWER Climatology to populate checks.</td></tr>"}
     </table>
 
     <h2>4. Nearby Data-Center &amp; Agricultural Synergy Nodes (12 km Pipe Cutoff)</h2>
@@ -2891,13 +2905,7 @@
         autopilotActive = false;
         if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
       }
-      if (!hasShownEarlyNudge) {
-        idle3sTimer = setTimeout(run3sNudge, 3000);
-        idle5sTimer = setTimeout(run5sNudge, 5000);
-      }
-      idle3sTimer = setTimeout(run3sNudge, 3000);
-    idle5sTimer = setTimeout(run5sNudge, 5000);
-    idleTimer = setTimeout(startJudgeAutopilot, 20000);
+      // Keep autopilot off unless explicitly started.
     }
 
     function startJudgeAutopilot() {
@@ -2928,10 +2936,10 @@
       }, 12000));
     }
 
+    // Idle autopilot disabled by default so the app never hijacks or re-sites itself while a judge is reading.
     ["pointermove", "keydown", "wheel", "touchstart", "mousedown"].forEach(evt => {
       window.addEventListener(evt, stopJudgeAutopilot, { passive: true });
     });
-    idleTimer = setTimeout(startJudgeAutopilot, 20000);
 
     if (el("topExportReportBtn")) {
       el("topExportReportBtn").addEventListener("click", generateMunicipalReport);

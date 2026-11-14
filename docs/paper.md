@@ -8,7 +8,7 @@
 
 ## Abstract
 
-We present **MilkyWays**, an explainable decision-support system for an industrial dairy farm co-located with an AI data center. Dairy farms face two coupled challenges: (1) adapting fodder crop rotations to shifting temperature, precipitation, and soil moisture regimes, and (2) supplying high thermal energy loads (~70% thermal, ~30% electricity) for pasteurization and cold storage. **MilkyWays** queries the live **NASA POWER Agroclimatology API** (`T2M`, `T2M_MAX`, `T2M_MIN`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M`) directly in the browser, pairs it with **GPM IMERG**, **SMAP**, **MODIS MOD13Q1**, **Landsat/HLS**, and **ISRIC SoilGrids**, and enforces **four mandatory agronomic and thermodynamic checks** alongside explicit **positive and negative controls**. On the verified Ontario Dairy Region baseline (`44.08°N, 79.88°W`), legume-cereal rotations (`Maize → Alfalfa → Red Clover`) reduce synthetic nitrogen fertilizer requirements by **25–30%** compared with continuous maize monocropping, while closed-loop liquid data center heat (`55–70 °C`) boosted by a heat pump (`70–90 °C`) satisfies HTST pasteurization (`72–78 °C`) via a double-wall heat exchanger (*"the coolant never touches the milk"*).
+We present **MilkyWays**, an explainable decision-support system for an industrial dairy farm co-located with an AI data center. Dairy farms face two coupled challenges: (1) adapting fodder crop rotations to shifting temperature, precipitation, and soil moisture regimes, and (2) supplying high thermal energy loads (~70% thermal, ~30% electricity) for pasteurization and cold storage. **MilkyWays** queries the live **NASA POWER Agroclimatology API** (`2001–2025` 25-year climatology, `~50 km` grid: `T2M`, `T2M_MAX`, `T2M_MIN`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M`) directly in the browser, pairs it in architecture with planned higher-resolution layers (**GPM IMERG**, **SMAP**, **MODIS MOD13Q1**, **Landsat/HLS**, and **ISRIC SoilGrids** — documented as planned integrations in [`datasets.md`](datasets.md)), and enforces **four mandatory agronomic and thermodynamic checks** alongside explicit **positive and negative controls**. On the verified Ontario Dairy Region baseline (`44.08°N, 79.88°W`), legume-cereal rotations (`Maize → Alfalfa → Red Clover`) reduce synthetic nitrogen fertilizer requirements by **25–30%** compared with continuous maize monocropping, while closed-loop liquid data center heat (`55–70 °C`) boosted by a heat pump (`70–90 °C`) satisfies HTST pasteurization (`72–78 °C`) via a double-wall heat exchanger (*"the coolant never touches the milk"*).
 
 ---
 
@@ -27,12 +27,12 @@ Agricultural decision-support tools frequently fail farmers in two ways: generic
 
 | Dataset | Exact Variables | Spatial / Temporal Scope | Role in MilkyWays |
 | --- | --- | --- | --- |
-| **NASA POWER** (`community=AG`) | `T2M`, `T2M_MAX`, `T2M_MIN`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M` | `~50 km` grid, daily & Jan–Dec climatology | Queried live in-browser to score growing-season heat stress, solar PAR proxy, and precipitation balance |
-| **NASA GPM IMERG** | Satellite precipitation rate | `~10 km` grid | Resolves rainfall onset and planting-window timing where 50 km POWER is coarse |
-| **NASA SMAP** (`SPL3SMP_E` L3/L4) | Surface & root-zone soil moisture (`m³/m³`) | `9 km` daily (`2015–present`) | Current moisture deficit check prior to seeding deep-rooted legumes *(not used for 20-year trends)* |
-| **MODIS `MOD13Q1`** | 16-day NDVI / EVI | `250 m` (`2000–present`) | Multi-season crop vigor comparison across rotation cycles |
-| **Landsat / HLS** | Surface reflectance | `30 m` | Field-level bare-ground and residue cover verification |
-| **ISRIC SoilGrids** *(non-NASA)* | Texture (clay/sand/silt), organic carbon, pH | `250 m` global grid | Local water-holding capacity combined with farmer priority sliders |
+| **NASA POWER** (`community=AG`) — *Live in App* | `T2M`, `T2M_MAX`, `T2M_MIN`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M` | `~50 km` grid, `2001–2025` Jan–Dec climatology | Queried live in-browser to score growing-season heat stress, solar PAR proxy, and precipitation balance |
+| **NASA GPM IMERG** *(Planned Integration)* | Satellite precipitation rate | `~10 km` grid | Resolves rainfall onset and planting-window timing where 50 km POWER is coarse |
+| **NASA SMAP** (`SPL3SMP_E` L3/L4) *(Planned Integration)* | Surface & root-zone soil moisture (`m³/m³`) | `9 km` daily (`2015–present`) | Current moisture deficit check prior to seeding deep-rooted legumes *(not used for 20-year trends)* |
+| **MODIS `MOD13Q1`** *(Planned Integration)* | 16-day NDVI / EVI | `250 m` (`2000–present`) | Multi-season crop vigor comparison across rotation cycles |
+| **Landsat / HLS** *(Planned Integration)* | Surface reflectance | `30 m` | Field-level bare-ground and residue cover verification |
+| **ISRIC SoilGrids** *(non-NASA, Planned / User-Selectable)* | Texture (clay/sand/silt), organic carbon, pH | `250 m` global grid | Local water-holding capacity combined with farmer priority sliders |
 
 ### Live Verified Baseline (`44.08°N, 79.88°W`, Ontario Dairy Region)
 
@@ -84,20 +84,20 @@ Every candidate configuration in **MilkyWays** must pass four explicit checks:
 
 ---
 
-## 5. Predictive Deep Learning Model (`FodderWeatherNet`)
+## 6. Predictive Deep Learning Model (`FodderWeatherNet`)
 
-To make **MilkyWays** a predictive decision-support tool rather than a static lookup, we trained **FodderWeatherNet**, a PyTorch 3-layer Multi-Layer Perceptron (`8 → 32 → 16 → 3`, ReLU activations, Adam optimizer) on **10 years of real daily NASA POWER observations (`2016–2025`)** across **6 global dairy regions** (`Ontario_CA`, `Gais_CH`, `Singapore_SG`, `Wisconsin_US`, `Waikato_NZ`, `Punjab_IN`).
+To make **MilkyWays** a predictive decision-support tool rather than a static lookup, we trained **FodderWeatherNet** offline in PyTorch — a 3-layer Multi-Layer Perceptron (`8 → 32 → 16 → 3`, ReLU activations, Adam optimizer) — on **10 years of daily NASA POWER observations (`2016–2025`)** across **6 global dairy regions** (`Ontario_CA`, `Gais_CH`, `Singapore_SG`, `Wisconsin_US`, `Waikato_NZ`, `Punjab_IN`). Full architecture, split, and limitations are documented in [`model-card.md`](model-card.md).
 
 - **Predictive setup:** Annual weather features at year `t` (`T2M`, `PRECTOTCORR`, `ALLSKY_SFC_SW_DWN`, `WS2M`, `GDD_base10`, frost days `<0 °C`, heat-stress days `>30 °C`, dry-day ratio `<1 mm`) predict next-season (`t+1`) **C3 Temperate Fodder Suitability**, **C4 Warm-Season Fodder Suitability**, and **Heat/Drought Stress Risk**.
 - **Strict temporal out-of-sample split:** Trained on `2016–2022` (`n = 36` region-years) and evaluated on `2023–2025` (`n = 18` region-years).
 - **Verified results:**
   - **Ridge Regression Baseline:** `R² = 0.8553` | `MAE = 6.04`
   - **FodderWeatherNet (PyTorch MLP):** `R² = 0.8740` | `MAE = 5.27` | `RMSE = 7.75`
-- **Live browser inference:** Trained weights (`model_weights.json`) execute a real forward pass directly in JavaScript inside the web app, guarded by the four mandatory agronomic and thermodynamic checks.
+- **Live browser inference:** Trained weights and `StandardScaler` parameters were exported to [`app/model_weights.json`](app/model_weights.json) and execute a pure-JavaScript forward pass directly in the web app, guarded by the four mandatory agronomic and thermodynamic checks.
 
 ---
 
-## 6. Municipal Replicability & Next-Horizon Agricultural Extensions
+## 7. Municipal Replicability & Next-Horizon Agricultural Extensions
 
 While **MilkyWays** keeps its validated baseline focused on **dairy farms** (where `55–70 °C` liquid cooling + heat pump boost meets `72–78 °C` HTST pasteurization and `~7.2 °C` chilling), the underlying **NASA Earth-observation + 6-criterion MCDA + Double-Wall Heat Exchanger + Municipal Feasibility Packet** architecture is modular. Other municipalities can adapt the same siting workflow to additional high-heat agricultural verticals:
 
@@ -118,6 +118,6 @@ While **MilkyWays** keeps its validated baseline focused on **dairy farms** (whe
 1. NASA POWER Agroclimatology API: `https://power.larc.nasa.gov/api/temporal/daily/point`
 2. NASA Earthdata Agriculture Production: `https://www.earthdata.nasa.gov/topics/human-dimensions/agriculture-production/data-access-tools`
 3. Bytes2Heat Best-Practice Overview (Gais, Switzerland Cheese Dairy, `1.5 GWh/yr`): `https://www.bytes2heat.de/static/files/20240403_BP%C3%9C_V2404_eng.pdf`
-4. Sunniva Encon Milk Pasteurization (`20,000 L/day`, `817 kWh/day`): `https://www.sunnivaencon.com/applications/milk-pasteurisation`
+4. Sunniva Encon Milk Pasteurization (`20,000 L/day`, `817 kWh/day`): `https://www.sunnivaencon.com/`
 5. Dairy Fodder Rotation Legume Nitrogen Reduction (`25–30%`): `https://agriculture.institute/livestock-pasture-management/best-practices-growing-irrigated-fodder-crops/`
 6. Control-validation methodology inspired by NASA Space Apps 2025 *Best Use of Data* winner *Resonant Exoplanets*: `https://www.spaceappschallenge.org/2025/find-a-team/resonant-exoplanets/`
