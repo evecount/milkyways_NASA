@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-label="Dairy pasture and barn on the left, AI data center on the right, joined by an insulated underground water loop">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101a3d"/><stop offset="1" stop-color="#1d2b5c"/></linearGradient>
+<linearGradient id="hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd16a"/><stop offset="1" stop-color="#3f9a45"/></linearGradient>
+<linearGradient id="dc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8ecf8"/><stop offset="1" stop-color="#aeb8d6"/></linearGradient>
+<linearGradient id="hot" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#f97316"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+<linearGradient id="cold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#14b8a6"/></linearGradient>
+</defs>
+<rect width="960" height="360" rx="28" fill="url(#sky)"/>
+<g fill="#fff7e6" opacity=".85"><circle cx="90" cy="40" r="1.6"/><circle cx="210" cy="70" r="1.2"/><circle cx="330" cy="30" r="1.8"/><circle cx="470" cy="56" r="1.3"/><circle cx="610" cy="26" r="1.6"/><circle cx="760" cy="48" r="1.2"/><circle cx="890" cy="34" r="1.7"/></g>
+<path d="M470 40 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4z" fill="#fde68a"/>
+<!-- ground -->
+<path d="M0 220 Q160 170 320 205 T600 210 L600 360 L0 360 Z" fill="url(#hill)"/>
+<path d="M560 230 L960 230 L960 360 L560 360Z" fill="#2a3a6e"/>
+<rect x="0" y="262" width="960" height="98" fill="#3b2f2a"/>
+<rect x="0" y="262" width="960" height="6" fill="#5a4636"/>
+<!-- barn -->
+<g transform="translate(70 120)"><path d="M0 70 L70 20 L140 70 L140 150 L0 150Z" fill="#d9483b"/><path d="M-8 74 L70 14 L148 74" fill="none" stroke="#fff7e6" stroke-width="8" stroke-linejoin="round"/><rect x="48" y="90" width="44" height="60" fill="#fff7e6"/><path d="M48 90 L92 150 M92 90 L48 150" stroke="#d9483b" stroke-width="5"/><rect x="58" y="44" width="24" height="20" rx="3" fill="#fff7e6"/></g>
+<!-- silo -->
+<g transform="translate(222 110)"><rect x="0" y="30" width="40" height="130" fill="#cbd5e1"/><path d="M0 30 Q20 0 40 30Z" fill="#94a3b8"/><path d="M0 70h40M0 110h40" stroke="#94a3b8" stroke-width="3"/></g>
+<!-- cows -->
+<g transform="translate(300 200)"><ellipse cx="40" cy="22" rx="38" ry="22" fill="#fff"/><circle cx="26" cy="16" r="9" fill="#1f2937"/><circle cx="56" cy="26" r="7" fill="#1f2937"/><rect x="12" y="36" width="8" height="18" rx="3" fill="#fff"/><rect x="58" y="36" width="8" height="18" rx="3" fill="#fff"/><circle cx="84" cy="8" r="16" fill="#fff"/><ellipse cx="90" cy="16" rx="10" ry="7" fill="#f9a8b8"/><circle cx="82" cy="4" r="2.4" fill="#111"/><path d="M74 -8l-4-8M92 -8l4-8" stroke="#c08a4a" stroke-width="4" stroke-linecap="round"/></g>
+<g transform="translate(420 214) scale(.75)"><ellipse cx="40" cy="22" rx="38" ry="22" fill="#fff"/><circle cx="50" cy="16" r="10" fill="#1f2937"/><rect x="12" y="36" width="8" height="18" rx="3" fill="#fff"/><rect x="58" y="36" width="8" height="18" rx="3" fill="#fff"/><circle cx="84" cy="8" r="16" fill="#fff"/><ellipse cx="90" cy="16" rx="10" ry="7" fill="#f9a8b8"/><circle cx="82" cy="4" r="2.4" fill="#111"/></g>
+<!-- data center -->
+<g transform="translate(620 92)"><rect x="0" y="40" width="280" height="140" rx="10" fill="url(#dc)"/><rect x="0" y="28" width="280" height="18" rx="6" fill="#64748b"/>
+<g fill="#1e293b"><rect x="22" y="62" width="50" height="100" rx="5"/><rect x="88" y="62" width="50" height="100" rx="5"/><rect x="154" y="62" width="50" height="100" rx="5"/><rect x="220" y="62" width="40" height="100" rx="5"/></g>
+<g fill="#22d3ee"><rect x="30" y="72" width="34" height="4" rx="2"/><rect x="30" y="86" width="34" height="4" rx="2"/><rect x="30" y="100" width="34" height="4" rx="2"/><rect x="96" y="72" width="34" height="4" rx="2"/><rect x="96" y="86" width="34" height="4" rx="2"/><rect x="162" y="72" width="34" height="4" rx="2"/><rect x="162" y="100" width="34" height="4" rx="2"/><rect x="228" y="86" width="24" height="4" rx="2"/></g>
+<g fill="#4ade80"><circle cx="36" cy="150" r="3"/><circle cx="102" cy="150" r="3"/><circle cx="168" cy="150" r="3"/><circle cx="234" cy="150" r="3"/></g>
+<g stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" opacity=".9"><path d="M60 20 q8 -10 0 -20 q-8 -10 0 -20"/><path d="M140 20 q8 -10 0 -20 q-8 -10 0 -20"/><path d="M220 20 q8 -10 0 -20 q-8 -10 0 -20"/></g></g>
+<!-- underground loop -->
+<path d="M760 272 L760 300 Q760 318 742 318 L200 318 Q180 318 180 300 L180 272" fill="none" stroke="#e2e8f0" stroke-width="22" stroke-linecap="round" opacity=".25"/>
+<path d="M760 272 L760 300 Q760 318 742 318 L200 318 Q180 318 180 300 L180 272" fill="none" stroke="url(#hot)" stroke-width="12" stroke-linecap="round"/>
+<path d="M200 284 L740 284" fill="none" stroke="#e2e8f0" stroke-width="20" stroke-linecap="round" opacity=".25"/>
+<path d="M200 284 L740 284" fill="none" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+<g fill="#fff7e6"><path d="M470 312 l-14 6 14 6z"/><path d="M490 278 l14 6 -14 6z"/></g>
+<g font-family="Fredoka, Nunito, sans-serif" font-weight="600" font-size="15" fill="#fff7e6"><text x="250" y="346">Warm water → dairy (55–70 °C)</text><text x="560" y="304" fill="#bae6fd">Cool return → servers</text></g>
+<g font-family="Fredoka, Nunito, sans-serif" font-weight="700" font-size="22" fill="#fff7e6"><text x="60" y="52">Milk &amp; Cows</text><text x="740" y="52">Servers &amp; Heat</text></g>
+</svg>

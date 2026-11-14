@@ -16,6 +16,7 @@ token*.json
 Thumbs.db
 desktop.ini
 *.swp
+*.zip
 .vscode/
 .idea/
 
