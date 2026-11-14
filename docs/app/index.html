@@ -493,36 +493,39 @@
     }
     .moo-sticker {
       position: fixed;
-      top: 68px;
+      top: 78px;
       right: 24px;
       z-index: 9999;
       background: linear-gradient(135deg, #0f172a, #1e293b);
       border: 2px solid #fde68a;
       color: #fef3c7;
-      padding: 10px 14px;
-      border-radius: 14px;
-      font-size: 0.8rem;
+      padding: 12px 16px 12px 0;
+      border-radius: 16px;
+      font-size: 0.82rem;
       font-weight: 600;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.65);
       transform: rotate(-1.5deg);
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.2s ease, transform 0.2s ease;
-      max-width: 390px;
+      max-width: 470px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       cursor: pointer;
+      overflow: visible;
     }
     .moo-sticker.show {
       pointer-events: auto;
     }
     .moo-sticker img {
-      width: 68px;
-      height: 68px;
+      width: 195px;
+      height: 195px;
       object-fit: contain;
       flex-shrink: 0;
-      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.45));
+      margin: -46px 0 -34px -52px;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));
+      transform: rotate(-4deg);
     }
     .moo-sticker.show {
       opacity: 1;
