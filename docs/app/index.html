@@ -300,7 +300,12 @@
       <div style="font-size:0.8rem; color:var(--muted);">NASA Space Apps Challenge 2026 &middot; Challenge 7: Field
         Shift</div>
     </div>
-    <a href="../">&larr; Back to Project Docs</a>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <a href="../" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Project Home</a>
+      <a href="../paper/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Technical Paper</a>
+      <a href="../datasets/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">NASA Datasets</a>
+      <a href="../slides/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">7-Slide Demo</a>
+    </div>
   </header>
 
   <div class="container">
@@ -346,7 +351,8 @@
         </div>
         <label for="csvUpload">Upload Farm Facts CSV (Plain-Language)</label>
         <input id="csvUpload" type="file" accept=".csv" style="font-size:0.78rem; padding:0.35rem;" />
-        <div class="status" style="margin-top:0.25rem;"><a href="#" id="downloadSampleCsv" style="color:var(--accent);">Download sample farm-facts.csv</a></div>
+        <div class="status" style="margin-top:0.25rem;"><a href="#" id="downloadSampleCsv"
+            style="color:var(--accent);">Download sample farm-facts.csv</a></div>
 
         <label for="heatMode">Data Center Heat Loop (Control Test)</label>
         <select id="heatMode">
@@ -378,17 +384,33 @@
       <div class="card">
         <div class="rot-head" style="margin-bottom:0.65rem;">
           <h2 style="margin:0;">Dairy Diary &mdash; Global Farm &amp; Data Center Logbook</h2>
-          <button type="button" id="openDiagBtn" style="width:auto; margin:0; padding:0.4rem 0.85rem;">+ New Diary Entry / Run Diagnostic</button>
+          <button type="button" id="openDiagBtn" style="width:auto; margin:0; padding:0.4rem 0.85rem;">+ New Diary Entry
+            / Run Diagnostic</button>
         </div>
-        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Every logged season feeds back into <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.</div>
+        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Every logged season feeds back into
+          <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.
+        </div>
         <div class="metrics-grid" style="margin-bottom:0.75rem;">
-          <div class="metric"><div class="k">Milking Herd</div><div class="v" id="ffCows">75 cows</div></div>
-          <div class="metric"><div class="k">Yield / Cow</div><div class="v" id="ffYield">33.3 L/d</div></div>
-          <div class="metric"><div class="k">Fodder Base</div><div class="v" id="ffAcres">600 ac</div></div>
-          <div class="metric"><div class="k">Pasteurization Need</div><div class="v" id="ffHeat">102 kWh/d</div></div>
+          <div class="metric">
+            <div class="k">Milking Herd</div>
+            <div class="v" id="ffCows">75 cows</div>
+          </div>
+          <div class="metric">
+            <div class="k">Yield / Cow</div>
+            <div class="v" id="ffYield">33.3 L/d</div>
+          </div>
+          <div class="metric">
+            <div class="k">Fodder Base</div>
+            <div class="v" id="ffAcres">600 ac</div>
+          </div>
+          <div class="metric">
+            <div class="k">Pasteurization Need</div>
+            <div class="v" id="ffHeat">102 kWh/d</div>
+          </div>
         </div>
         <div id="diaryFeed" class="checks-grid"></div>
-        <h3 style="font-size:0.88rem; color:var(--muted); margin:0.9rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar (from live NASA POWER)</h3>
+        <h3 style="font-size:0.88rem; color:var(--muted); margin:0.9rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
+          (from live NASA POWER)</h3>
         <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
       </div>
       <div class="card">
@@ -867,9 +889,9 @@
       });
       localStorage.setItem("milkyways_obs", JSON.stringify(list));
       updateObsStatus();
-    el("openDiagBtn").addEventListener("click", () => {
-      el("obsCrop").scrollIntoView({ behavior: "smooth" });
-    });
+      el("openDiagBtn").addEventListener("click", () => {
+        el("obsCrop").scrollIntoView({ behavior: "smooth" });
+      });
     });
     el("exportObsBtn").addEventListener("click", () => {
       const blob = new Blob([JSON.stringify(getObs(), null, 2)], { type: "application/json" });
