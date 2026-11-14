@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MilkyWays — Dairy Fodder Rotation &amp; Waste-Heat Decision Tool</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #14b8a6;
+      --indigo: #6366f1;
+      --warn: #f59e0b;
+      --good: #22c55e;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      background: #0b1120;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    header a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 860px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    h1 { font-size: 1.25rem; margin-bottom: 0; }
+    h2 { font-size: 1.05rem; color: var(--accent); margin-bottom: 0.75rem; }
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+      margin-top: 0.75rem;
+    }
+    select, input[type="number"], input[type="range"], button {
+      width: 100%;
+      padding: 0.5rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    input[type="range"] { padding: 0; border: none; }
+    button {
+      margin-top: 1rem;
+      background: var(--indigo);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.92; }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0.75rem;
+    }
+    .metric {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+    }
+    .metric .k { font-size: 0.75rem; color: var(--muted); }
+    .metric .v { font-size: 1.2rem; font-weight: 700; margin-top: 0.15rem; }
+    .rotation-card {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .rotation-card.best { border-color: var(--accent); }
+    .rot-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-weight: 600;
+      background: rgba(20, 184, 166, 0.15);
+      color: var(--accent);
+    }
+    .badge.warn { background: rgba(245, 158, 11, 0.15); color: var(--warn); }
+    .bars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+      font-size: 0.78rem;
+    }
+    .bar-bg {
+      height: 6px;
+      background: #1e293b;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.25rem;
+    }
+    .bar-fill { height: 100%; background: var(--accent); }
+    .status {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .safety-box {
+      border-left: 4px solid var(--good);
+      background: rgba(34, 197, 94, 0.08);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      margin-top: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>MilkyWays &mdash; Dairy Fodder &amp; Waste-Heat Decision Tool</h1>
+      <div style="font-size:0.8rem; color:var(--muted);">NASA Space Apps Challenge 2026 &middot; Challenge 7: Field Shift</div>
+    </div>
+    <a href="../">&larr; Back to Project Docs</a>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="card">
+        <h2>1. Farm Location (NASA POWER)</h2>
+        <label for="preset">Preset Region</label>
+        <select id="preset">
+          <option value="44.08,-79.88">Ontario Dairy Region, Canada (44.08, -79.88)</option>
+          <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
+          <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
+        </select>
+
+        <div class="row2">
+          <div>
+            <label for="lat">Latitude</label>
+            <input id="lat" type="number" step="0.01" value="44.08" />
+          </div>
+          <div>
+            <label for="lon">Longitude</label>
+            <input id="lon" type="number" step="0.01" value="-79.88" />
+          </div>
+        </div>
+
+        <label for="soil">Local Soil Profile (SoilGrids / Farm Input)</label>
+        <select id="soil">
+          <option value="loam">Clay Loam (Moderate drainage, high CEC)</option>
+          <option value="sandy">Sandy Loam (Fast drainage, drought-prone)</option>
+          <option value="clay">Heavy Clay (High water retention, compaction risk)</option>
+        </select>
+
+        <label for="milk">Daily Milk Volume (Litres/day)</label>
+        <input id="milk" type="number" value="20000" step="1000" min="1000" />
+
+        <button id="fetchBtn">Fetch Live NASA POWER &amp; Rank</button>
+        <div class="status" id="apiStatus">Ready. Click to query power.larc.nasa.gov.</div>
+      </div>
+
+      <div class="card">
+        <h2>2. Farmer Priorities</h2>
+        <label>Soil Health &amp; N-Fixation (<span id="wSoilVal">40</span>%)</label>
+        <input id="wSoil" type="range" min="0" max="100" value="40" />
+
+        <label>Water Efficiency (<span id="wWaterVal">25</span>%)</label>
+        <input id="wWater" type="range" min="0" max="100" value="25" />
+
+        <label>Heat Resilience (<span id="wHeatVal">15</span>%)</label>
+        <input id="wHeat" type="range" min="0" max="100" value="15" />
+
+        <label>Dairy Feed Quality (<span id="wFeedVal">20</span>%)</label>
+        <input id="wFeed" type="range" min="0" max="100" value="20" />
+      </div>
+    </aside>
+
+    <main>
+      <div class="card">
+        <h2>NASA POWER Climate Baseline (<span id="coordLabel">44.08&deg;N, -79.88&deg;E</span>)</h2>
+        <div class="metrics-grid">
+          <div class="metric"><div class="k">Mean Temp (T2M)</div><div class="v" id="mTemp">7.0 &deg;C</div></div>
+          <div class="metric"><div class="k">Precipitation (PRECTOTCORR)</div><div class="v" id="mRain">2.16 mm/d</div></div>
+          <div class="metric"><div class="k">Solar Irradiance (ALLSKY)</div><div class="v" id="mSolar">13.05 MJ/m&sup2;/d</div></div>
+          <div class="metric"><div class="k">Wind Speed (WS2M)</div><div class="v" id="mWind">2.98 m/s</div></div>
+        </div>
+        <div class="status">Source: <a href="https://power.larc.nasa.gov/api/temporal/climatology/point" target="_blank" style="color:var(--accent);">NASA POWER Agroclimatology API</a> (~50 km grid). Complemented by GPM IMERG (~10 km rainfall), SMAP (9 km soil moisture), and MODIS MOD13Q1 (250 m NDVI).</div>
+      </div>
+
+      <div class="card">
+        <h2>Ranked Fodder Rotations</h2>
+        <div id="rotationsList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Data Centre Waste-Heat Balance</h2>
+        <div class="metrics-grid">
+          <div class="metric"><div class="k">Dairy Thermal Demand</div><div class="v" id="hDemand">817 kWh/d</div></div>
+          <div class="metric"><div class="k">Avg Heat Load</div><div class="v" id="hKw">82 kW</div></div>
+          <div class="metric"><div class="k">HTST Pasteurisation</div><div class="v">72&ndash;78 &deg;C</div></div>
+          <div class="metric"><div class="k">Absorption Chilling</div><div class="v">~7.2 &deg;C</div></div>
+        </div>
+        <div class="safety-box">
+          <strong>Safety &amp; Engineering Limits:</strong> Data centre coolant (30&ndash;45 &deg;C air / 55&ndash;70 &deg;C liquid) stays in a closed primary loop. A <strong>double-wall heat exchanger</strong> transfers heat to a separate food-grade water loop, boosted by a heat pump to 70&ndash;90 &deg;C. <strong>The coolant never touches the milk.</strong>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const ROTATIONS = [
+      {
+        name: "Maize Silage -> Alfalfa (3 yr) -> Red Clover",
+        note: "High-protein legume break cuts N fertiliser 25-30% and builds organic matter.",
+        soil: 92, water: 74, heat: 78, feed: 94,
+        coolBonus: 12, dryBonus: -8
+      },
+      {
+        name: "Corn -> Soybeans -> Winter Wheat -> Alfalfa",
+        note: "Classic 4-crop temperate dairy rotation balancing silage energy and rumen-digestible protein.",
+        soil: 88, water: 78, heat: 80, feed: 90,
+        coolBonus: 10, dryBonus: -5
+      },
+      {
+        name: "Sorghum Silage -> Cowpea -> Berseem Clover",
+        note: "Drought- and heat-tolerant C4 silage paired with fast tropical/warm-season N-fixing legumes.",
+        soil: 85, water: 92, heat: 95, feed: 82,
+        coolBonus: -10, dryBonus: 14
+      },
+      {
+        name: "Continuous Maize Monocrop (Baseline)",
+        note: "High short-term silage tonnage, but depletes soil N, increases erosion, and raises pest/heat risk.",
+        soil: 32, water: 48, heat: 52, feed: 68,
+        coolBonus: 0, dryBonus: 0
+      }
+    ];
+
+    let climate = { t2m: 7.0, rain: 2.16, solar: 13.05, wind: 2.98 };
+
+    const el = (id) => document.getElementById(id);
+
+    function renderAll() {
+      const wSoil = +el("wSoil").value;
+      const wWater = +el("wWater").value;
+      const wHeat = +el("wHeat").value;
+      const wFeed = +el("wFeed").value;
+      const wSum = Math.max(1, wSoil + wWater + wHeat + wFeed);
+
+      el("wSoilVal").textContent = Math.round((wSoil / wSum) * 100);
+      el("wWaterVal").textContent = Math.round((wWater / wSum) * 100);
+      el("wHeatVal").textContent = Math.round((wHeat / wSum) * 100);
+      el("wFeedVal").textContent = Math.round((wFeed / wSum) * 100);
+
+      const soilType = el("soil").value;
+      const isWarm = climate.t2m >= 18;
+      const isDry = climate.rain < 2.2 || soilType === "sandy";
+
+      const scored = ROTATIONS.map(r => {
+        let sSoil = r.soil;
+        let sWater = r.water + (isDry ? r.dryBonus : 0);
+        let sHeat = r.heat + (isWarm ? r.dryBonus : r.coolBonus);
+        let sFeed = r.feed;
+        sSoil = Math.max(10, Math.min(100, sSoil));
+        sWater = Math.max(10, Math.min(100, sWater));
+        sHeat = Math.max(10, Math.min(100, sHeat));
+        const total = Math.round((sSoil * wSoil + sWater * wWater + sHeat * wHeat + sFeed * wFeed) / wSum);
+        return { ...r, sSoil, sWater, sHeat, sFeed, total };
+      }).sort((a, b) => b.total - a.total);
+
+      el("rotationsList").innerHTML = scored.map((r, i) => `
+        <div class="rotation-card ${i === 0 ? "best" : ""}">
+          <div class="rot-head">
+            <strong>#${i + 1} ${r.name}</strong>
+            <span class="badge ${r.total < 55 ? "warn" : ""}">Score: ${r.total}/100</span>
+          </div>
+          <div style="font-size:0.84rem; color:var(--muted); margin-top:0.25rem;">${r.note}</div>
+          <div class="bars">
+            <div>Soil: ${r.sSoil}<div class="bar-bg"><div class="bar-fill" style="width:${r.sSoil}%"></div></div></div>
+            <div>Water: ${r.sWater}<div class="bar-bg"><div class="bar-fill" style="width:${r.sWater}%"></div></div></div>
+            <div>Heat: ${r.sHeat}<div class="bar-bg"><div class="bar-fill" style="width:${r.sHeat}%"></div></div></div>
+            <div>Feed: ${r.sFeed}<div class="bar-bg"><div class="bar-fill" style="width:${r.sFeed}%"></div></div></div>
+          </div>
+        </div>
+      `).join("");
+
+      const milk = Math.max(1000, +el("milk").value || 20000);
+      const kwh = Math.round((milk / 20000) * 817);
+      const kw = Math.round((milk / 20000) * 82);
+      el("hDemand").textContent = `${kwh.toLocaleString()} kWh/d`;
+      el("hKw").textContent = `${kw.toLocaleString()} kW`;
+    }
+
+    async function fetchNasaPower() {
+      const lat = parseFloat(el("lat").value);
+      const lon = parseFloat(el("lon").value);
+      el("coordLabel").textContent = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+      el("apiStatus").textContent = "Querying live NASA POWER API...";
+      try {
+        const url = `https://power.larc.nasa.gov/api/temporal/climatology/point?parameters=T2M,PRECTOTCORR,ALLSKY_SFC_SW_DWN,WS2M&community=AG&longitude=${lon}&latitude=${lat}&format=JSON`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const p = data.properties.parameter;
+        climate = {
+          t2m: p.T2M.ANN,
+          rain: p.PRECTOTCORR.ANN,
+          solar: p.ALLSKY_SFC_SW_DWN.ANN,
+          wind: p.WS2M.ANN
+        };
+        el("mTemp").textContent = `${climate.t2m.toFixed(2)} °C`;
+        el("mRain").textContent = `${climate.rain.toFixed(2)} mm/d`;
+        el("mSolar").textContent = `${climate.solar.toFixed(2)} MJ/m²/d`;
+        el("mWind").textContent = `${climate.wind.toFixed(2)} m/s`;
+        el("apiStatus").textContent = "Live NASA POWER data loaded.";
+      } catch (err) {
+        el("apiStatus").textContent = `Using cached baseline (${err.message}).`;
+      }
+      renderAll();
+    }
+
+    el("preset").addEventListener("change", (e) => {
+      const [la, lo] = e.target.value.split(",");
+      el("lat").value = la;
+      el("lon").value = lo;
+      fetchNasaPower();
+    });
+    el("fetchBtn").addEventListener("click", fetchNasaPower);
+    ["wSoil", "wWater", "wHeat", "wFeed", "soil", "milk"].forEach(id => {
+      el(id).addEventListener("input", renderAll);
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>

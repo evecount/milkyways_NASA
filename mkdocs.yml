@@ -1,0 +1,42 @@
+site_name: MilkyWays
+site_description: Decision-support tool for industrial dairy fodder rotation using NASA Earth observations and data centre waste heat.
+site_url: https://evecount.github.io/milkyways_NASA/
+repo_url: https://github.com/evecount/milkyways_NASA
+repo_name: evecount/milkyways_NASA
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - tables
+
+nav:
+  - Home: index.md
+  - Interactive Tool: app/index.html
+  - NASA Datasets: datasets.md
+  - Waste Heat & Safety: waste-heat.md
