@@ -887,7 +887,7 @@
           <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
           <div style="display:flex; gap:0.45rem; align-items:center;">
             <span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span>
-            <span id="autopilotBadge" style="display:none; font-size:0.7rem; padding:0.16rem 0.5rem; border-radius:999px; background:rgba(99,102,241,0.22); color:#c7d2fe; border:1px solid rgba(129,140,248,0.55); font-weight:700;">▶ Autopilot Demo (Move mouse to stop)</span>
+            <span id="autopilotBadge" style="display:none; font-size:0.72rem; padding:0.2rem 0.6rem; border-radius:999px; background:rgba(99,102,241,0.28); color:#e0e7ff; border:1px solid rgba(129,140,248,0.75); font-weight:700;">▶ Autopilot: touring farms — click anywhere to pause</span>
             <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (14 Farms)</button>
             <button type="button" id="topExportReportBtn" style="width:auto; margin:0; padding:0.25rem 0.65rem; font-size:0.75rem; background:#0d9488; color:#fff; border:1px solid #14b8a6; font-weight:700;">Export Municipal Report</button>
             <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
@@ -2989,7 +2989,10 @@
       }
     }
 
+    let autopilotPausedByUser = false;
+
     function stopJudgeAutopilot() {
+      autopilotPausedByUser = true;
       if (idle3sTimer) clearTimeout(idle3sTimer);
       if (idle5sTimer) clearTimeout(idle5sTimer);
       if (idleTimer) clearTimeout(idleTimer);
@@ -2999,13 +3002,15 @@
         autopilotActive = false;
         if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
       }
-      // Keep autopilot off unless explicitly started.
     }
 
     function startJudgeAutopilot() {
-      if (autopilotActive) return;
+      if (autopilotActive || autopilotPausedByUser) return;
       autopilotActive = true;
       if (el("autopilotBadge")) el("autopilotBadge").style.display = "inline-flex";
+      if (el("capcomLatest")) {
+        el("capcomLatest").innerHTML = `<strong style="color:#a5b4fc;">▶ Autopilot:</strong> Touring farms automatically — <strong>click anywhere or touch any control to pause</strong>.`;
+      }
 
       // Beat 1: Fly to Gais, Switzerland (1.5 GWh/yr proof)
       if (el("preset")) {
@@ -3030,10 +3035,11 @@
       }, 12000));
     }
 
-    // Idle autopilot disabled by default so the app never hijacks or re-sites itself while a judge is reading.
-    ["pointermove", "keydown", "wheel", "touchstart", "mousedown"].forEach(evt => {
+    // Start 20s Autopilot Tour only if the judge hasn't interacted; any touch pauses it permanently.
+    ["pointerdown", "keydown", "wheel", "touchstart", "mousedown", "input"].forEach(evt => {
       window.addEventListener(evt, stopJudgeAutopilot, { passive: true });
     });
+    idleTimer = setTimeout(startJudgeAutopilot, 20000);
 
     if (el("topExportReportBtn")) {
       el("topExportReportBtn").addEventListener("click", generateMunicipalReport);
