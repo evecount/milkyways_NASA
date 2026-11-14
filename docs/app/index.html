@@ -601,7 +601,25 @@
           <span><strong>Click anywhere on the map</strong> (or any of the 13 pins) to test siting a dairy farm &middot; <strong>Zoom out</strong> for regional <strong>Synergy Spider</strong></span>
         </div>
         <div id="mcdaMap" style="height:clamp(240px, 32vh, 340px); width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
-        <div id="topologyBoard"></div>
+        <div id="topologyBoard"></div>
+        <div id="diaryChatBox" style="margin-top:0.55rem; background:#0b1120; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.8rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.45rem;">
+            <span style="font-size:0.82rem; font-weight:700; color:var(--accent);">Ask MilkyWays &middot; Dairy Diary Chat (Feeds FodderWeatherNet)</span>
+            <div style="display:flex; gap:0.35rem; flex-wrap:wrap;">
+              <button type="button" class="outcome-chip chat-q" data-q="What should I plant next here?">What to plant?</button>
+              <button type="button" class="outcome-chip chat-q" data-q="Can a data center heat my pasteurizer safely?">Heat loop safe?</button>
+              <button type="button" class="outcome-chip chat-q" data-q="Why did I get this suitability score?">Why this score?</button>
+              <button type="button" class="outcome-chip chat-q" data-q="Log harvest: 21 t/ac, 89/100">Log harvest</button>
+            </div>
+          </div>
+          <div id="chatFeed" style="max-height:110px; overflow-y:auto; font-size:0.79rem; display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.45rem;">
+            <div style="color:#cbd5e1;"><strong style="color:#14b8a6;">MilkyWays:</strong> Ask about rotations, waste-heat safety, or type your harvest (e.g. <em>"21 t/ac maize, 89/100"</em>) to train <code>FodderWeatherNet</code>.</div>
+          </div>
+          <div style="display:flex; gap:0.45rem;">
+            <input id="chatInput" type="text" placeholder="Ask a question or log farm data (e.g. 21 t/ac maize, 89/100)..." style="flex:1; padding:0.42rem 0.65rem; border-radius:6px; border:1px solid var(--border); background:#0f172a; color:var(--text); font-size:0.82rem;" />
+            <button id="chatSendBtn" type="button" style="width:auto; margin:0; padding:0.42rem 0.85rem; font-size:0.82rem; background:linear-gradient(135deg,#4f46e5,#0d9488);">Ask / Log</button>
+          </div>
+        </div>
         <h3 style="font-size:0.88rem; color:var(--muted); margin:0.85rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
           (from live NASA POWER)</h3>
         <div id="diaryCalendar" class="cal-grid"></div>
@@ -1159,13 +1177,7 @@
 
         </div>
 
-        <div style="margin-top:0.5rem; padding:0.4rem 0.65rem; border-radius:6px; background:rgba(20,184,166,0.08); border:1px solid #334155; font-size:0.76rem; color:var(--muted);">
-
-          Watershed &amp; Zoning Buffer: 1,500 ft agricultural setback &middot; Auditable farm + municipality MCDA overlay
-
-        </div>
-
-      `;
+              `;
 
       whizzBoardNumbers(board);
 
@@ -1925,6 +1937,85 @@
       runFarmDiagnostic();
       el("logGroundTruthPanel").scrollIntoView({ behavior: "smooth", block: "center" });
     });
+    function appendChat(role, html) {
+      const feed = el("chatFeed");
+      if (!feed) return;
+      const col = role === "You" ? "#6366f1" : "#14b8a6";
+      const div = document.createElement("div");
+      div.style.color = "#e2e8f0";
+      div.innerHTML = `<strong style="color:${col};">${role}:</strong> ${html}`;
+      feed.appendChild(div);
+      feed.scrollTop = feed.scrollHeight;
+    }
+
+    function handleDiaryChat(raw) {
+      const msg = (raw || "").trim();
+      if (!msg) return;
+      appendChat("You", msg.replace(/</g, "&lt;"));
+      const low = msg.toLowerCase();
+
+      // Detect harvest / score logging intent to feed FodderWeatherNet
+      const scoreMatch = msg.match(/(\d{1,3})\s*\/\s*100/);
+      const yieldMatch = msg.match(/(\d+(?:\.\d+)?)\s*t\s*\/\s*ac/i);
+      if (low.includes("log") || scoreMatch || yieldMatch) {
+        if (yieldMatch && el("yieldTon")) el("yieldTon").value = yieldMatch[1];
+        const sc = scoreMatch ? Math.max(1, Math.min(100, +scoreMatch[1])) : (+el("obsOutcome").value || 88);
+        const crop = low.includes("sorghum") || low.includes("cowpea") ? "Sorghum -> Cowpea" : (low.includes("maize") || low.includes("alfalfa") ? "Maize Silage -> Alfalfa" : el("obsCrop").value);
+        const list = getObs();
+        list.push({
+          timestamp: new Date().toISOString(),
+          lat: parseFloat(el("lat").value),
+          lon: parseFloat(el("lon").value),
+          soil: el("soil").value,
+          t2m: climate.t2m,
+          rain: climate.rain,
+          solar: climate.solar,
+          crop,
+          observed_score: sc,
+          note: `Chat log · ${yieldMatch ? yieldMatch[1] + " t/ac · " : ""}T2M ${climate.t2m.toFixed(1)}°C`
+        });
+        localStorage.setItem("milkyways_obs", JSON.stringify(list));
+        updateObsStatus(true);
+        renderAll();
+        appendChat("MilkyWays", `Logged <strong>${crop} (${sc}/100)</strong> to Dairy Diary (${list.length} total) — ready to retrain <code>FodderWeatherNet</code>!`);
+        return;
+      }
+
+      if (isWaterSite) {
+        appendChat("MilkyWays", `<strong>Open-Water Exclusion:</strong> These coordinates (${el("lat").value}°, ${el("lon").value}°) are offshore. Click on land or pick one of the 13 farms to run siting &amp; rotation checks.`);
+        return;
+      }
+
+      const htstOk = el("heatMode").value === "boosted";
+      const milk = Math.max(500, +el("milk").value || 1200);
+      const kwh = Math.round((milk / 20000) * 817);
+      if (low.includes("heat") || low.includes("pasteur") || low.includes("data center") || low.includes("safe")) {
+        appendChat("MilkyWays", htstOk
+          ? `<strong>PASS:</strong> 55–70°C liquid loop + heat pump (70–90°C) covers your <strong>${kwh.toLocaleString()} kWh/d</strong> HTST pasteurization (72–78°C) via a double-wall heat exchanger (zero coolant-milk contact).`
+          : `<strong>FAIL:</strong> Unboosted 30–45°C air waste heat cannot reach 72–78°C HTST pasteurization. Switch to 55–70°C Liquid + Heat Pump.`);
+        return;
+      }
+
+      if (low.includes("score") || low.includes("why") || low.includes("wlc")) {
+        appendChat("MilkyWays", `${el("heroSuitabilityBadge").textContent} using 6 weights: Soil ${el("wSoilVal").textContent}%, Water ${el("wWaterVal").textContent}%, Heat ${el("wHeatVal").textContent}%, Feed ${el("wFeedVal").textContent}%, Grid ${el("wGridVal").textContent}%, Flood ${el("wFloodVal").textContent}%. NASA T2M is ${climate.t2m.toFixed(1)}°C.`);
+        return;
+      }
+
+      const isWarm = climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy";
+      const rec = isWarm ? "Sorghum Silage -> Cowpea -> Berseem Clover" : "Maize Silage -> Alfalfa (3 yr) -> Red Clover";
+      appendChat("MilkyWays", `At ${climate.t2m.toFixed(1)}°C &amp; ${climate.rain.toFixed(1)} mm/d rain (${el("soil").value} soil), plant <strong>${rec}</strong> — cuts synthetic N 25–30%. (Risk: ${el("dlRisk") ? el("dlRisk").textContent : "--"}).`);
+    }
+
+    el("chatSendBtn").addEventListener("click", () => {
+      handleDiaryChat(el("chatInput").value);
+      el("chatInput").value = "";
+    });
+    el("chatInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); el("chatSendBtn").click(); }
+    });
+    document.querySelectorAll(".chat-q").forEach(btn => {
+      btn.addEventListener("click", () => handleDiaryChat(btn.dataset.q));
+    });
   </script>
 </body>
 
