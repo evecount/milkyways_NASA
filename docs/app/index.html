@@ -1582,6 +1582,7 @@
         return div;
       };
       keyCtrl.addTo(mcdaMap);
+      L.control.scale({ metric: true, imperial: true, position: "bottomright" }).addTo(mcdaMap);
 
       GLOBAL_FARMS.forEach(gf => {
 
@@ -2465,6 +2466,7 @@
       const nodes = ${JSON.stringify(synergyNodes)};
       const maxPipeKm = ${MAX_PIPE_KM};
       const map = L.map("reportMap", { zoomControl: true }).setView([lat, lon], 10);
+      L.control.scale({ metric: true, imperial: true, position: "bottomright" }).addTo(map);
       L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
         attribution: "Esri World Imagery", maxZoom: 18
       }).addTo(map);
