@@ -68,6 +68,7 @@ Every candidate configuration in **MilkyWays** must pass four explicit checks:
 - **Spatial resolution:** NASA POWER (`~50 km`) models regional climate, not individual paddocks; field-scale deployment pairs it with `10 km` GPM IMERG, `9 km` SMAP, `250 m` MODIS, and `30 m` HLS.
 - **Temporal record:** SMAP begins in `2015` and is restricted to current soil-moisture conditions.
 - **Next horizon:** Generalize the closed-loop heat-recovery model and predictive weather pipeline to a second farm type (broiler poultry houses requiring `32–34 °C` brooding heat and NASA heat-stress alerts).
+- **Future efficiency & rural grid symbiosis:** AI data centers are increasingly sited in rural agricultural regions for land, water, and high-voltage transmission access—putting them directly alongside livestock and dairy operations (e.g., ~4,925 active/under-construction U.S. data centers sharing rural grids and aquifers with 11,000–15,000+ regulated livestock operations). Rather than competing for local power and water, MilkyWays turns proximity into circular efficiency: closed-loop data center waste heat offsets the dairy plant's ~70% thermal load, while NASA POWER and SMAP-guided fodder rotations cut synthetic nitrogen use and irrigation stress on the shared watershed.
 
 ---
 
