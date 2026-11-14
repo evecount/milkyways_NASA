@@ -584,13 +584,34 @@
       flex-wrap: wrap;
     }
     .popup-stage {
+      width: auto;
+      margin: 0;
       font-size: 11px;
       font-weight: 700;
-      padding: 2px 7px;
+      padding: 3px 8px;
       border-radius: 999px;
       background: #e2e8f0;
       color: #0f172a;
       border: 1px solid #cbd5e1;
+      cursor: pointer;
+    }
+    .popup-stage:hover {
+      background: #cbd5e1;
+    }
+    .popup-stage.active {
+      background: #0f766e;
+      color: #ffffff;
+      border-color: #0f766e;
+    }
+    .popup-stage-detail {
+      font-size: 11.5px;
+      line-height: 1.4;
+      color: #1e293b;
+      background: #f1f5f9;
+      border-left: 3px solid #0d9488;
+      padding: 5px 7px;
+      border-radius: 4px;
+      margin: 4px 0 6px;
     }
     .popup-export-btn {
       width: 100%;
@@ -1723,13 +1744,14 @@
         <strong>Candidate Dairy Parcel</strong> (${lat.toFixed(3)}°, ${lon.toFixed(3)}°)<br/>
         <strong>MCDA Score:</strong> ${score}/100 &middot; <strong>HTST:</strong> ${htstOk ? "72–78 °C PASS" : "FAIL"}<br/>
         <strong>NASA POWER:</strong> ${climate.t2m.toFixed(1)} °C &middot; ${climate.rain.toFixed(1)} mm/d &middot; ${climate.solar.toFixed(1)} MJ/m²/d<br/>
-        <strong>FodderWeatherNet:</strong> C3 ${c3Txt} | C4 ${c4Txt} (${riskTxt})<br/>
+        <strong>FodderWeatherNet:</strong> C3 ${c3Txt.replace(/\s+/g,"")} | C4 ${c4Txt.replace(/\s+/g,"")} (Risk ${riskTxt.replace(/\s+/g,"")})<br/>
         <strong>Top Rotation:</strong> ${topName}
         <div class="popup-stages">
-          <span class="popup-stage" title="Weeks 1–4: Screening & 1,500 ft setback check">1. Eval</span>
-          <span class="popup-stage" title="Months 1–6: Double-wall HX & Dairy Diary calibration">2. Pilot</span>
-          <span class="popup-stage" title="Months 6–18+: Full circular symbiosis">3. Result</span>
+          <button type="button" class="popup-stage" onclick="showPopupStage(this,'eval','parcel','this site')">1. Eval</button>
+          <button type="button" class="popup-stage" onclick="showPopupStage(this,'pilot','parcel','this site')">2. Pilot</button>
+          <button type="button" class="popup-stage" onclick="showPopupStage(this,'result','parcel','this site')">3. Result</button>
         </div>
+        <div class="popup-stage-detail" style="display:none;"></div>
         <button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>
       `;
 
@@ -1772,7 +1794,7 @@
             .bindTooltip(`${n.name} (${km} km · ${n.cap} · Viable Pipe)`)
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><div class="popup-stages"><span class="popup-stage" title="Weeks 1–4: Survey pipe corridor & setback">1. Eval</span><span class="popup-stage" title="Months 1–6: Double-wall HX + HTST metering">2. Pilot</span><span class="popup-stage" title="Months 6–18+: Offtake + N cut + cascade">3. Result</span></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
+            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><div class="popup-stages"><button type="button" class="popup-stage" onclick="showPopupStage(this,'eval','pipe','${n.name}')">1. Eval</button><button type="button" class="popup-stage" onclick="showPopupStage(this,'pilot','pipe','${n.name}')">2. Pilot</button><button type="button" class="popup-stage" onclick="showPopupStage(this,'result','pipe','${n.name}')">3. Result</button></div><div class="popup-stage-detail" style="display:none;"></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
             .addTo(spiderLayer);
         } else {
           // Beyond 12 km: no pipe line — render a Position Beacon only
@@ -1780,7 +1802,7 @@
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 5, color: "#fff", fillColor: "#f59e0b", fillOpacity: 0.95, weight: 1.5 })
             .bindTooltip(`${n.name} — Position Beacon (${km} km > ${MAX_PIPE_KM} km pipe limit)`)
-            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<div class="popup-stages"><span class="popup-stage" title="Weeks 1–4: Survey pipe corridor & setback">1. Eval</span><span class="popup-stage" title="Months 1–6: Double-wall HX + HTST metering">2. Pilot</span><span class="popup-stage" title="Months 6–18+: Offtake + N cut + cascade">3. Result</span></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
+            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<div class="popup-stages"><button type="button" class="popup-stage" onclick="showPopupStage(this,'eval','beacon','${n.name}')">1. Eval</button><button type="button" class="popup-stage" onclick="showPopupStage(this,'pilot','beacon','${n.name}')">2. Pilot</button><button type="button" class="popup-stage" onclick="showPopupStage(this,'result','beacon','${n.name}')">3. Result</button></div><div class="popup-stage-detail" style="display:none;"></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
             .addTo(spiderLayer);
         }
       });
@@ -2336,6 +2358,33 @@
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;");
+    }
+
+    function showPopupStage(btn, stage, mode, label) {
+      const box = btn.closest(".leaflet-popup-content");
+      if (!box) return;
+      box.querySelectorAll(".popup-stage").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const detail = box.querySelector(".popup-stage-detail");
+      const copy = {
+        eval: mode === "pipe"
+          ? `<strong>Stage 1 · Eval (Weeks 1–4):</strong> Survey insulated pipe route to ${label}, verify 1,500 ft setback, and log baseline soil/forage facts.`
+          : `<strong>Stage 1 · Eval (Weeks 1–4):</strong> Pipe > ${MAX_PIPE_KM} km is non-viable; screen parcel for on-site Edge Data Center co-location &amp; 1,500 ft setback.`,
+        pilot: mode === "pipe"
+          ? `<strong>Stage 2 · Pilot (Months 1–6):</strong> Install double-wall HX + heat pump (70–90 °C), meter kWh/d HTST offset, and calibrate FodderWeatherNet.`
+          : `<strong>Stage 2 · Pilot (Months 1–6):</strong> Permit modular liquid-cooled Edge DC (55–70 °C) paired directly with double-wall HX (~0 km pipe loss).`,
+        result: mode === "pipe"
+          ? `<strong>Stage 3 · Result (Months 6–18+):</strong> Lock in long-term waste-heat offtake, 25–30% synthetic N cut, and cascade 30–45 °C heat to greenhouses.`
+          : `<strong>Stage 3 · Result (Months 6–18+):</strong> Run zero-loss circular symbiosis (HTST 72–78 °C + ~7.2 °C chill) and cascade residual heat locally.`
+      };
+      const text = copy[stage] || copy.eval;
+      if (detail) {
+        detail.innerHTML = text;
+        detail.style.display = "block";
+      }
+      if (el("capcomLatest")) {
+        el("capcomLatest").innerHTML = text;
+      }
     }
 
     function generateMunicipalReport() {
