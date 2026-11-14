@@ -485,6 +485,58 @@
       border-color: rgba(52, 211, 153, 0.8);
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
+    .top-export-btn {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(20, 184, 166, 0.22));
+      border: 1px solid rgba(52, 211, 153, 0.65);
+      color: #ecfdf5;
+      padding: 0.38rem 0.85rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease;
+    }
+    .top-export-btn:hover {
+      transform: translateY(-1px);
+      border-color: #34d399;
+    }
+    .journey-bar {
+      max-width: 1400px;
+      margin: 0.65rem auto 0;
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .journey-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.32rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #334155;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .journey-step.active {
+      color: #e0f2fe;
+      border-color: rgba(56, 189, 248, 0.55);
+      background: rgba(14, 165, 233, 0.12);
+    }
+    .journey-step.done {
+      color: #d1fae5;
+      border-color: rgba(52, 211, 153, 0.55);
+      background: rgba(16, 185, 129, 0.14);
+    }
+    .journey-arrow {
+      color: #475569;
+      font-size: 0.8rem;
+    }
     .export-report-btn:active {
       transform: translateY(1px);
     }
@@ -503,8 +555,17 @@
       <a href="../paper/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">Technical Paper</a>
       <a href="../datasets/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">NASA Datasets</a>
       <a href="../slides/" style="background:#1e293b; border:1px solid #334155; padding:0.35rem 0.7rem; border-radius:6px;">7-Slide Demo</a>
+      <button id="topExportReportBtn" class="top-export-btn" type="button" title="Export print-to-PDF Municipal Feasibility Report with site map, co-location plan, Eval → Pilot → Result roadmap, and NASA provenance.">Export Report</button>
     </div>
   </header>
+
+  <div class="journey-bar" aria-label="Decision workflow progression">
+    <button type="button" class="journey-step done" id="step1Pill" onclick="el('preset').focus()" title="Step 1: Pick a preset region or click anywhere on the satellite map.">① Site Selected ✓</button>
+    <span class="journey-arrow">→</span>
+    <button type="button" class="journey-step active" id="step2Pill" onclick="el('wSoil').focus()" title="Step 2: Adjust the 6 MCDA priorities, inspect checks, or ask Dairy Diary Chat.">② Tune &amp; Inspect</button>
+    <span class="journey-arrow">→</span>
+    <button type="button" class="journey-step" id="step3Pill" onclick="generateMunicipalReport()" title="Step 3: Export the complete Municipal Feasibility Packet (HTML / Print to PDF).">③ Export Municipal Packet</button>
+  </div>
 
   <div class="container">
     <aside>
@@ -2451,11 +2512,26 @@
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 1500);
 
+      markJourneyStep(3);
       if (el("apiStatus")) {
         el("apiStatus").textContent = `Municipal feasibility packet exported for (${lat.toFixed(3)}, ${lon.toFixed(3)}).`;
       }
     }
 
+    function markJourneyStep(step) {
+      const s1 = el("step1Pill"), s2 = el("step2Pill"), s3 = el("step3Pill");
+      if (!s1 || !s2 || !s3) return;
+      if (step >= 1) { s1.classList.add("done"); s1.classList.remove("active"); }
+      if (step === 2) { s2.classList.add("done"); s2.classList.remove("active"); s3.classList.add("active"); }
+      if (step >= 3) { s2.classList.add("done"); s3.classList.add("done"); s3.classList.remove("active"); s3.textContent = "③ Packet Exported ✓"; }
+    }
+
+    if (el("topExportReportBtn")) {
+      el("topExportReportBtn").addEventListener("click", generateMunicipalReport);
+    }
+    ["wSoil","wWater","wHeat","wFeed","wGrid","wFlood"].forEach(id => {
+      if (el(id)) el(id).addEventListener("input", () => markJourneyStep(2));
+    });
     if (el("exportReportBtn")) {
       el("exportReportBtn").addEventListener("click", generateMunicipalReport);
     }
