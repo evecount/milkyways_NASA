@@ -490,7 +490,13 @@
           <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
           <option value="43.07,-89.40">Wisconsin Dairy Belt, USA (43.07, -89.40)</option>
           <option value="-37.79,175.28">Waikato Pasture Dairy, New Zealand (-37.79, 175.28)</option>
-          <option value="-0.30,36.08">Nakuru Highland Dairy, Kenya (-0.30, 36.08)</option>
+          <option value="-0.30,36.08">Nakuru Highland Dairy, Kenya (-0.30, 36.08)</option>
+          <option value="53.12,5.79">Friesland Dairy Polder, Netherlands (53.12, 5.79)</option>
+          <option value="51.90,-8.47">Cork Pasture Belt, Ireland (51.90, -8.47)</option>
+          <option value="42.92,143.20">Hokkaido Tokachi Dairy, Japan (42.92, 143.20)</option>
+          <option value="22.56,72.93">Anand Cooperative Dairy, India (22.56, 72.93)</option>
+          <option value="-24.79,-50.01">Castro Parana Dairy, Brazil (-24.79, -50.01)</option>
+          <option value="-38.16,146.53">Gippsland Dairy Valley, Australia (-38.16, 146.53)</option>
         </select>
 
         <details style="margin-top:0.65rem;">
@@ -572,7 +578,7 @@
         <div class="rot-head" style="margin-bottom:0.4rem;">
           <h2 style="margin:0;">MCDA Parcel Topology &amp; 12-Month Calendar</h2>
           <div style="display:flex; gap:0.45rem; align-items:center;">
-            <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (6 Farms)</button>
+            <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (12 Farms)</button>
             <span class="badge" id="heroSuitabilityBadge">Suitability: --/100</span>
           </div>
         </div>
@@ -1135,39 +1141,102 @@
 
 
 
-    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, spiderLayer = null, hasUserPickedRegion = false;
-    const REGIONAL_SYNERGIES = {
-      "1.42,103.72": [
-        { name: "Woodlands / Sungei Kadut DC Hub", type: "dc", lat: 1.44, lon: 103.76, cap: "60 MW heat" },
-        { name: "Jurong / Tuas Industrial Corridor", type: "dc", lat: 1.33, lon: 103.65, cap: "120 MW heat" },
-        { name: "Johor Sedenak Tech Park", type: "dc", lat: 1.67, lon: 103.56, cap: "200 MW heat" },
-        { name: "Lim Chu Kang Agri-Cluster", type: "farm", lat: 1.43, lon: 103.70, cap: "Fodder / Dairy" }
-      ],
-      "44.08,-79.88": [
-        { name: "Markham / Vaughan DC Corridor", type: "dc", lat: 43.85, lon: -79.35, cap: "95 MW heat" },
-        { name: "Brampton Cloud Hub", type: "dc", lat: 43.73, lon: -79.76, cap: "70 MW heat" },
-        { name: "Guelph Dairy Research Belt", type: "farm", lat: 43.54, lon: -80.25, cap: "Fodder / Dairy" }
-      ],
-      "47.36,9.45": [
-        { name: "St. Gallen Data Hub", type: "dc", lat: 47.42, lon: 9.37, cap: "25 MW heat" },
-        { name: "Zurich Cloud Campus", type: "dc", lat: 47.38, lon: 8.54, cap: "110 MW heat" },
-        { name: "Appenzell Alpine Pastures", type: "farm", lat: 47.33, lon: 9.41, cap: "Cheese Dairy" }
-      ],
-      "43.07,-89.40": [
-        { name: "Madison Tech & Cloud Hub", type: "dc", lat: 43.09, lon: -89.32, cap: "80 MW heat" },
-        { name: "Mount Pleasant AI Campus", type: "dc", lat: 42.71, lon: -87.89, cap: "250 MW heat" },
-        { name: "Dane County Dairy Cluster", type: "farm", lat: 43.18, lon: -89.55, cap: "Silage / Dairy" }
-      ],
-      "-37.79,175.28": [
-        { name: "Hamilton Cloud Node", type: "dc", lat: -37.76, lon: 175.25, cap: "40 MW heat" },
-        { name: "Auckland Hyperscale Zone", type: "dc", lat: -36.82, lon: 174.63, cap: "140 MW heat" },
-        { name: "Matamata Pasture Belt", type: "farm", lat: -37.81, lon: 175.77, cap: "Pasture Dairy" }
-      ],
-      "-0.30,36.08": [
-        { name: "Naivasha Geothermal DC Zone", type: "dc", lat: -0.72, lon: 36.43, cap: "50 MW heat" },
-        { name: "Nairobi East Africa Cloud Hub", type: "dc", lat: -1.29, lon: 36.82, cap: "90 MW heat" },
+    let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, spiderLayer = null, hasUserPickedRegion = false;
+
+    const REGIONAL_SYNERGIES = {
+
+      "1.42,103.72": [
+
+        { name: "Woodlands / Sungei Kadut DC Hub", type: "dc", lat: 1.44, lon: 103.76, cap: "60 MW heat" },
+
+        { name: "Jurong / Tuas Industrial Corridor", type: "dc", lat: 1.33, lon: 103.65, cap: "120 MW heat" },
+
+        { name: "Johor Sedenak Tech Park", type: "dc", lat: 1.67, lon: 103.56, cap: "200 MW heat" },
+
+        { name: "Lim Chu Kang Agri-Cluster", type: "farm", lat: 1.43, lon: 103.70, cap: "Fodder / Dairy" }
+
+      ],
+
+      "44.08,-79.88": [
+
+        { name: "Markham / Vaughan DC Corridor", type: "dc", lat: 43.85, lon: -79.35, cap: "95 MW heat" },
+
+        { name: "Brampton Cloud Hub", type: "dc", lat: 43.73, lon: -79.76, cap: "70 MW heat" },
+
+        { name: "Guelph Dairy Research Belt", type: "farm", lat: 43.54, lon: -80.25, cap: "Fodder / Dairy" }
+
+      ],
+
+      "47.36,9.45": [
+
+        { name: "St. Gallen Data Hub", type: "dc", lat: 47.42, lon: 9.37, cap: "25 MW heat" },
+
+        { name: "Zurich Cloud Campus", type: "dc", lat: 47.38, lon: 8.54, cap: "110 MW heat" },
+
+        { name: "Appenzell Alpine Pastures", type: "farm", lat: 47.33, lon: 9.41, cap: "Cheese Dairy" }
+
+      ],
+
+      "43.07,-89.40": [
+
+        { name: "Madison Tech & Cloud Hub", type: "dc", lat: 43.09, lon: -89.32, cap: "80 MW heat" },
+
+        { name: "Mount Pleasant AI Campus", type: "dc", lat: 42.71, lon: -87.89, cap: "250 MW heat" },
+
+        { name: "Dane County Dairy Cluster", type: "farm", lat: 43.18, lon: -89.55, cap: "Silage / Dairy" }
+
+      ],
+
+      "-37.79,175.28": [
+
+        { name: "Hamilton Cloud Node", type: "dc", lat: -37.76, lon: 175.25, cap: "40 MW heat" },
+
+        { name: "Auckland Hyperscale Zone", type: "dc", lat: -36.82, lon: 174.63, cap: "140 MW heat" },
+
+        { name: "Matamata Pasture Belt", type: "farm", lat: -37.81, lon: 175.77, cap: "Pasture Dairy" }
+
+      ],
+
+      "-0.30,36.08": [
+
+        { name: "Naivasha Geothermal DC Zone", type: "dc", lat: -0.72, lon: 36.43, cap: "50 MW heat" },
+
+        { name: "Nairobi East Africa Cloud Hub", type: "dc", lat: -1.29, lon: 36.82, cap: "90 MW heat" },
+
         { name: "Rift Valley Fodder Co-op", type: "farm", lat: -0.25, lon: 36.15, cap: "Sorghum / Dairy" }
-      ]
+      ],
+      "53.12,5.79": [
+        { name: "Eemshaven Hyperscale DC", type: "dc", lat: 53.44, lon: 6.83, cap: "160 MW heat" },
+        { name: "Groningen Cloud Hub", type: "dc", lat: 53.22, lon: 6.57, cap: "55 MW heat" },
+        { name: "Leeuwarden Dairy Polder", type: "farm", lat: 53.20, lon: 5.80, cap: "Grass / Dairy" }
+      ],
+      "51.90,-8.47": [
+        { name: "Cork Harbour Data Hub", type: "dc", lat: 51.85, lon: -8.30, cap: "75 MW heat" },
+        { name: "Dublin Cloud Corridor", type: "dc", lat: 53.35, lon: -6.40, cap: "220 MW heat" },
+        { name: "Munster Grass-Fed Co-op", type: "farm", lat: 52.14, lon: -8.65, cap: "Clover / Dairy" }
+      ],
+      "42.92,143.20": [
+        { name: "Ishikari Cold-Climate DC", type: "dc", lat: 43.22, lon: 141.32, cap: "90 MW heat" },
+        { name: "Sapporo Edge Cloud Hub", type: "dc", lat: 43.06, lon: 141.35, cap: "45 MW heat" },
+        { name: "Obihiro Forage Belt", type: "farm", lat: 42.90, lon: 143.10, cap: "Silage / Dairy" }
+      ],
+      "22.56,72.93": [
+        { name: "GIFT City Data Corridor", type: "dc", lat: 23.16, lon: 72.68, cap: "110 MW heat" },
+        { name: "Vadodara Industrial Hub", type: "dc", lat: 22.31, lon: 73.18, cap: "65 MW heat" },
+        { name: "Kaira Dairy Cooperative", type: "farm", lat: 22.62, lon: 72.88, cap: "Sorghum / Dairy" }
+      ],
+      "-24.79,-50.01": [
+        { name: "Curitiba Data Hub", type: "dc", lat: -25.43, lon: -49.27, cap: "85 MW heat" },
+        { name: "Campinas / SP Cloud Belt", type: "dc", lat: -22.91, lon: -47.06, cap: "190 MW heat" },
+        { name: "Castrolanda Dairy Co-op", type: "farm", lat: -24.85, lon: -49.95, cap: "Maize / Dairy" }
+      ],
+      "-38.16,146.53": [
+        { name: "Morwell Energy & Cloud Hub", type: "dc", lat: -38.23, lon: 146.40, cap: "70 MW heat" },
+        { name: "Melbourne Eastern DC", type: "dc", lat: -37.88, lon: 145.16, cap: "130 MW heat" },
+        { name: "Latrobe Pasture Belt", type: "farm", lat: -38.18, lon: 146.60, cap: "Alfalfa / Dairy" }
+
+      ]
+
     };
 
     const GLOBAL_FARMS = [
@@ -1182,7 +1251,13 @@
 
       { key: "-37.79,175.28", name: "Waikato Pasture Dairy, New Zealand", lat: -37.79, lon: 175.28 },
 
-      { key: "-0.30,36.08", name: "Nakuru Highland Dairy, Kenya", lat: -0.30, lon: 36.08 }
+      { key: "-0.30,36.08", name: "Nakuru Highland Dairy, Kenya", lat: -0.30, lon: 36.08 },
+      { key: "53.12,5.79", name: "Friesland Dairy Polder, Netherlands", lat: 53.12, lon: 5.79 },
+      { key: "51.90,-8.47", name: "Cork Pasture Belt, Ireland", lat: 51.90, lon: -8.47 },
+      { key: "42.92,143.20", name: "Hokkaido Tokachi Dairy, Japan", lat: 42.92, lon: 143.20 },
+      { key: "22.56,72.93", name: "Anand Cooperative Dairy, India", lat: 22.56, lon: 72.93 },
+      { key: "-24.79,-50.01", name: "Castro Parana Dairy, Brazil", lat: -24.79, lon: -50.01 },
+      { key: "-38.16,146.53", name: "Gippsland Dairy Valley, Australia", lat: -38.16, lon: 146.53 }
 
     ];
 
@@ -1230,7 +1305,8 @@
 
       rasterLayer = L.layerGroup().addTo(mcdaMap);
 
-      bufferLayer = L.layerGroup().addTo(mcdaMap);
+      bufferLayer = L.layerGroup().addTo(mcdaMap);
+
       spiderLayer = L.layerGroup().addTo(mcdaMap);
 
       GLOBAL_FARMS.forEach(gf => {
@@ -1259,11 +1335,12 @@
 
         { "Satellite": sat, "Topographic (MCDA)": topo },
 
-        { "Global 6-Farm Network": globalFarmsLayer, "Synergy Spider (Zoom Out)": spiderLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
+        { "Global 12-Farm Network": globalFarmsLayer, "Synergy Spider (Zoom Out)": spiderLayer, "NASA MCDA Raster Grid": rasterLayer, "Co-Location Buffer Rings": bufferLayer }
 
       ).addTo(mcdaMap);
 
-      mcdaMap.on("zoomend", renderSynergySpider);
+      mcdaMap.on("zoomend", renderSynergySpider);
+
       mcdaMap.on("click", (e) => {
 
         hasUserPickedRegion = true;
@@ -1386,7 +1463,8 @@
 
 
 
-      renderSynergySpider();
+      renderSynergySpider();
+
       if (hasUserPickedRegion) {
 
         const dist = mcdaMap.getCenter().distanceTo([lat, lon]);
@@ -1471,31 +1549,56 @@
 
 
 
-    function renderSynergySpider() {
-      if (!mcdaMap || !spiderLayer) return;
-      spiderLayer.clearLayers();
-      const z = mcdaMap.getZoom();
-      if (z > 11 || z < 4) return;
-      const lat = parseFloat(el("lat").value) || 1.42;
-      const lon = parseFloat(el("lon").value) || 103.72;
-      const presetKey = el("preset").value;
-      const nodes = REGIONAL_SYNERGIES[presetKey] || [
-        { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
-        { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
-        { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
-      ];
-      nodes.forEach(n => {
-        const km = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1);
-        const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
-        L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
-          .bindTooltip(`${n.name} (${km} km · ${n.cap})`)
-          .addTo(spiderLayer);
-        L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-          .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}`)
-          .addTo(spiderLayer);
-      });
-    }
-
+    function renderSynergySpider() {
+
+      if (!mcdaMap || !spiderLayer) return;
+
+      spiderLayer.clearLayers();
+
+      const z = mcdaMap.getZoom();
+
+      if (z > 11 || z < 4) return;
+
+      const lat = parseFloat(el("lat").value) || 1.42;
+
+      const lon = parseFloat(el("lon").value) || 103.72;
+
+      const presetKey = el("preset").value;
+
+      const nodes = REGIONAL_SYNERGIES[presetKey] || [
+
+        { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
+
+        { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
+
+        { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
+
+      ];
+
+      nodes.forEach(n => {
+
+        const km = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1);
+
+        const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
+
+        L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
+
+          .bindTooltip(`${n.name} (${km} km · ${n.cap})`)
+
+          .addTo(spiderLayer);
+
+        L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
+
+          .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}`)
+
+          .addTo(spiderLayer);
+
+      });
+
+    }
+
+
+
     function renderCalendar() {
       const cal = el("diaryCalendar");
       if (!cal) return;
@@ -1554,7 +1657,13 @@
       "1.42,103.72": { cows: 40, milk: 1200, acres: 45, soil: "clay" },
       "43.07,-89.40": { cows: 350, milk: 11500, acres: 850, soil: "loam" },
       "-37.79,175.28": { cows: 420, milk: 12000, acres: 700, soil: "loam" },
-      "-0.30,36.08": { cows: 60, milk: 1100, acres: 90, soil: "sandy" }
+      "-0.30,36.08": { cows: 60, milk: 1100, acres: 90, soil: "sandy" },
+      "53.12,5.79": { cows: 220, milk: 7200, acres: 310, soil: "clay" },
+      "51.90,-8.47": { cows: 180, milk: 5400, acres: 280, soil: "loam" },
+      "42.92,143.20": { cows: 260, milk: 8100, acres: 450, soil: "loam" },
+      "22.56,72.93": { cows: 140, milk: 2800, acres: 120, soil: "sandy" },
+      "-24.79,-50.01": { cows: 310, milk: 9600, acres: 520, soil: "clay" },
+      "-38.16,146.53": { cows: 380, milk: 10800, acres: 640, soil: "loam" }
     };
     el("worldViewBtn").addEventListener("click", () => {
       hasUserPickedRegion = false;
