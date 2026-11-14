@@ -52,17 +52,43 @@
     }
 
     .container {
-      max-width: 1160px;
+      width: 100%;
+      max-width: min(1640px, 96vw);
       margin: 0 auto;
-      padding: 1.5rem;
+      padding: 1rem 1.25rem;
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 1.5rem;
+      grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
+      gap: 1.25rem;
+      align-items: start;
+    }
+
+    aside {
+      position: sticky;
+      top: 1rem;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0.4rem;
+    }
+
+    @media (min-width: 1360px) {
+      .cal-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 860px) {
       .container {
         grid-template-columns: 1fr;
+        padding: 0.75rem;
+      }
+      aside {
+        position: static;
+      }
+      .cal-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -148,42 +174,78 @@
       transform: translateY(-1px);
     }
 
-    .topo-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.65rem;
-    }
-    @media (max-width: 720px) {
-      .topo-grid { grid-template-columns: 1fr; }
-    }
-    .topo-chip {
-      background: #0b1120;
-      border: 1.5px solid var(--border);
-      border-radius: 10px;
-      padding: 0.75rem 0.85rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      min-height: 128px;
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-    .topo-chip h4 {
-      margin: 0 0 0.35rem;
-      font-size: 0.86rem;
-      color: var(--text);
-    }
-    .flap {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-variant-numeric: tabular-nums;
-      color: #f8fafc;
-      font-weight: 700;
-      background: rgba(148, 163, 184, 0.12);
-      padding: 0.05rem 0.28rem;
-      border-radius: 4px;
-      letter-spacing: 0.03em;
-    }
-
+    .topo-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 0.65rem;
+
+    }
+
+    @media (max-width: 720px) {
+
+      .topo-grid { grid-template-columns: 1fr; }
+
+    }
+
+    .topo-chip {
+
+      background: #0b1120;
+
+      border: 1.5px solid var(--border);
+
+      border-radius: 10px;
+
+      padding: 0.75rem 0.85rem;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: space-between;
+
+      min-height: 128px;
+
+      font-size: 0.78rem;
+
+      color: var(--muted);
+
+    }
+
+    .topo-chip h4 {
+
+      margin: 0 0 0.35rem;
+
+      font-size: 0.86rem;
+
+      color: var(--text);
+
+    }
+
+    .flap {
+
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+      font-variant-numeric: tabular-nums;
+
+      color: #f8fafc;
+
+      font-weight: 700;
+
+      background: rgba(148, 163, 184, 0.12);
+
+      padding: 0.05rem 0.28rem;
+
+      border-radius: 4px;
+
+      letter-spacing: 0.03em;
+
+    }
+
+
+
     #fetchBtn:active {
       transform: translateY(3px);
       box-shadow: 0 1px 0 #3730a3;
@@ -471,11 +533,11 @@
         <div class="status" style="margin-top:0; margin-bottom:0.65rem;">
           Interactive NASA MCDA suitability map &amp; closed-loop heat topology. <strong>Click anywhere on the map</strong> to test siting a dairy farm at those coordinates.
         </div>
-        <div id="mcdaMap" style="height:250px; width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
+        <div id="mcdaMap" style="height:clamp(240px, 32vh, 340px); width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
         <div id="topologyBoard"></div>
         <h3 style="font-size:0.88rem; color:var(--muted); margin:0.85rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar
           (from live NASA POWER)</h3>
-        <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
+        <div id="diaryCalendar" class="cal-grid"></div>
         <details style="margin-top:0.85rem; background:#0b1120; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.85rem;">
           <summary style="cursor:pointer; font-size:0.85rem; font-weight:600; color:var(--accent);">Inside the Tuning: MCDA + FodderWeatherNet Pipeline</summary>
           <div id="tuningInsides" style="margin-top:0.65rem; font-size:0.8rem; color:#cbd5e1;"></div>
@@ -854,86 +916,166 @@
       renderCalendar();
     }
 
-    let flapAnimId = 0;
-    function whizzBoardNumbers(container) {
-      if (!container) return;
-      if (flapAnimId) cancelAnimationFrame(flapAnimId);
-      const flaps = Array.from(container.querySelectorAll(".flap[data-target]"));
-      const start = performance.now();
-      const duration = 460;
-      function frame(now) {
-        const p = Math.min(1, (now - start) / duration);
-        flaps.forEach((el, idx) => {
-          const target = el.dataset.target || "";
-          const revealCount = Math.floor(p * target.length + (p > 0.85 ? target.length : 0));
-          let out = "";
-          for (let i = 0; i < target.length; i++) {
-            const ch = target[i];
-            if (i < revealCount || !/[0-9]/.test(ch)) {
-              out += ch;
-            } else {
-              out += Math.floor((Math.random() * 10 + idx) % 10);
-            }
-          }
-          el.textContent = out;
-        });
-        if (p < 1) flapAnimId = requestAnimationFrame(frame);
-      }
-      flapAnimId = requestAnimationFrame(frame);
-    }
-
-    function renderTopology(topRot, cows, milk, acres, kwh, kw) {
-      const board = el("topologyBoard");
-      if (!board || !topRot) return;
-      const htstOk = el("heatMode").value === "boosted";
-      const yTon = +el("yieldTon").value || 18.5;
-      const sN = +el("synthN").value || 110;
-      const score = topRot.total;
-      const zoneFill = score >= 75 ? "rgba(34,197,94,0.12)" : (score >= 55 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)");
-      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
-      const badge = el("heroSuitabilityBadge");
-      const verdict = score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk");
-      if (badge) badge.textContent = `Site Verdict: ${verdict} (${score}/100)`;
-      updateMcdaMap(score, zoneStroke, htstOk, topRot.name, kwh, kw);
-      renderTuningInsides(topRot, score);
-      const pipeStroke = htstOk ? "#14b8a6" : "#ef4444";
-      board.innerHTML = `
-        <div class="topo-grid">
-          <div class="topo-chip" style="background:${zoneFill}; border-color:${zoneStroke};">
-            <div>
-              <h4>Fodder Fields (<span class="flap" data-target="${acres}">${acres}</span> ac)</h4>
-              <div style="color:#14b8a6; font-weight:600; margin-bottom:0.25rem;">${topRot.name}</div>
-              <div>Silage: <span class="flap" data-target="${yTon.toFixed(1)}">${yTon.toFixed(1)}</span> t/ac &middot; N: <span class="flap" data-target="${sN}">${sN}</span> kg/ha</div>
-              <div>NASA T2M: <span class="flap" data-target="${climate.t2m.toFixed(1)}">${climate.t2m.toFixed(1)}</span>&deg;C &middot; Rain: <span class="flap" data-target="${climate.rain.toFixed(1)}">${climate.rain.toFixed(1)}</span> mm/d</div>
-            </div>
-            <div style="margin-top:0.45rem; font-weight:700; color:${zoneStroke};">Zone Score: <span class="flap" data-target="${score}/100">${score}/100</span></div>
-          </div>
-
-          <div class="topo-chip" style="border-color:#6366f1;">
-            <div>
-              <h4>Dairy Plant</h4>
-              <div><span class="flap" data-target="${cows}">${cows}</span> cows &middot; <span class="flap" data-target="${milk.toLocaleString()}">${milk.toLocaleString()}</span> L/d</div>
-              <div>Load: <span class="flap" data-target="${kwh.toLocaleString()}">${kwh.toLocaleString()}</span> kWh/d (<span class="flap" data-target="${kw}">${kw}</span> kW)</div>
-            </div>
-            <div style="margin-top:0.45rem; font-weight:700; color:${htstOk ? "#22c55e" : "#ef4444"};">HTST <span class="flap" data-target="72-78">72-78</span>&deg;C: ${htstOk ? "PASS" : "FAIL"}</div>
-          </div>
-
-          <div class="topo-chip" style="border-color:${pipeStroke};">
-            <div>
-              <h4>AI Data Center Loop</h4>
-              <div>${htstOk ? '<span class="flap" data-target="55-70">55-70</span>&deg;C Liquid + HP (<span class="flap" data-target="70-90">70-90</span>&deg;C)' : '<span class="flap" data-target="30-45">30-45</span>&deg;C Air (Unboosted)'}</div>
-              <div style="color:#14b8a6; margin-top:0.2rem;">Double-Wall Heat Exchanger</div>
-            </div>
-            <div style="margin-top:0.45rem; font-weight:700; color:#94a3b8;">Zero coolant-milk contact</div>
-          </div>
-        </div>
-        <div style="margin-top:0.5rem; padding:0.4rem 0.65rem; border-radius:6px; background:rgba(20,184,166,0.08); border:1px solid #334155; font-size:0.76rem; color:var(--muted);">
-          Watershed &amp; Zoning Buffer: 1,500 ft agricultural setback &middot; Auditable farm + municipality MCDA overlay
-        </div>
-      `;
-      whizzBoardNumbers(board);
-    }
-
+    let flapAnimId = 0;
+
+    function whizzBoardNumbers(container) {
+
+      if (!container) return;
+
+      if (flapAnimId) cancelAnimationFrame(flapAnimId);
+
+      const flaps = Array.from(container.querySelectorAll(".flap[data-target]"));
+
+      const start = performance.now();
+
+      const duration = 460;
+
+      function frame(now) {
+
+        const p = Math.min(1, (now - start) / duration);
+
+        flaps.forEach((el, idx) => {
+
+          const target = el.dataset.target || "";
+
+          const revealCount = Math.floor(p * target.length + (p > 0.85 ? target.length : 0));
+
+          let out = "";
+
+          for (let i = 0; i < target.length; i++) {
+
+            const ch = target[i];
+
+            if (i < revealCount || !/[0-9]/.test(ch)) {
+
+              out += ch;
+
+            } else {
+
+              out += Math.floor((Math.random() * 10 + idx) % 10);
+
+            }
+
+          }
+
+          el.textContent = out;
+
+        });
+
+        if (p < 1) flapAnimId = requestAnimationFrame(frame);
+
+      }
+
+      flapAnimId = requestAnimationFrame(frame);
+
+    }
+
+
+
+    function renderTopology(topRot, cows, milk, acres, kwh, kw) {
+
+      const board = el("topologyBoard");
+
+      if (!board || !topRot) return;
+
+      const htstOk = el("heatMode").value === "boosted";
+
+      const yTon = +el("yieldTon").value || 18.5;
+
+      const sN = +el("synthN").value || 110;
+
+      const score = topRot.total;
+
+      const zoneFill = score >= 75 ? "rgba(34,197,94,0.12)" : (score >= 55 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)");
+
+      const zoneStroke = score >= 75 ? "#22c55e" : (score >= 55 ? "#f59e0b" : "#ef4444");
+
+      const badge = el("heroSuitabilityBadge");
+
+      const verdict = score >= 75 ? "Suitable" : (score >= 55 ? "Marginal" : "High Risk");
+
+      if (badge) badge.textContent = `Site Verdict: ${verdict} (${score}/100)`;
+
+      updateMcdaMap(score, zoneStroke, htstOk, topRot.name, kwh, kw);
+
+      renderTuningInsides(topRot, score);
+
+      const pipeStroke = htstOk ? "#14b8a6" : "#ef4444";
+
+      board.innerHTML = `
+
+        <div class="topo-grid">
+
+          <div class="topo-chip" style="background:${zoneFill}; border-color:${zoneStroke};">
+
+            <div>
+
+              <h4>Fodder Fields (<span class="flap" data-target="${acres}">${acres}</span> ac)</h4>
+
+              <div style="color:#14b8a6; font-weight:600; margin-bottom:0.25rem;">${topRot.name}</div>
+
+              <div>Silage: <span class="flap" data-target="${yTon.toFixed(1)}">${yTon.toFixed(1)}</span> t/ac &middot; N: <span class="flap" data-target="${sN}">${sN}</span> kg/ha</div>
+
+              <div>NASA T2M: <span class="flap" data-target="${climate.t2m.toFixed(1)}">${climate.t2m.toFixed(1)}</span>&deg;C &middot; Rain: <span class="flap" data-target="${climate.rain.toFixed(1)}">${climate.rain.toFixed(1)}</span> mm/d</div>
+
+            </div>
+
+            <div style="margin-top:0.45rem; font-weight:700; color:${zoneStroke};">Zone Score: <span class="flap" data-target="${score}/100">${score}/100</span></div>
+
+          </div>
+
+
+
+          <div class="topo-chip" style="border-color:#6366f1;">
+
+            <div>
+
+              <h4>Dairy Plant</h4>
+
+              <div><span class="flap" data-target="${cows}">${cows}</span> cows &middot; <span class="flap" data-target="${milk.toLocaleString()}">${milk.toLocaleString()}</span> L/d</div>
+
+              <div>Load: <span class="flap" data-target="${kwh.toLocaleString()}">${kwh.toLocaleString()}</span> kWh/d (<span class="flap" data-target="${kw}">${kw}</span> kW)</div>
+
+            </div>
+
+            <div style="margin-top:0.45rem; font-weight:700; color:${htstOk ? "#22c55e" : "#ef4444"};">HTST <span class="flap" data-target="72-78">72-78</span>&deg;C: ${htstOk ? "PASS" : "FAIL"}</div>
+
+          </div>
+
+
+
+          <div class="topo-chip" style="border-color:${pipeStroke};">
+
+            <div>
+
+              <h4>AI Data Center Loop</h4>
+
+              <div>${htstOk ? '<span class="flap" data-target="55-70">55-70</span>&deg;C Liquid + HP (<span class="flap" data-target="70-90">70-90</span>&deg;C)' : '<span class="flap" data-target="30-45">30-45</span>&deg;C Air (Unboosted)'}</div>
+
+              <div style="color:#14b8a6; margin-top:0.2rem;">Double-Wall Heat Exchanger</div>
+
+            </div>
+
+            <div style="margin-top:0.45rem; font-weight:700; color:#94a3b8;">Zero coolant-milk contact</div>
+
+          </div>
+
+        </div>
+
+        <div style="margin-top:0.5rem; padding:0.4rem 0.65rem; border-radius:6px; background:rgba(20,184,166,0.08); border:1px solid #334155; font-size:0.76rem; color:var(--muted);">
+
+          Watershed &amp; Zoning Buffer: 1,500 ft agricultural setback &middot; Auditable farm + municipality MCDA overlay
+
+        </div>
+
+      `;
+
+      whizzBoardNumbers(board);
+
+    }
+
+
+
     let mcdaMap = null, rasterLayer = null, bufferLayer = null, globalFarmsLayer = null, hasUserPickedRegion = false;
 
     const GLOBAL_FARMS = [
