@@ -447,8 +447,9 @@
         </div>
         <div id="diaryFeed" class="checks-grid"></div>
       </div>
-      <div class="card">
-        <h2>NASA POWER Climate Baseline (<span id="coordLabel">44.08&deg;N, -79.88&deg;E</span>)</h2>
+      <details class="card">
+        <summary style="cursor:pointer; font-size:1.05rem; font-weight:700; color:var(--accent);">NASA POWER Climate Baseline (<span id="coordLabel">1.42&deg;N, 103.72&deg;E</span>)</summary>
+        <div style="margin-top:0.75rem;">
         <div class="metrics-grid">
           <div class="metric">
             <div class="k">Mean Temp (T2M)</div>
@@ -478,7 +479,8 @@
         <div class="status">Source: <a href="https://power.larc.nasa.gov/api/temporal/climatology/point" target="_blank"
             style="color:var(--accent);">NASA POWER Agroclimatology API</a> (~50 km grid). Complemented by GPM IMERG
           (~10 km rainfall), SMAP (9 km soil moisture), and MODIS MOD13Q1 (250 m NDVI).</div>
-      </div>
+        </div>
+      </details>
 
       <div class="card">
         <h2>Predictive Deep Learning Forecast (FodderWeatherNet &mdash; PyTorch MLP)</h2>
@@ -504,18 +506,19 @@
           Outperforms Ridge baseline (R&sup2; 0.8553).</div>
       </div>
 
-      <div class="card">
-        <h2>4 Mandatory Domain Checks (Agronomy &amp; Thermodynamics)</h2>
-        <div class="checks-grid" id="checksGrid"></div>
-      </div>
+      <details class="card">
+        <summary style="cursor:pointer; font-size:1.05rem; font-weight:700; color:var(--accent);">4 Mandatory Domain Checks (Agronomy &amp; Thermodynamics)</summary>
+        <div class="checks-grid" id="checksGrid" style="margin-top:0.75rem;"></div>
+      </details>
 
-      <div class="card">
-        <h2>Ranked Fodder Rotations (with Positive &amp; Negative Controls)</h2>
-        <div id="rotationsList"></div>
-      </div>
+      <details class="card">
+        <summary style="cursor:pointer; font-size:1.05rem; font-weight:700; color:var(--accent);">Ranked Fodder Rotations (with Positive &amp; Negative Controls)</summary>
+        <div id="rotationsList" style="margin-top:0.75rem;"></div>
+      </details>
 
-      <div class="card">
-        <h2>Data Center Waste-Heat Balance</h2>
+      <details class="card">
+        <summary style="cursor:pointer; font-size:1.05rem; font-weight:700; color:var(--accent);">Data Center Waste-Heat Balance</summary>
+        <div style="margin-top:0.75rem;">
         <div class="metrics-grid">
           <div class="metric">
             <div class="k">Dairy Thermal Demand</div>
@@ -535,7 +538,8 @@
           </div>
         </div>
         <div class="safety-box" id="safetyBox"></div>
-      </div>
+        </div>
+      </details>
 
       <div class="card">
         <h2>Log On-Farm Ground Truth (Improves Model Over Time)</h2>
