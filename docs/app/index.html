@@ -369,6 +369,8 @@
         </div>
         <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Every logged season feeds back into <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.</div>
         <div id="diaryFeed" class="checks-grid"></div>
+        <h3 style="font-size:0.88rem; color:var(--muted); margin:0.9rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar (from live NASA POWER)</h3>
+        <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
       </div>
       <div class="card">
         <h2>NASA POWER Climate Baseline (<span id="coordLabel">44.08&deg;N, -79.88&deg;E</span>)</h2>
@@ -696,6 +698,24 @@
       renderChart();
       renderChecks();
       runNeuralInference();
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const cal = el("diaryCalendar");
+      if (!cal) return;
+      const tArr = climate.monthly.T2M;
+      const rArr = climate.monthly.PRECTOTCORR;
+      cal.innerHTML = MONTHS.map((m, i) => {
+        const t = tArr[i], r = rArr[i];
+        let stage = "Cover / Rest", col = "rgba(148,163,184,0.12)", brd = "#334155";
+        if (t >= 8 && t < 16 && i < 6) { stage = "Seed Legume"; col = "rgba(20,184,166,0.16)"; brd = "#14b8a6"; }
+        else if (t >= 16) { stage = r < 2 ? "Sorghum / Irrig." : "Peak Silage"; col = "rgba(34,197,94,0.16)"; brd = "#22c55e"; }
+        else if (t >= 6 && i >= 8) { stage = "Harvest / Cover"; col = "rgba(245,158,11,0.16)"; brd = "#f59e0b"; }
+        return `<div style="background:${col}; border:1px solid ${brd}; border-radius:6px; padding:0.4rem; font-size:0.72rem; text-align:center;">
+          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div>${stage}</div>
+        </div>`;
+      }).join("");
     }
 
     async function fetchNasaPower() {
