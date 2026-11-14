@@ -135,6 +135,12 @@ def main():
 
     full = pd.concat(all_annual, ignore_index=True)
 
+    obs_path = os.path.join(DATA_DIR, "community_observations.json")
+    if os.path.exists(obs_path):
+        with open(obs_path, "r", encoding="utf-8") as f:
+            obs_list = json.load(f)
+        print(f"Loaded {len(obs_list)} community farm observations from {obs_path}")
+
     # Pair year t features -> year t+1 targets (true predictive next-season setup)
     feature_cols = ["t2m", "rain", "solar", "wind", "gdd10", "frost_days", "heat_days", "dry_ratio"]
     target_cols = ["c3_suitability", "c4_suitability", "stress_risk"]

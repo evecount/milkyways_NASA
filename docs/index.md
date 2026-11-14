@@ -1,6 +1,6 @@
 # MilkyWays
 
-**NASA Space Apps Challenge Singapore 2026 — Challenge 7: *Field Shift: Adapting Farms with NASA Data***
+**The decision tool that learns from farms all over the world.** &mdash; *NASA Space Apps Challenge Singapore 2026 (Challenge 7: Field Shift)*
 
 > **What fodder rotation should this dairy farm plant next?**
 

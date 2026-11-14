@@ -1,0 +1,56 @@
+[
+  {
+    "region": "Ontario_CA",
+    "lat": 44.08,
+    "lon": -79.88,
+    "soil": "loam",
+    "crop": "Maize Silage -> Alfalfa (3 yr) -> Red Clover",
+    "observed_score": 91,
+    "source": "Initial regional baseline (25-30% N reduction)"
+  },
+  {
+    "region": "Gais_CH",
+    "lat": 47.36,
+    "lon": 9.45,
+    "soil": "loam",
+    "crop": "Maize Silage -> Alfalfa (3 yr) -> Red Clover",
+    "observed_score": 90,
+    "source": "Commercial dairy + waste-heat benchmark (1.5 GWh/yr)"
+  },
+  {
+    "region": "Wisconsin_US",
+    "lat": 43.78,
+    "lon": -88.78,
+    "soil": "loam",
+    "crop": "Corn -> Soybeans -> Winter Wheat -> Alfalfa",
+    "observed_score": 89,
+    "source": "Temperate US dairy belt baseline"
+  },
+  {
+    "region": "Waikato_NZ",
+    "lat": -37.78,
+    "lon": 175.28,
+    "soil": "loam",
+    "crop": "Maize Silage -> Alfalfa (3 yr) -> Red Clover",
+    "observed_score": 92,
+    "source": "Pasture-silage rotation baseline"
+  },
+  {
+    "region": "Punjab_IN",
+    "lat": 30.9,
+    "lon": 75.85,
+    "soil": "sandy",
+    "crop": "Sorghum Silage -> Cowpea -> Berseem Clover",
+    "observed_score": 88,
+    "source": "Warm-season irrigated fodder baseline"
+  },
+  {
+    "region": "Singapore_SG",
+    "lat": 1.42,
+    "lon": 103.72,
+    "soil": "clay",
+    "crop": "Sorghum Silage -> Cowpea -> Berseem Clover",
+    "observed_score": 84,
+    "source": "Tropical humid demo baseline"
+  }
+]
