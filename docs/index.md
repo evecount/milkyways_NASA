@@ -1,4 +1,4 @@
-# MilkyWays
+# MilkyWays &mdash; Data Center Dairy Diary
 
 **The decision tool that learns from farms and data centers around the world.** &mdash; *NASA Space Apps Challenge Singapore 2026 (Challenge 7: Field Shift)*
 
