@@ -333,7 +333,20 @@
         </select>
 
         <label for="milk">Daily Milk Volume (Liters/day)</label>
-        <input id="milk" type="number" value="20000" step="1000" min="1000" />
+        <input id="milk" type="number" value="2500" step="500" min="500" />
+        <div class="row2">
+          <div>
+            <label for="cows">Milking Herd (Cows)</label>
+            <input id="cows" type="number" value="75" step="5" min="10" />
+          </div>
+          <div>
+            <label for="acres">Fodder Land (Acres)</label>
+            <input id="acres" type="number" value="600" step="10" min="5" />
+          </div>
+        </div>
+        <label for="csvUpload">Upload Farm Facts CSV (Plain-Language)</label>
+        <input id="csvUpload" type="file" accept=".csv" style="font-size:0.78rem; padding:0.35rem;" />
+        <div class="status" style="margin-top:0.25rem;"><a href="#" id="downloadSampleCsv" style="color:var(--accent);">Download sample farm-facts.csv</a></div>
 
         <label for="heatMode">Data Center Heat Loop (Control Test)</label>
         <select id="heatMode">
@@ -368,6 +381,12 @@
           <button type="button" id="openDiagBtn" style="width:auto; margin:0; padding:0.4rem 0.85rem;">+ New Diary Entry / Run Diagnostic</button>
         </div>
         <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Every logged season feeds back into <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.</div>
+        <div class="metrics-grid" style="margin-bottom:0.75rem;">
+          <div class="metric"><div class="k">Milking Herd</div><div class="v" id="ffCows">75 cows</div></div>
+          <div class="metric"><div class="k">Yield / Cow</div><div class="v" id="ffYield">33.3 L/d</div></div>
+          <div class="metric"><div class="k">Fodder Base</div><div class="v" id="ffAcres">600 ac</div></div>
+          <div class="metric"><div class="k">Pasteurization Need</div><div class="v" id="ffHeat">102 kWh/d</div></div>
+        </div>
         <div id="diaryFeed" class="checks-grid"></div>
         <h3 style="font-size:0.88rem; color:var(--muted); margin:0.9rem 0 0.4rem;">12-Month Crop &amp; Heat Calendar (from live NASA POWER)</h3>
         <div id="diaryCalendar" style="display:grid; grid-template-columns:repeat(6,1fr); gap:0.4rem;"></div>
@@ -689,11 +708,19 @@
         </div>
       `).join("");
 
-      const milk = Math.max(1000, +el("milk").value || 20000);
+      const milk = Math.max(500, +el("milk").value || 2500);
+      const cows = Math.max(1, +el("cows").value || 75);
+      const acres = Math.max(1, +el("acres").value || 600);
       const kwh = Math.round((milk / 20000) * 817);
       const kw = Math.round((milk / 20000) * 82);
       el("hDemand").textContent = `${kwh.toLocaleString()} kWh/d`;
       el("hKw").textContent = `${kw.toLocaleString()} kW`;
+      if (el("ffCows")) {
+        el("ffCows").textContent = `${cows.toLocaleString()} cows`;
+        el("ffYield").textContent = `${(milk / cows).toFixed(1)} L/d`;
+        el("ffAcres").textContent = `${acres.toLocaleString()} ac`;
+        el("ffHeat").textContent = `${kwh.toLocaleString()} kWh/d`;
+      }
 
       renderChart();
       renderChecks();
@@ -753,14 +780,54 @@
       renderAll();
     }
 
+    const PRESET_FACTS = {
+      "44.08,-79.88": { cows: 75, milk: 2500, acres: 600, soil: "loam" },
+      "47.36,9.45": { cows: 600, milk: 20000, acres: 950, soil: "loam" },
+      "1.42,103.72": { cows: 40, milk: 1200, acres: 45, soil: "clay" }
+    };
     el("preset").addEventListener("change", (e) => {
       const [la, lo] = e.target.value.split(",");
       el("lat").value = la;
       el("lon").value = lo;
+      const f = PRESET_FACTS[e.target.value];
+      if (f) {
+        el("cows").value = f.cows;
+        el("milk").value = f.milk;
+        el("acres").value = f.acres;
+        el("soil").value = f.soil;
+      }
       fetchNasaPower();
     });
     el("fetchBtn").addEventListener("click", fetchNasaPower);
-    ["wSoil", "wWater", "wHeat", "wFeed", "soil", "milk", "heatMode"].forEach(id => {
+    el("downloadSampleCsv").addEventListener("click", (e) => {
+      e.preventDefault();
+      const csv = "farm_name,lat,lon,milking_cows,daily_milk_liters,fodder_acres,soil_type\nOntario_Dairy,44.08,-79.88,75,2500,600,loam\n";
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+      a.download = "farm-facts.csv";
+      a.click();
+    });
+    el("csvUpload").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const lines = String(reader.result).trim().split(/\r?\n/);
+        if (lines.length < 2) return;
+        const cols = lines[1].split(",").map(s => s.trim());
+        if (cols.length >= 7) {
+          el("lat").value = cols[1];
+          el("lon").value = cols[2];
+          el("cows").value = cols[3];
+          el("milk").value = cols[4];
+          el("acres").value = cols[5];
+          if (["loam", "sandy", "clay"].includes(cols[6])) el("soil").value = cols[6];
+          fetchNasaPower();
+        }
+      };
+      reader.readAsText(file);
+    });
+    ["wSoil", "wWater", "wHeat", "wFeed", "soil", "milk", "cows", "acres", "heatMode"].forEach(id => {
       el(id).addEventListener("input", renderAll);
     });
 
