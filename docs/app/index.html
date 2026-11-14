@@ -1832,12 +1832,7 @@
         <strong>NASA POWER:</strong> ${climate.t2m.toFixed(1)} °C &middot; ${climate.rain.toFixed(1)} mm/d &middot; ${climate.solar.toFixed(1)} MJ/m²/d<br/>
         <strong>FodderWeatherNet:</strong> C3 ${c3Txt.replace(/\s+/g,"")} | C4 ${c4Txt.replace(/\s+/g,"")} (Risk ${riskTxt.replace(/\s+/g,"")})<br/>
         <strong>Top Rotation:</strong> ${topName}
-        <div class="popup-stages">
-          <button type="button" class="popup-stage stage-eval" onclick="showPopupStage(this,'eval','parcel','this site')">1. Eval</button>
-          <button type="button" class="popup-stage stage-pilot" onclick="showPopupStage(this,'pilot','parcel','this site')">2. Pilot</button>
-          <button type="button" class="popup-stage stage-result" onclick="showPopupStage(this,'result','parcel','this site')">3. Result</button>
-        </div>
-        <div class="popup-stage-detail" style="display:none;"></div>
+
         <button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>
       `;
 
@@ -1880,7 +1875,7 @@
             .bindTooltip(`${n.name} (${km} km · ${n.cap} · Viable Pipe)`)
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><div class="popup-stages"><button type="button" class="popup-stage stage-eval" onclick="showPopupStage(this,'eval','pipe','${n.name}')">1. Eval</button><button type="button" class="popup-stage stage-pilot" onclick="showPopupStage(this,'pilot','pipe','${n.name}')">2. Pilot</button><button type="button" class="popup-stage stage-result" onclick="showPopupStage(this,'result','pipe','${n.name}')">3. Result</button></div><div class="popup-stage-detail" style="display:none;"></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`, { maxWidth: 310, maxHeight: 215, autoPanPaddingTopLeft: [16, 18], autoPanPaddingBottomRight: [16, 18] })
+            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`, { maxWidth: 310, maxHeight: 215, autoPanPaddingTopLeft: [16, 18], autoPanPaddingBottomRight: [16, 18] })
             .addTo(spiderLayer);
         } else {
           // Beyond 12 km: no pipe line — render a Position Beacon only
@@ -1888,7 +1883,7 @@
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 5, color: "#fff", fillColor: "#f59e0b", fillOpacity: 0.95, weight: 1.5 })
             .bindTooltip(`${n.name} — Position Beacon (${km} km > ${MAX_PIPE_KM} km pipe limit)`)
-            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<div class="popup-stages"><button type="button" class="popup-stage stage-eval" onclick="showPopupStage(this,'eval','beacon','${n.name}')">1. Eval</button><button type="button" class="popup-stage stage-pilot" onclick="showPopupStage(this,'pilot','beacon','${n.name}')">2. Pilot</button><button type="button" class="popup-stage stage-result" onclick="showPopupStage(this,'result','beacon','${n.name}')">3. Result</button></div><div class="popup-stage-detail" style="display:none;"></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`, { maxWidth: 310, maxHeight: 215, autoPanPaddingTopLeft: [16, 18], autoPanPaddingBottomRight: [16, 18] })
+            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`, { maxWidth: 310, maxHeight: 215, autoPanPaddingTopLeft: [16, 18], autoPanPaddingBottomRight: [16, 18] })
             .addTo(spiderLayer);
         }
       });
