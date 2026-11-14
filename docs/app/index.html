@@ -708,12 +708,14 @@
       const rArr = climate.monthly.PRECTOTCORR;
       cal.innerHTML = MONTHS.map((m, i) => {
         const t = tArr[i], r = rArr[i];
-        let stage = "Cover / Rest", col = "rgba(148,163,184,0.12)", brd = "#334155";
-        if (t >= 8 && t < 16 && i < 6) { stage = "Seed Legume"; col = "rgba(20,184,166,0.16)"; brd = "#14b8a6"; }
-        else if (t >= 16) { stage = r < 2 ? "Sorghum / Irrig." : "Peak Silage"; col = "rgba(34,197,94,0.16)"; brd = "#22c55e"; }
-        else if (t >= 6 && i >= 8) { stage = "Harvest / Cover"; col = "rgba(245,158,11,0.16)"; brd = "#f59e0b"; }
+        let crop = (climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy") ? "Berseem Cover" : "Red Clover Cover";
+        let stage = "Soil Rest / Cover", col = "rgba(148,163,184,0.12)", brd = "#334155";
+        const useC4 = (climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy");
+        if (t >= 8 && t < 16 && i < 6) { crop = useC4 ? "Cowpea (N-Fix)" : "Alfalfa (N-Fix)"; stage = "Seed Legume"; col = "rgba(20,184,166,0.16)"; brd = "#14b8a6"; }
+        else if (t >= 16 && i < 8) { crop = useC4 ? "Sorghum Silage" : "Maize Silage"; stage = r < 2 ? "Grow + Irrigate" : "Peak Silage"; col = "rgba(34,197,94,0.16)"; brd = "#22c55e"; }
+        else if (t >= 6 && i >= 8) { crop = useC4 ? "Cowpea -> Berseem" : "Harvest -> Clover"; stage = "Cut & Re-seed"; col = "rgba(245,158,11,0.16)"; brd = "#f59e0b"; }
         return `<div style="background:${col}; border:1px solid ${brd}; border-radius:6px; padding:0.4rem; font-size:0.72rem; text-align:center;">
-          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div>${stage}</div>
+          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div style="font-weight:600;">${crop}</div><div>${stage}</div>
         </div>`;
       }).join("");
     }
