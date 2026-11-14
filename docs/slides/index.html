@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MilkyWays — 7-Slide Project Demo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #14b8a6;
+      --indigo: #6366f1;
+      --good: #22c55e;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #020617;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      background: #0b1120;
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+    .toolbar button {
+      background: var(--indigo);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .deck {
+      max-width: 960px;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .slide {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2.25rem 2.5rem;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      page-break-after: always;
+    }
+    .slide-num {
+      font-size: 0.78rem;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    h1 { font-size: 2.4rem; margin: 0.4rem 0; line-height: 1.15; }
+    h2 { font-size: 1.65rem; margin: 0.35rem 0 0.8rem; color: var(--accent); }
+    p, li { font-size: 1.05rem; color: #e2e8f0; line-height: 1.55; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+    }
+    .box.pos { border-left: 4px solid var(--good); }
+    .box.neg { border-left: 4px solid var(--bad); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.55rem 0.65rem; border-bottom: 1px solid var(--border); }
+    th { color: var(--accent); }
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 0.65rem;
+      margin-top: 1rem;
+    }
+    @media print {
+      body { background: var(--bg); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .toolbar { display: none; }
+      .deck { margin: 0; padding: 0; max-width: none; gap: 0; }
+      .slide { border: none; border-radius: 0; min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div><strong>MilkyWays</strong> &mdash; 7-Slide Demo Deck (NASA Space Apps 2026)</div>
+    <button onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <div class="deck">
+    <!-- SLIDE 1 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 1 of 7 &middot; Title</div>
+        <h1>MilkyWays</h1>
+        <p style="font-size:1.3rem; color:var(--accent); font-weight:600; margin-top:0.25rem;">
+          Cows and servers, milk and heat &mdash; NASA-guided fodder rotation &amp; circular waste heat for dairy farms.
+        </p>
+        <div class="grid2" style="margin-top:1.75rem;">
+          <div class="box">
+            <strong>Challenge Selected</strong><br/>
+            Challenge 7: <em>Field Shift &mdash; Adapting Farms with NASA Data</em>
+          </div>
+          <div class="box">
+            <strong>Team &amp; Member</strong><br/>
+            Team: <strong>MilkyWays</strong><br/>
+            Member: <strong>Gwendalynn Lim Wan Ting</strong>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>NASA Space Apps Challenge Singapore 2026</span><span>evecount.github.io/milkyways_NASA</span></div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 2 of 7 &middot; The Problem</div>
+        <h2>Two Pressures on One Industrial Dairy Farm</h2>
+        <div class="grid2">
+          <div class="box">
+            <h3>1. In the Field</h3>
+            <p>Shifting temperatures, erratic rainfall, and soil degradation make fodder crop rotation high-stakes. Continuous cereal monocrops deplete soil nitrogen and raise drought/heat risk.</p>
+          </div>
+          <div class="box">
+            <h3>2. In the Dairy Plant</h3>
+            <p>Dairy processing is <strong>~70% thermal energy</strong> (pasteurisation 72&ndash;78 &deg;C, CIP washing 40&ndash;60 &deg;C) and 30% electricity (chilling &lt;5 &deg;C) &mdash; while nearby AI data centres reject low-grade heat 24/7.</p>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; Challenge 7: Field Shift</span><span>2 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 3 of 7 &middot; NASA Open Data</div>
+        <h2>Data-to-Decision Pipeline (Explainable, Not a Black Box)</h2>
+        <table>
+          <thead>
+            <tr><th>Dataset</th><th>Variables</th><th>Role in MilkyWays</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>NASA POWER</strong> (Live API)</td><td><code>T2M</code>, <code>PRECTOTCORR</code>, <code>ALLSKY_SFC_SW_DWN</code>, <code>WS2M</code></td><td>Queries annual &amp; Jan&ndash;Dec seasonal climate baseline in browser</td></tr>
+            <tr><td><strong>NASA GPM IMERG</strong></td><td>~10 km precipitation</td><td>Resolves rainfall onset &amp; planting windows</td></tr>
+            <tr><td><strong>NASA SMAP L3/L4</strong></td><td>9 km soil moisture (2015+)</td><td>Flags current moisture deficit before legume seeding</td></tr>
+            <tr><td><strong>MODIS MOD13Q1 &amp; HLS</strong></td><td>250 m NDVI / 30 m reflectance</td><td>Verifies multi-season crop vigour &amp; field residue</td></tr>
+            <tr><td><strong>ISRIC SoilGrids</strong></td><td>250 m soil texture &amp; pH</td><td>Combines local soil profile with farmer priority weights</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; Best Use of Data</span><span>3 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 4 of 7 &middot; User Experience</div>
+        <h2>How the Farmer Uses MilkyWays</h2>
+        <div class="grid2">
+          <div class="box">
+            <h3>Inputs</h3>
+            <ul>
+              <li>Select farm coordinates or preset region (e.g. Ontario Dairy Region <code>44.08&deg;N, -79.88&deg;E</code>)</li>
+              <li>Choose local soil profile (Clay Loam, Sandy Loam, Heavy Clay)</li>
+              <li>Enter daily milk volume (e.g. <code>20,000 L/day</code>)</li>
+              <li>Adjust priority sliders: Soil Health, Water Efficiency, Heat Resilience, Feed Quality</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>Outputs</h3>
+            <ul>
+              <li>Live Jan&ndash;Dec NASA POWER seasonal chart</li>
+              <li>4 Mandatory Agronomy &amp; Thermodynamics Checks (PASS/FAIL)</li>
+              <li>Ranked fodder rotations (Maize/Sorghum silage &harr; Alfalfa/Clover/Cowpea legumes)</li>
+              <li>Matched dairy thermal demand (<code>817 kWh/day</code>)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>4 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 5 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 5 of 7 &middot; Validation &amp; Controls</div>
+        <h2>4 Mandatory Checks + Positive &amp; Negative Controls</h2>
+        <div class="grid2">
+          <div class="box pos">
+            <h3>Positive Controls (PASS)</h3>
+            <ul>
+              <li><strong>Maize &rarr; Alfalfa &rarr; Red Clover:</strong> Cuts synthetic nitrogen fertiliser by <strong>25&ndash;30%</strong> and builds soil organic matter.</li>
+              <li><strong>55&ndash;70 &deg;C Liquid + Heat Pump (70&ndash;90 &deg;C):</strong> Meets <code>72&ndash;78 &deg;C</code> HTST pasteurisation &amp; drives <code>~7.2 &deg;C</code> absorption chilling.</li>
+              <li><strong>Commercial Proof:</strong> Gais, Switzerland cheese dairy (<code>1.5 GWh/year</code>, <code>20 &deg;C &rarr; 14 &deg;C</code>).</li>
+            </ul>
+          </div>
+          <div class="box neg">
+            <h3>Negative Controls (FAIL)</h3>
+            <ul>
+              <li><strong>Continuous Maize Monocrop:</strong> Fails nitrogen-fixation cycle check; depletes soil N and increases erosion/heat risk.</li>
+              <li><strong>Unboosted 30&ndash;45 &deg;C Air Waste Heat:</strong> Explicitly flagged as insufficient for <code>72&ndash;78 &deg;C</code> HTST without a heat pump boost.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; Deterministic Validation</span><span>5 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 6 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 6 of 7 &middot; Food Safety &amp; Architecture</div>
+        <h2>&ldquo;The Coolant Never Touches the Milk&rdquo;</h2>
+        <div class="box" style="margin-top:0.75rem;">
+          <p style="font-size:1.15rem; text-align:center; margin:0.5rem 0;">
+            <strong>AI Data Centre Closed Coolant Loop</strong> (30&ndash;45 &deg;C Air / 55&ndash;70 &deg;C Liquid)<br/>
+            &darr; <em>Double-Wall Heat Exchanger (Zero Mixing)</em> &darr;<br/>
+            <strong>Food-Grade Water Loop + Heat Pump Boost</strong> (70&ndash;90 &deg;C)<br/>
+            &darr; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &darr;<br/>
+            <strong>HTST Pasteurisation (72&ndash;78 &deg;C)</strong> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <strong>Absorption Chilling (~7.2 &deg;C)</strong>
+          </p>
+        </div>
+        <p style="margin-top:1rem;"><strong>Honest limits stated:</strong> NASA POWER is a ~50 km regional grid (paired with 9 km SMAP &amp; 250 m MODIS for field refinement); SMAP records start in 2015 (current conditions only).</p>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; Safe Circular Symbiosis</span><span>6 / 7</span></div>
+    </section>
+
+    <!-- SLIDE 7 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 7 of 7 &middot; Impact &amp; Future</div>
+        <h2>Impact: Resilient Fields, Circular Dairy Heat</h2>
+        <ul>
+          <li><strong>For Farmers:</strong> Plain-language, zero-login decision tool using live NASA data to cut N fertiliser 25&ndash;30% and protect soil health.</li>
+          <li><strong>For Data Centres:</strong> Turns wasted low-grade heat into a measurable community thermal resource for nearby food processing.</li>
+          <li><strong>Next Horizon:</strong> Expand the same closed-loop heat + NASA climate-stress pattern to a second farm type (broiler poultry houses needing 32&ndash;34 &deg;C brooding heat &amp; heat-stress alerts).</li>
+        </ul>
+      </div>
+      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>7 / 7</span></div>
+    </section>
+  </div>
+</body>
+</html>
