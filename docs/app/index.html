@@ -449,6 +449,33 @@
           </div>
         </div>
         <div id="diaryFeed" class="checks-grid"></div>
+        <details id="logGroundTruthPanel" style="margin-top:0.85rem; background:#0b1120; border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.85rem;">
+          <summary style="cursor:pointer; font-size:0.86rem; font-weight:600; color:var(--accent);">Log On-Farm Ground Truth (Improves FodderWeatherNet Over Time)</summary>
+          <div style="margin-top:0.65rem;">
+            <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Any farm can enter its coordinates above, run
+              live NASA POWER + FodderWeatherNet, and log real seasonal outcomes to grow the open training dataset.</div>
+            <div class="row2">
+              <div>
+                <label for="obsCrop">Planted Fodder Crop</label>
+                <select id="obsCrop">
+                  <option value="Maize Silage -> Alfalfa">Maize Silage &rarr; Alfalfa</option>
+                  <option value="Sorghum -> Cowpea">Sorghum &rarr; Cowpea</option>
+                  <option value="Corn -> Soybeans -> Wheat -> Alfalfa">Corn &rarr; Soybeans &rarr; Wheat &rarr; Alfalfa</option>
+                  <option value="Continuous Maize">Continuous Maize</option>
+                </select>
+              </div>
+              <div>
+                <label for="obsOutcome">Observed Season Outcome (1&ndash;100)</label>
+                <input id="obsOutcome" type="number" min="1" max="100" value="85" />
+              </div>
+            </div>
+            <div class="row2">
+              <button id="saveObsBtn" type="button">Save Observation Locally</button>
+              <button id="exportObsBtn" type="button" style="background:var(--accent); color:#0b1120;">Export Dataset JSON</button>
+            </div>
+            <div class="status" id="obsStatus">0 local observations logged in browser.</div>
+          </div>
+        </details>
       </div>
       <details class="card">
         <summary style="cursor:pointer; font-size:1.05rem; font-weight:700; color:var(--accent);">NASA POWER Climate Baseline (<span id="coordLabel">1.42&deg;N, 103.72&deg;E</span>)</summary>
@@ -544,33 +571,7 @@
         </div>
       </details>
 
-      <div class="card">
-        <h2>Log On-Farm Ground Truth (Improves Model Over Time)</h2>
-        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Any farm can enter its coordinates above, run
-          live NASA POWER + FodderWeatherNet, and log real seasonal outcomes to grow the open training dataset.</div>
-        <div class="row2">
-          <div>
-            <label for="obsCrop">Planted Fodder Crop</label>
-            <select id="obsCrop">
-              <option value="Maize Silage -> Alfalfa">Maize Silage &rarr; Alfalfa</option>
-              <option value="Sorghum -> Cowpea">Sorghum &rarr; Cowpea</option>
-              <option value="Corn -> Soybeans -> Wheat -> Alfalfa">Corn &rarr; Soybeans &rarr; Wheat &rarr; Alfalfa
-              </option>
-              <option value="Continuous Maize">Continuous Maize</option>
-            </select>
-          </div>
-          <div>
-            <label for="obsOutcome">Observed Season Outcome (1&ndash;100)</label>
-            <input id="obsOutcome" type="number" min="1" max="100" value="85" />
-          </div>
-        </div>
-        <div class="row2">
-          <button id="saveObsBtn" type="button">Save Observation Locally</button>
-          <button id="exportObsBtn" type="button" style="background:var(--accent); color:#0b1120;">Export Dataset
-            JSON</button>
-        </div>
-        <div class="status" id="obsStatus">0 local observations logged in browser.</div>
-      </div>
+
     </main>
   </div>
 
@@ -1298,7 +1299,9 @@
     });
     updateObsStatus();
     el("openDiagBtn").addEventListener("click", () => {
-      el("obsCrop").scrollIntoView({ behavior: "smooth" });
+      const panel = el("logGroundTruthPanel");
+      if (panel) panel.open = true;
+      el("obsCrop").scrollIntoView({ behavior: "smooth", block: "center" });
     });
   </script>
 </body>
