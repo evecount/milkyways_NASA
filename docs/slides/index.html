@@ -119,6 +119,12 @@
       gap: 1.25rem;
     }
 
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
     .box {
       background: var(--card);
       border: 1px solid var(--border);
@@ -190,7 +196,7 @@
 
 <body>
   <div class="toolbar">
-    <div><strong>MilkyWays</strong> &mdash; 7-Slide Demo Deck (NASA Space Apps 2026)</div>
+    <div><strong>MilkyWays</strong> &mdash; 8-Slide Demo Deck (NASA Space Apps 2026)</div>
     <div style="display:flex; gap:0.5rem; align-items:center;">
       <a href="../app/">Live App</a>
       <a href="../paper/">Paper</a>
@@ -203,7 +209,7 @@
     <!-- SLIDE 1 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 1 of 7 &middot; Title</div>
+        <div class="slide-num">Slide 1 of 8 &middot; Title</div>
         <h1>MilkyWays &mdash; Data Center Dairy Diary</h1>
         <p style="font-size:1.3rem; color:var(--accent); font-weight:600; margin-top:0.25rem;">
           The decision tool that learns from farms and data centers around the world &mdash; NASA-guided fodder rotation
@@ -228,7 +234,7 @@
     <!-- SLIDE 2 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 2 of 7 &middot; The Problem &amp; Gap</div>
+        <div class="slide-num">Slide 2 of 8 &middot; The Problem &amp; Gap</div>
         <h2>Rural Farms &amp; Data Centers Collide &mdash; And GIS Tools Miss the Farm</h2>
         <div class="grid2">
           <div class="box">
@@ -245,13 +251,13 @@
           </div>
         </div>
       </div>
-      <div class="foot"><span>MilkyWays &middot; Challenge 7: Field Shift</span><span>2 / 7</span></div>
+      <div class="foot"><span>MilkyWays &middot; Challenge 7: Field Shift</span><span>2 / 8</span></div>
     </section>
 
     <!-- SLIDE 3 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 3 of 7 &middot; NASA Open Data</div>
+        <div class="slide-num">Slide 3 of 8 &middot; NASA Open Data</div>
         <h2>Data-to-Decision Pipeline (Explainable, Not a Black Box)</h2>
         <table>
           <thead>
@@ -305,13 +311,13 @@
           <code>R&sup2; = 0.8740 | MAE = 5.27</code>, running locally in the browser with no GIS install.
         </div>
       </div>
-      <div class="foot"><span>MilkyWays &middot; Best Use of Data</span><span>3 / 7</span></div>
+      <div class="foot"><span>MilkyWays &middot; Best Use of Data</span><span>3 / 8</span></div>
     </section>
 
     <!-- SLIDE 4 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 4 of 7 &middot; User Experience</div>
+        <div class="slide-num">Slide 4 of 8 &middot; User Experience</div>
         <h2>Zero-Install SDSS + Dairy Diary in One Browser Screen</h2>
         <div class="grid2">
           <div class="box">
@@ -336,13 +342,13 @@
           </div>
         </div>
       </div>
-      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>4 / 7</span></div>
+      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>4 / 8</span></div>
     </section>
 
     <!-- SLIDE 5 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 5 of 7 &middot; Validation &amp; Controls</div>
+        <div class="slide-num">Slide 5 of 8 &middot; Validation &amp; Controls</div>
         <h2>4 Mandatory Checks + Positive &amp; Negative Controls</h2>
         <div class="grid2">
           <div class="box pos">
@@ -372,13 +378,13 @@
           </div>
         </div>
       </div>
-      <div class="foot"><span>MilkyWays &middot; Deterministic Validation</span><span>5 / 7</span></div>
+      <div class="foot"><span>MilkyWays &middot; Deterministic Validation</span><span>5 / 8</span></div>
     </section>
 
     <!-- SLIDE 6 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 6 of 7 &middot; Food Safety &amp; Architecture</div>
+        <div class="slide-num">Slide 6 of 8 &middot; Food Safety &amp; Architecture</div>
         <h2>&ldquo;The Coolant Never Touches the Milk&rdquo;</h2>
         <div class="box" style="margin-top:0.75rem;">
           <p style="font-size:1.15rem; text-align:center; margin:0.5rem 0;">
@@ -397,13 +403,51 @@
           with 9 km SMAP &amp; 250 m MODIS for field refinement); SMAP records start in 2015 (current conditions only).
         </p>
       </div>
-      <div class="foot"><span>MilkyWays &middot; Safe Circular Symbiosis</span><span>6 / 7</span></div>
+      <div class="foot"><span>MilkyWays &middot; Safe Circular Symbiosis</span><span>6 / 8</span></div>
     </section>
 
     <!-- SLIDE 7 -->
     <section class="slide">
       <div>
-        <div class="slide-num">Slide 7 of 7 &middot; Government &amp; Civic Impact</div>
+        <div class="slide-num">Slide 7 of 8 &middot; Platform Capabilities</div>
+        <h2>Complete Feature &amp; Capability Matrix</h2>
+        <div class="grid3" style="margin-top:0.75rem;">
+          <div class="box">
+            <h3>Spatial &amp; GIS Engine</h3>
+            <ul>
+              <li><strong>Satellite World View:</strong> 13 global dairy farms + click-anywhere parcel testing</li>
+              <li><strong>NASA MCDA Raster Grid:</strong> Live 7&times;7 suitability grid &amp; 1,500 ft setback rings</li>
+              <li><strong>Zoom-Out Synergy Spider:</strong> Links farms to regional data centers (MW) &amp; agri hubs (km)</li>
+              <li><strong>Open-Water Exclusion Gate:</strong> Automatically blocks ocean &amp; lake coordinates</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>NASA Data &amp; AI Core</h3>
+            <ul>
+              <li><strong>Live NASA POWER Query:</strong> Real-time <code>T2M</code>, rain, solar &amp; wind climatology</li>
+              <li><strong><code>FodderWeatherNet</code>:</strong> In-browser C3/C4 yield &amp; stress proxy (<code>R&sup2; = 0.8740</code>)</li>
+              <li><strong>6-Criterion MCDA Sliders:</strong> Soil, Water, Heat, Feed, Grid Proximity &amp; Flood Buffer</li>
+              <li><strong>4 Mandatory Checks:</strong> Heat PAR, Water/Soil, N-Fixation &amp; Double-Wall Food Safety</li>
+            </ul>
+          </div>
+          <div class="box">
+            <h3>Operator UX &amp; Civic Export</h3>
+            <ul>
+              <li><strong>Split-Flap Telemetry + Calendar:</strong> Live Airport Board chips &amp; 12-month crop schedule</li>
+              <li><strong>Dairy Diary Chat:</strong> Natural-language logbook feeding the deep-learning loop</li>
+              <li><strong>Municipal Feasibility Packet:</strong> One-click print-to-PDF HTML report with full provenance</li>
+              <li><strong>Zero-Install Portability:</strong> CSV farm upload, JSON/CSV export &amp; zero API keys</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>MilkyWays &middot; End-to-End Decision Architecture</span><span>7 / 8</span></div>
+    </section>
+
+    <!-- SLIDE 8 -->
+    <section class="slide">
+      <div>
+        <div class="slide-num">Slide 8 of 8 &middot; Government &amp; Civic Impact</div>
         <h2>Civic &amp; Municipal Impact: Resolving Land, Water &amp; Energy Conflicts</h2>
         <ul>
           <li><strong>For Rural Planners &amp; Local Government:</strong> Connects NASA satellite data with real-world
@@ -417,7 +461,7 @@
           </li>
         </ul>
       </div>
-      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>7 / 7</span></div>
+      <div class="foot"><span>Live App: evecount.github.io/milkyways_NASA/app/</span><span>8 / 8</span></div>
     </section>
   </div>
 </body>
