@@ -246,29 +246,52 @@
 
 
 
-    @keyframes diaryPop {
-      0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-      50% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-      100% { transform: scale(1); box-shadow: none; }
-    }
-    .diary-pop {
-      animation: diaryPop 0.55s ease;
-    }
-    .outcome-chip {
-      width: auto;
-      margin: 0;
-      padding: 0.35rem 0.65rem;
-      font-size: 0.78rem;
-      background: #1e293b;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      color: var(--text);
-      cursor: pointer;
-    }
-    .outcome-chip:hover {
-      border-color: var(--accent);
-    }
-
+    @keyframes diaryPop {
+
+      0% { transform: scale(0.96); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+
+      50% { transform: scale(1.02); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+
+      100% { transform: scale(1); box-shadow: none; }
+
+    }
+
+    .diary-pop {
+
+      animation: diaryPop 0.55s ease;
+
+    }
+
+    .outcome-chip {
+
+      width: auto;
+
+      margin: 0;
+
+      padding: 0.35rem 0.65rem;
+
+      font-size: 0.78rem;
+
+      background: #1e293b;
+
+      border: 1px solid var(--border);
+
+      border-radius: 999px;
+
+      color: var(--text);
+
+      cursor: pointer;
+
+    }
+
+    .outcome-chip:hover {
+
+      border-color: var(--accent);
+
+    }
+
+
+
     #fetchBtn:active {
       transform: translateY(3px);
       box-shadow: 0 1px 0 #3730a3;
@@ -734,23 +757,23 @@
         note: "High-protein legume break cuts N fertilizer 25-30% and builds organic matter.",
         control: "POSITIVE CONTROL (N-Fixing)",
         controlClass: "pos",
-        soil: 92, water: 74, heat: 78, feed: 94,
-        coolBonus: 12, dryBonus: -8
+        soil: 96, water: 62, heat: 68, feed: 95,
+        coolBonus: 12, dryBonus: -10
       },
       {
         name: "Corn -> Soybeans -> Winter Wheat -> Alfalfa",
         note: "Classic 4-crop temperate dairy rotation balancing silage energy and rumen-digestible protein.",
         control: "",
         controlClass: "",
-        soil: 88, water: 78, heat: 80, feed: 90,
-        coolBonus: 10, dryBonus: -5
+        soil: 86, water: 74, heat: 72, feed: 88,
+        coolBonus: 10, dryBonus: -6
       },
       {
         name: "Sorghum Silage -> Cowpea -> Berseem Clover",
         note: "Drought- and heat-tolerant C4 silage paired with fast warm-season N-fixing legumes.",
         control: "",
         controlClass: "",
-        soil: 85, water: 92, heat: 95, feed: 82,
+        soil: 74, water: 95, heat: 96, feed: 76,
         coolBonus: -10, dryBonus: 14
       },
       {
@@ -944,62 +967,38 @@
       renderCalendar();
     }
 
-    let flapAnimId = 0;
-
-    function whizzBoardNumbers(container) {
-
-      if (!container) return;
-
-      if (flapAnimId) cancelAnimationFrame(flapAnimId);
-
-      const flaps = Array.from(container.querySelectorAll(".flap[data-target]"));
-
-      const start = performance.now();
-
-      const duration = 460;
-
-      function frame(now) {
-
-        const p = Math.min(1, (now - start) / duration);
-
-        flaps.forEach((el, idx) => {
-
-          const target = el.dataset.target || "";
-
-          const revealCount = Math.floor(p * target.length + (p > 0.85 ? target.length : 0));
-
-          let out = "";
-
-          for (let i = 0; i < target.length; i++) {
-
-            const ch = target[i];
-
-            if (i < revealCount || !/[0-9]/.test(ch)) {
-
-              out += ch;
-
-            } else {
-
-              out += Math.floor((Math.random() * 10 + idx) % 10);
-
-            }
-
-          }
-
-          el.textContent = out;
-
-        });
-
-        if (p < 1) flapAnimId = requestAnimationFrame(frame);
-
-      }
-
-      flapAnimId = requestAnimationFrame(frame);
-
-    }
-
-
-
+    let flapAnimId = 0, prevFlapTargets = [];
+    function whizzBoardNumbers(container) {
+      if (!container) return;
+      if (flapAnimId) cancelAnimationFrame(flapAnimId);
+      const allFlaps = Array.from(container.querySelectorAll(".flap[data-target]"));
+      const nextTargets = allFlaps.map(f => f.dataset.target);
+      const flaps = allFlaps.filter((f, idx) => prevFlapTargets[idx] !== nextTargets[idx]);
+      prevFlapTargets = nextTargets;
+      if (!flaps.length) return;
+      const start = performance.now();
+      const duration = 460;
+      function frame(now) {
+        const p = Math.min(1, (now - start) / duration);
+        flaps.forEach((el, idx) => {
+          const target = el.dataset.target || "";
+          const revealCount = Math.floor(p * target.length + (p > 0.85 ? target.length : 0));
+          let out = "";
+          for (let i = 0; i < target.length; i++) {
+            const ch = target[i];
+            if (i < revealCount || !/[0-9]/.test(ch)) {
+              out += ch;
+            } else {
+              out += Math.floor((Math.random() * 10 + idx) % 10);
+            }
+          }
+          el.textContent = out;
+        });
+        if (p < 1) flapAnimId = requestAnimationFrame(frame);
+      }
+      flapAnimId = requestAnimationFrame(frame);
+    }
+
     function renderTopology(topRot, cows, milk, acres, kwh, kw) {
 
       const board = el("topologyBoard");
