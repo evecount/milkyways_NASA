@@ -129,6 +129,31 @@
       opacity: 0.92;
     }
 
+    @keyframes nasaPulse {
+      0% { box-shadow: 0 4px 0 #3730a3, 0 0 0 0 rgba(20, 184, 166, 0.55); }
+      70% { box-shadow: 0 4px 0 #3730a3, 0 0 0 9px rgba(20, 184, 166, 0); }
+      100% { box-shadow: 0 4px 0 #3730a3, 0 0 0 0 rgba(20, 184, 166, 0); }
+    }
+
+    #fetchBtn {
+      background: linear-gradient(135deg, #4f46e5, #0d9488);
+      box-shadow: 0 4px 0 #3730a3;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+      animation: nasaPulse 2.4s infinite;
+    }
+
+    #fetchBtn:hover {
+      opacity: 1;
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    #fetchBtn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #3730a3;
+      animation: none;
+    }
+
     .row2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
