@@ -749,7 +749,7 @@
         <div id="mcdaMap" style="height:clamp(240px, 32vh, 340px); width:100%; border-radius:10px; border:1px solid var(--border); margin-bottom:0.75rem; background:#0b1120;"></div>
         <div id="topologyBoard"></div>
 
-        <div id="diaryChatBox" style="margin-top:0.65rem; background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(11,17,32,0.98)); border:1px solid rgba(20,184,166,0.45); box-shadow:0 0 22px rgba(20,184,166,0.08), inset 0 1px 0 rgba(255,255,255,0.06); border-radius:10px; padding:0.75rem 0.9rem;">
+        <div id="diaryChatBox" style="margin-top:0.5rem; background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(11,17,32,0.98)); border:1px solid rgba(20,184,166,0.45); box-shadow:0 0 16px rgba(20,184,166,0.07); border-radius:9px; padding:0.5rem 0.75rem;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.45rem; margin-bottom:0.5rem;">
             <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
               <span style="font-size:0.86rem; font-weight:800; color:#5eead4; letter-spacing:0.01em;">Ask MilkyWays &middot; Plain-Speaking Siting Copilot</span>
@@ -779,9 +779,12 @@
             <button type="button" class="outcome-chip chat-q" data-q="Log harvest: 21 t/ac, 89/100">Log harvest</button>
           </div>
 
-          <div id="chatFeed" style="max-height:145px; overflow-y:auto; font-size:0.81rem; line-height:1.45; display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.5rem; padding-right:0.2rem;">
+          <details id="chatDrawerDetails" style="margin-bottom:0.35rem;">
+            <summary style="cursor:pointer; font-size:0.75rem; color:#94a3b8; margin-bottom:0.3rem;">Show conversation log ▾</summary>
+            <div id="chatFeed" style="max-height:92px; overflow-y:auto; font-size:0.81rem; line-height:1.45; display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.5rem; padding-right:0.2rem;">
             <div style="color:#cbd5e1;"><strong style="color:#14b8a6;">MilkyWays:</strong> Hey! Tell me what you're looking at — pick your role above (<strong>Farmer</strong>, <strong>Planner</strong>, <strong>DC Operator</strong>, or <strong>NASA Judge</strong>) or drop your last silage cut like <em>"21 t/ac, 89/100"</em> so I can tune things for your site.</div>
           </div>
+          </details>
 
           <div style="display:flex; gap:0.45rem;">
             <input id="chatInput" type="text" placeholder="Ask in plain English or log farm data (e.g. 21 t/ac maize, 89/100)..." title="Ask about siting, waste heat, or rotations — or log field yields/observations to feed the FodderWeatherNet calibration loop." style="flex:1; padding:0.45rem 0.7rem; border-radius:7px; border:1px solid #334155; background:#0f172a; color:var(--text); font-size:0.82rem;" />
@@ -2136,9 +2139,17 @@
       }
     }
 
+    let lastChatTs = 0;
+    let lastChatMsg = "";
+    let offTopicStreak = 0;
+
     async function handleDiaryChat(raw) {
-      const msg = (raw || "").trim();
+      const msg = (raw || "").trim().slice(0, 240);
       if (!msg) return;
+      const now = Date.now();
+      if (now - lastChatTs < 900) return; // Anti-bot cooldown
+      lastChatTs = now;
+      if (el("chatDrawerDetails")) el("chatDrawerDetails").open = true;
       appendChat("You", msg.replace(/</g, "&lt;"));
       const low = msg.toLowerCase();
       const persona = el("chatPersona") ? el("chatPersona").value : "farmer";
@@ -2216,15 +2227,24 @@
 
       const domainKw = /(crop|plant|fodder|rotat|maize|sorghum|alfalfa|clover|soil|rain|temp|climate|nasa|milk|cow|dairy|km|report|export|farm|yield|nitrogen|water|drought|flood|zoning|setback|help|what|which|how)/;
       if (!domainKw.test(low)) {
+        offTopicStreak += 1;
+        if (low === lastChatMsg || offTopicStreak >= 3) {
+          appendChat("MilkyWays", "Anti-spam guard active: please use one of the quick buttons above or enter a real dairy/siting question (e.g. <code>21 t/ac</code>).");
+          lastChatMsg = low;
+          return;
+        }
+        lastChatMsg = low;
         const fallbackByPersona = {
-          farmer: "Haha, fair stress-test! I only speak dairy, soil, and waste heat though — what did your last silage cut look like (e.g. <code>21 t/ac</code>)?",
-          planner: "Haha, good catch — I stick to zoning, 1,500 ft setbacks, and 12 km thermal corridors. Want me to summarize this parcel's co-location case?",
-          dc: "Haha, strictly cooling loops and dairy heat here! Are you running 55–70 °C liquid cooling or 30–45 °C air?",
-          judge: "Haha, love the sanity check — our domain guard caught that cleanly! Want to test our Negative Controls or ask about our NASA + IM3/Cal-FF data tables?"
+          farmer: "I'm built specifically for <strong>dairy fodder</strong> and <strong>waste-heat loops</strong> (not general veggies/off-topic chat). Drop a silage number like <code>21 t/ac</code> or click <strong>What to plant?</strong>",
+          planner: "I stick strictly to <strong>1,500 ft setbacks</strong>, <strong>12 km thermal corridors</strong>, and municipal zoning. Try <strong>Why this score?</strong> or hit <strong>Export Report</strong>.",
+          dc: "Strictly cooling loops &amp; dairy heat here — ask about <strong>55–70 °C liquid</strong> vs. <strong>30–45 °C air</strong> heat safety.",
+          judge: "Domain guard triggered cleanly! Try <strong>Heat loop safe?</strong> to test our Negative Control or <strong>Why this score?</strong> for WLC weights."
         };
         appendChat("MilkyWays", fallbackByPersona[persona] || fallbackByPersona.farmer);
         return;
       }
+      offTopicStreak = 0;
+      lastChatMsg = low;
 
       const isWarm = climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy";
       const rec = isWarm ? "Sorghum Silage -> Cowpea -> Berseem Clover" : "Maize Silage -> Alfalfa (3 yr) -> Red Clover";
