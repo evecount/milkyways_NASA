@@ -485,6 +485,36 @@
       border-color: rgba(52, 211, 153, 0.8);
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
+    .popup-stages {
+      display: flex;
+      gap: 4px;
+      margin: 7px 0 6px;
+      flex-wrap: wrap;
+    }
+    .popup-stage {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #0f172a;
+      border: 1px solid #cbd5e1;
+    }
+    .popup-export-btn {
+      width: 100%;
+      margin-top: 4px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      border: none;
+      background: #059669;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .popup-export-btn:hover {
+      background: #047857;
+    }
     .top-export-btn {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(20, 184, 166, 0.22));
       border: 1px solid rgba(52, 211, 153, 0.65);
@@ -558,14 +588,6 @@
       <button id="topExportReportBtn" class="top-export-btn" type="button" title="Export print-to-PDF Municipal Feasibility Report with site map, co-location plan, Eval → Pilot → Result roadmap, and NASA provenance.">Export Report</button>
     </div>
   </header>
-
-  <div class="journey-bar" aria-label="Decision workflow progression">
-    <button type="button" class="journey-step done" id="step1Pill" onclick="el('preset').focus()" title="Step 1: Pick a preset region or click anywhere on the satellite map.">① Site Selected ✓</button>
-    <span class="journey-arrow">→</span>
-    <button type="button" class="journey-step active" id="step2Pill" onclick="el('wSoil').focus()" title="Step 2: Adjust the 6 MCDA priorities, inspect checks, or ask Dairy Diary Chat.">② Tune &amp; Inspect</button>
-    <span class="journey-arrow">→</span>
-    <button type="button" class="journey-step" id="step3Pill" onclick="generateMunicipalReport()" title="Step 3: Export the complete Municipal Feasibility Packet (HTML / Print to PDF).">③ Export Municipal Packet</button>
-  </div>
 
   <div class="container">
     <aside>
@@ -651,7 +673,6 @@
 
         <button id="fetchBtn" title="Queries live NASA POWER daily climatology (T2M, rain, solar, wind) for these coordinates and re-ranks all fodder rotations.">Fetch Live NASA POWER &amp; Rank</button>
         <div class="status" id="apiStatus">Ready. Querying NASA POWER climatology...</div>
-        <button id="exportReportBtn" title="Generates a print-to-PDF municipal packet with siting verdict, 12 km pipe vs. Position Beacon co-location plan, Eval → Pilot → Result roadmap, and NASA provenance." class="export-report-btn" type="button">Export Municipal Feasibility Report</button>
       </div>
 
       <div class="card">
@@ -1650,7 +1671,7 @@
 
       L.circleMarker([lat, lon], { radius: 7, color: "#fff", fillColor: zoneColor, fillOpacity: 1, weight: 2 })
 
-        .bindPopup(`<strong>Dairy Farm</strong> (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)`)
+        .bindPopup(`<strong>Dairy Farm</strong> (${lat.toFixed(2)}°, ${lon.toFixed(2)}°)<div class="popup-stages"><span class="popup-stage" title="Weeks 1–4: Screening & setback check">1. Eval</span><span class="popup-stage" title="Months 1–6: Heat loop & Dairy Diary calibration">2. Pilot</span><span class="popup-stage" title="Months 6–18+: Full circular symbiosis">3. Result</span></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
 
         .addTo(bufferLayer);
 
@@ -1708,7 +1729,7 @@
             .bindTooltip(`${n.name} (${km} km · ${n.cap} · Viable Pipe)`)
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><br/><small>Export Municipal Feasibility Report for the <b>Eval &rarr; Pilot &rarr; Result</b> packet.</small>`)
+            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span><div class="popup-stages"><span class="popup-stage" title="Weeks 1–4: Survey pipe corridor & setback">1. Eval</span><span class="popup-stage" title="Months 1–6: Double-wall HX + HTST metering">2. Pilot</span><span class="popup-stage" title="Months 6–18+: Offtake + N cut + cascade">3. Result</span></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
             .addTo(spiderLayer);
         } else {
           // Beyond 12 km: no pipe line — render a Position Beacon only
@@ -1716,7 +1737,7 @@
             .addTo(spiderLayer);
           L.circleMarker([n.lat, n.lon], { radius: 5, color: "#fff", fillColor: "#f59e0b", fillOpacity: 0.95, weight: 1.5 })
             .bindTooltip(`${n.name} — Position Beacon (${km} km > ${MAX_PIPE_KM} km pipe limit)`)
-            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<br/><small>Export Municipal Feasibility Report for the <b>Eval &rarr; Pilot &rarr; Result</b> packet.</small>`)
+            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}<div class="popup-stages"><span class="popup-stage" title="Weeks 1–4: Survey pipe corridor & setback">1. Eval</span><span class="popup-stage" title="Months 1–6: Double-wall HX + HTST metering">2. Pilot</span><span class="popup-stage" title="Months 6–18+: Offtake + N cut + cascade">3. Result</span></div><button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>`)
             .addTo(spiderLayer);
         }
       });
