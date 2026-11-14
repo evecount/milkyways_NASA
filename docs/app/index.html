@@ -306,6 +306,31 @@
         </div>
         <div class="safety-box" id="safetyBox"></div>
       </div>
+
+      <div class="card">
+        <h2>Log On-Farm Ground Truth (Improves Model Over Time)</h2>
+        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Any farm can enter its coordinates above, run live NASA POWER + FodderWeatherNet, and log real seasonal outcomes to grow the open training dataset.</div>
+        <div class="row2">
+          <div>
+            <label for="obsCrop">Planted Fodder Crop</label>
+            <select id="obsCrop">
+              <option value="Maize Silage -> Alfalfa">Maize Silage &rarr; Alfalfa</option>
+              <option value="Sorghum -> Cowpea">Sorghum &rarr; Cowpea</option>
+              <option value="Corn -> Soybeans -> Wheat -> Alfalfa">Corn &rarr; Soybeans &rarr; Wheat &rarr; Alfalfa</option>
+              <option value="Continuous Maize">Continuous Maize</option>
+            </select>
+          </div>
+          <div>
+            <label for="obsOutcome">Observed Season Outcome (1&ndash;100)</label>
+            <input id="obsOutcome" type="number" min="1" max="100" value="85" />
+          </div>
+        </div>
+        <div class="row2">
+          <button id="saveObsBtn" type="button">Save Observation Locally</button>
+          <button id="exportObsBtn" type="button" style="background:var(--accent); color:#0b1120;">Export Dataset JSON</button>
+        </div>
+        <div class="status" id="obsStatus">0 local observations logged in browser.</div>
+      </div>
     </main>
   </div>
 
@@ -562,6 +587,37 @@
     });
 
     fetchNasaPower();
+    function getObs() {
+      try { return JSON.parse(localStorage.getItem("milkyways_obs") || "[]"); } catch { return []; }
+    }
+    function updateObsStatus() {
+      const list = getObs();
+      el("obsStatus").textContent = `${list.length} observation(s) logged locally (ready to export & retrain FodderWeatherNet).`;
+    }
+    el("saveObsBtn").addEventListener("click", () => {
+      const list = getObs();
+      list.push({
+        timestamp: new Date().toISOString(),
+        lat: parseFloat(el("lat").value),
+        lon: parseFloat(el("lon").value),
+        soil: el("soil").value,
+        t2m: climate.t2m,
+        rain: climate.rain,
+        solar: climate.solar,
+        crop: el("obsCrop").value,
+        observed_score: Math.max(1, Math.min(100, +el("obsOutcome").value || 80))
+      });
+      localStorage.setItem("milkyways_obs", JSON.stringify(list));
+      updateObsStatus();
+    });
+    el("exportObsBtn").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(getObs(), null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "milkyways_farm_observations.json";
+      a.click();
+    });
+    updateObsStatus();
   </script>
 </body>
 </html>
