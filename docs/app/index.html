@@ -1623,55 +1623,43 @@
 
 
 
+    const MAX_PIPE_KM = 12.0;
+
     function renderSynergySpider() {
-
       if (!mcdaMap || !spiderLayer) return;
-
       spiderLayer.clearLayers();
-
       const z = mcdaMap.getZoom();
-
       if (z > 11 || z < 4) return;
-
       const lat = parseFloat(el("lat").value) || 1.42;
-
       const lon = parseFloat(el("lon").value) || 103.72;
-
       const presetKey = el("preset").value;
-
       const nodes = REGIONAL_SYNERGIES[presetKey] || [
-
         { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
-
         { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
-
         { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
-
       ];
-
       nodes.forEach(n => {
-
-        const km = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1);
-
+        const kmNum = mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000;
+        const km = kmNum.toFixed(1);
         const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
-
-        L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
-
-          .bindTooltip(`${n.name} (${km} km · ${n.cap})`)
-
-          .addTo(spiderLayer);
-
-        L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
-
-          .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}`)
-
-          .addTo(spiderLayer);
-
+        if (kmNum <= MAX_PIPE_KM) {
+          L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2, dashArray: "6 5", opacity: 0.85 })
+            .bindTooltip(`${n.name} (${km} km · ${n.cap} · Viable Pipe)`)
+            .addTo(spiderLayer);
+          L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", fillColor: col, fillOpacity: 0.95, weight: 2 })
+            .bindPopup(`<strong>${n.name}</strong><br/>${n.type === "dc" ? "Potential Waste-Heat Source" : "Regional Dairy / Fodder Synergy"}<br/>Distance: ${km} km · ${n.cap}<br/><span style="color:#059669;font-weight:700;">Viable Thermal Pipe (&le; ${MAX_PIPE_KM} km)</span>`)
+            .addTo(spiderLayer);
+        } else {
+          // Beyond 12 km: no pipe line — render a Position Beacon only
+          L.circleMarker([n.lat, n.lon], { radius: 11, color: "#f59e0b", fillColor: "#f59e0b", fillOpacity: 0.12, weight: 1.5, dashArray: "3 3" })
+            .addTo(spiderLayer);
+          L.circleMarker([n.lat, n.lon], { radius: 5, color: "#fff", fillColor: "#f59e0b", fillOpacity: 0.95, weight: 1.5 })
+            .bindTooltip(`${n.name} — Position Beacon (${km} km > ${MAX_PIPE_KM} km pipe limit)`)
+            .bindPopup(`<strong>${n.name}</strong><br/><span style="color:#d97706;font-weight:700;">Position Beacon Only (${km} km &gt; ${MAX_PIPE_KM} km pipe limit)</span><br/>Hot-water piping is non-viable at this distance. Co-locate a new ${n.type === "dc" ? "Dairy / Processing Plant near this hub" : "Edge Data Center on-site"} instead.<br/>Capacity: ${n.cap}`)
+            .addTo(spiderLayer);
+        }
       });
-
     }
-
-
 
     function renderTuningInsides(topRot, score) {
 
@@ -2203,19 +2191,43 @@
 
       let synergyNodes = [];
       if (typeof REGIONAL_SYNERGIES !== "undefined") {
-        const pool = REGIONAL_SYNERGIES[presetKey] || [];
+        const pool = REGIONAL_SYNERGIES[presetKey] || [
+          { name: "Regional Data Center Corridor", type: "dc", lat: lat + 0.08, lon: lon + 0.11, cap: "50 MW heat" },
+          { name: "Secondary Cloud Hub", type: "dc", lat: lat - 0.12, lon: lon + 0.07, cap: "80 MW heat" },
+          { name: "Neighboring Fodder Co-op", type: "farm", lat: lat + 0.06, lon: lon - 0.09, cap: "Fodder / Dairy" }
+        ];
         synergyNodes = pool.map(n => {
+          let kmNum = null;
           let distKm = "—";
           if (typeof mcdaMap !== "undefined" && mcdaMap && typeof mcdaMap.distance === "function") {
-            distKm = (mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000).toFixed(1) + " km";
+            kmNum = mcdaMap.distance([lat, lon], [n.lat, n.lon]) / 1000;
+            distKm = kmNum.toFixed(1) + " km";
           }
+          const pipeViable = kmNum != null && kmNum <= MAX_PIPE_KM;
           return {
             name: n.name || "Regional Node",
-            kind: n.type === "dc" ? "Data Center (Waste-Heat Source)" : "Agricultural / Dairy Hub",
+            type: n.type || "dc",
+            kind: n.type === "dc" ? "Data Center (Waste-Heat Source)" : "Dairy / Processing / Fodder Hub",
+            kmNum,
             distKm,
-            heatMw: n.mw != null ? `${n.mw} MW` : (n.heatMw != null ? `${n.heatMw} MW` : "—")
+            pipeStatus: kmNum == null ? "Verify locally" : (pipeViable ? `Viable Pipe (≤ ${MAX_PIPE_KM} km)` : `Position Beacon Only (> ${MAX_PIPE_KM} km)`),
+            heatMw: n.cap || "—"
           };
         });
+      }
+
+      const viableDc = synergyNodes.filter(n => n.type === "dc" && n.kmNum != null && n.kmNum <= MAX_PIPE_KM).sort((a, b) => a.kmNum - b.kmNum)[0];
+      const nearestDc = synergyNodes.filter(n => n.type === "dc" && n.kmNum != null).sort((a, b) => a.kmNum - b.kmNum)[0];
+      const viableFarm = synergyNodes.filter(n => n.type !== "dc" && n.kmNum != null && n.kmNum <= MAX_PIPE_KM).sort((a, b) => a.kmNum - b.kmNum)[0];
+
+      let colocationTitle = "Co-Locate a New Edge Data Center OR Dairy Processing Plant";
+      let colocationDetail = `No existing waste-heat Data Center sits within the ${MAX_PIPE_KM} km viable hot-water pipe envelope. Because long-distance thermal piping loses heat and CapEx viability, the municipality should zone this parcel to either (a) co-locate a new modular liquid-cooled Edge/AI Data Center adjacent to the dairy, or (b) site a new dairy processing plant within ${MAX_PIPE_KM} km of ${nearestDc ? nearestDc.name + " (" + nearestDc.distKm + " beacon)" : "the nearest regional substation/data hub"}.`;
+      if (viableDc) {
+        colocationTitle = `Direct Thermal Pipe Interconnect Viable (${viableDc.name}, ${viableDc.distKm})`;
+        colocationDetail = `${viableDc.name} (${viableDc.heatMw}) lies ${viableDc.distKm} from this parcel — inside the ${MAX_PIPE_KM} km thermal pipe limit. The municipality can permit an insulated closed-loop interconnect to supply HTST pasteurization and chilling, OR expand on-site dairy processing capacity${viableFarm ? " alongside " + viableFarm.name + " (" + viableFarm.distKm + ")" : ""}.`;
+      } else if (viableFarm) {
+        colocationTitle = `Co-Locate a New Data Center Near ${viableFarm.name} (${viableFarm.distKm})`;
+        colocationDetail = `${viableFarm.name} lies ${viableFarm.distKm} from this coordinate, whereas the nearest Data Center beacon${nearestDc ? " (" + nearestDc.name + " at " + nearestDc.distKm + ")" : ""} exceeds the ${MAX_PIPE_KM} km pipe cutoff. Zoning a new liquid-cooled Edge Data Center inside this ${MAX_PIPE_KM} km agricultural cluster unlocks shared waste heat without nonsensical long-distance piping.`;
       }
 
       const timestamp = new Date().toISOString();
@@ -2313,11 +2325,15 @@
       ${checkCards.length ? checkCards.map(c => `<tr><td><strong>${escHtml(c.title)}</strong></td><td>${escHtml(c.body)}</td></tr>`).join("") : "<tr><td colspan='2'>Run Fetch Live NASA POWER to populate checks.</td></tr>"}
     </table>
 
-    <h2>4. Nearby Data-Center &amp; Agricultural Synergy Nodes</h2>
+    <h2>4. Nearby Data-Center &amp; Agricultural Synergy Nodes (12 km Pipe Cutoff)</h2>
     <table>
-      <tr><th>Node Name</th><th>Role</th><th>Geodesic Distance</th><th>Thermal / Hub Capacity</th></tr>
-      ${synergyNodes.length ? synergyNodes.map(n => `<tr><td><strong>${escHtml(n.name)}</strong></td><td>${escHtml(n.kind)}</td><td>${escHtml(n.distKm)}</td><td>${escHtml(n.heatMw)}</td></tr>`).join("") : "<tr><td colspan='4'>Custom coordinate outside preset synergy corridor; verify local substation &amp; data-center interconnect within 15 km.</td></tr>"}
+      <tr><th>Node Name</th><th>Role</th><th>Distance</th><th>Pipe / Beacon Status</th><th>Capacity</th></tr>
+      ${synergyNodes.map(n => `<tr><td><strong>${escHtml(n.name)}</strong></td><td>${escHtml(n.kind)}</td><td>${escHtml(n.distKm)}</td><td>${escHtml(n.pipeStatus)}</td><td>${escHtml(n.heatMw)}</td></tr>`).join("")}
     </table>
+    <div class="note-box">
+      <strong>Co-Location Siting Recommendation — ${escHtml(colocationTitle)}:</strong><br/>
+      ${escHtml(colocationDetail)}
+    </div>
 
     <h2>5. Data Provenance, Deep Learning Proxy &amp; Verification Limits</h2>
     <table>
