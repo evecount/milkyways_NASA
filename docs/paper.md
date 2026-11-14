@@ -43,6 +43,16 @@ Agricultural decision-support tools frequently fail farmers in two ways: generic
 
 ---
 
+### 2b. Anti-Hallucination Infrastructure & Dairy Grounding (Separate Facility Tables)
+
+Because both hyperscale AI facilities (proprietary infrastructure) and dairy farm addresses (protected under agricultural privacy laws in many countries) lack a single unified government registry, **MilkyWays** sources and documents two separate, verifiable open-data tables:
+
+1. **AI Data Center Table (How Sourced):** Built from satellite-verified and DOE/open-source facility registries — **IM3 Open Source Data Center Atlas** (PNNL/DOE, filtered to `≥ 250,000 sq ft` campuses with water/transmission layers), **Data Center Atlas (`kiankyars/datacenter-atlas`)** (announced/under-construction mega-projects), **ATLAS (`Ringmast4r/Global-Data-Center-Map`)** (`18,110+` facilities / `6,100+` exact GPS coords across `116` countries), and **PeeringDB** (`5,200+` interconnection hubs).
+2. **Dairy Farm Table (How Sourced):** Built separately by combining **FAO Gridded Livestock of the World (`GLW 4`, ~10 km)**, **Cal-FF Factory Farm Census** (`2,121` aerial-CV barn/lagoon polygons), **State CAFO Permit Registries** (ArcGIS Hub for NY, MI, WI), **OpenStreetMap Overpass** (`landuse=farmyard`, `building=cowshed`), **UK Registered Dairy Establishments** (`data.gov.uk` CSV), and **NASA CMS / Vista-CA** (aerial AI dairy & manure lagoon CH₄ mapping for biogas co-generation).
+3. **Metric Buffer Join:** Reprojecting both layers into `EPSG:3857` / local UTM and running `gpd.sjoin(dairy_farms, datacenters.buffer(12000))` enforces our **`12 km` viable pipe cutoff** (rendering dashed pipe connectors `≤ 12 km` and co-location **Position Beacons** beyond `12 km`), then samples **NASA GRACE-FO** and **ECOSTRESS** at each intersection.
+
+---
+
 ## 3. Four Mandatory Domain Checks
 
 Every candidate configuration in **MilkyWays** must pass four explicit checks:

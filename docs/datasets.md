@@ -50,6 +50,29 @@ Because hyperscale AI infrastructure is proprietary, no single government regist
 
 ---
 
+## 2c. Open-Source Dairy Farm & Livestock Datasets (Privacy-Compliant Grounding)
+
+Because farm addresses are protected under agricultural privacy laws in many countries, no single global point file lists every dairy farm. Researchers and municipal planners combine global cattle density rasters with public environmental CAFO permit registries, computer-vision barn footprints, and NASA methane facility detections:
+
+| Dataset | Coverage & Scale | Available Formats | Why It Works in MilkyWays | Source |
+| :--- | :--- | :--- | :--- | :--- |
+| **FAO Gridded Livestock of the World (`GLW 4`)** | Global (`~10 km` / 5 arc-minute resolution) | GeoTIFF (Raster) | Global cattle abundance heatmap to score overlap against ATLAS data centers | [fao.org/livestock-systems](https://www.fao.org/livestock-systems/global-distributions/en/) |
+| **Cal-FF Factory Farm Census** | California, USA (`2,121` facilities; 98% of state CAFOs, including dairy) | CSV, GeoJSON (Hugging Face) | Aerial-CV barn/lagoon polygons and exact dairy classifications | [Nature Scientific Data (2025)](https://www.nature.com/articles/s41597-025-06082-6) |
+| **State CAFO Permit Registries (ArcGIS Hub)** | U.S. Dairy States (New York, Michigan, Wisconsin, etc.) | GeoJSON, Shapefile, CSV | Public environmental agency GPS points for regulated dairy operations | [ArcGIS Hub (`tags=farms`)](https://hub.arcgis.com/search?collection=dataset&tags=farms) |
+| **OpenStreetMap (`Overpass API`)** | Global (crowd-sourced farmyards, barns, pastures) | GeoJSON, CSV, KML | Query `landuse=farmyard` or `building=cowshed` inside any thermal buffer zone | [openstreetmap.org](https://www.openstreetmap.org/) |
+| **UK Registered Dairy Establishments** | United Kingdom (updated monthly) | CSV | Postcodes & establishment names ready to geocode into UK/EU map pins | [data.gov.uk](https://www.data.gov.uk/dataset/61ce0cbc-3c0e-4311-8021-ff439138eaee/list-of-registered-dairy-establishments) |
+| **NASA CMS / Vista-CA** *(Methane & Biogas)* | California San Joaquin Valley | GeoJSON / Aerial AI layer | Maps dairy facilities & manure lagoons for CH₄ biogas + backup generator synergy | [carbon.nasa.gov](https://carbon.nasa.gov/) |
+
+### Reproducible Spatial-Join Method (Data Centers × Dairy Farms)
+
+To identify co-location corridors without hallucinating links:
+1. Reproject both the Data Center layer (`IM3` / `ATLAS`, filtered to `≥ 250,000 sq ft` campuses) and Dairy layer (`Cal-FF` / `State CAFOs` / `OSM`) into a metric CRS (`EPSG:3857` or local UTM).
+2. Buffer each data center by the viable thermal pipe radius (`5–12 km`, e.g., `datacenters.geometry.buffer(12000)`).
+3. Run `gpd.sjoin(dairy_farms, datacenter_buffers, predicate="within")` to isolate viable pipe corridors vs. `> 12 km` Position Beacons.
+4. Sample **NASA GRACE-FO** (groundwater anomaly) and **NASA ECOSTRESS** (`~70 m` LST) pixels at each intersection.
+
+---
+
 ## 3. Honest Limits & Validation
 
 To avoid black-box overclaiming, **MilkyWays** states its data and engineering boundaries explicitly:
