@@ -491,6 +491,29 @@
       border-color: rgba(52, 211, 153, 0.8);
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
+    .moo-sticker {
+      position: fixed;
+      top: 68px;
+      right: 24px;
+      z-index: 9999;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border: 2px solid #fde68a;
+      color: #fef3c7;
+      padding: 8px 13px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      transform: rotate(-1.5deg);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      max-width: 310px;
+    }
+    .moo-sticker.show {
+      opacity: 1;
+      transform: rotate(0deg) translateY(2px);
+    }
     .hud-card {
       position: relative;
       border-color: rgba(20, 184, 166, 0.55) !important;
@@ -687,6 +710,7 @@
 </head>
 
 <body>
+  <div id="mooSticker" class="moo-sticker" aria-live="polite"></div>
   <header>
     <div class="header-inner">
     <div>
@@ -2782,6 +2806,16 @@
       "Beyond 12 km, hot-water piping loses viability — Position Beacons flag on-site co-location instead."
     ];
 
+    const MOO_MENTIONS = [
+      "Click anywhere on land to test siting a dairy farm with live NASA POWER data!",
+      "Zoom out (4–11) to inspect 12 km Thermal Pipes vs. >12 km Position Beacons.",
+      "Click any map pin & tap 1. Eval / 2. Pilot / 3. Result for an instant stage plan.",
+      "Hit Export Municipal Feasibility Report in any map popup for a print-to-PDF packet.",
+      "Try switching CAPCOM's role to Farmer, Planner, DC Operator, or NASA Judge!",
+      "Log your real harvest (e.g. 21 t/ac, 89/100) in CAPCOM to calibrate FodderWeatherNet."
+    ];
+    let mooStickerTimer = null;
+
     if (el("mooBtn")) {
       el("mooBtn").addEventListener("click", () => {
         playMooSound();
@@ -2797,6 +2831,19 @@
           const fact = MOO_FACTS[(Math.floor(mooCount / 3) - 1) % MOO_FACTS.length];
           if (el("capcomLatest")) {
             el("capcomLatest").innerHTML = `<strong style="color:#fde68a;">🐄 MOO #${mooCount}:</strong> Hopped to <strong>${gf.name}</strong> — ${fact}`;
+          }
+        }
+        if (mooCount > 3) {
+          const mention = MOO_MENTIONS[(mooCount - 4) % MOO_MENTIONS.length];
+          const st = el("mooSticker");
+          if (st) {
+            st.innerHTML = `<span style="color:#5eead4;">🏷️ MOO #${mooCount} STICKER:</span> ${mention}`;
+            st.classList.add("show");
+            if (mooStickerTimer) clearTimeout(mooStickerTimer);
+            mooStickerTimer = setTimeout(() => st.classList.remove("show"), 3600);
+          }
+          if (mooCount % 3 !== 0 && el("capcomLatest")) {
+            el("capcomLatest").innerHTML = `<strong style="color:#fde68a;">🐄 MOO #${mooCount} MENTION:</strong> ${mention}`;
           }
         }
       });
