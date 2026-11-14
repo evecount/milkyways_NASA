@@ -38,5 +38,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Interactive Tool: app/index.html
+  - 7-Slide Demo: slides/index.html
+  - Technical Paper: paper.md
   - NASA Datasets: datasets.md
   - Waste Heat & Safety: waste-heat.md
