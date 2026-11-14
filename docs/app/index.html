@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,7 +18,11 @@
       --good: #22c55e;
       --bad: #ef4444;
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -25,6 +30,7 @@
       color: var(--text);
       line-height: 1.5;
     }
+
     header {
       background: #0b1120;
       border-bottom: 1px solid var(--border);
@@ -35,12 +41,14 @@
       flex-wrap: wrap;
       gap: 0.75rem;
     }
+
     header a {
       color: var(--accent);
       text-decoration: none;
       font-size: 0.9rem;
       font-weight: 600;
     }
+
     .container {
       max-width: 1160px;
       margin: 0 auto;
@@ -49,9 +57,13 @@
       grid-template-columns: 340px 1fr;
       gap: 1.5rem;
     }
+
     @media (max-width: 860px) {
-      .container { grid-template-columns: 1fr; }
+      .container {
+        grid-template-columns: 1fr;
+      }
     }
+
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -59,9 +71,24 @@
       padding: 1.25rem;
       margin-bottom: 1rem;
     }
-    h1, h2, h3 { margin-top: 0; }
-    h1 { font-size: 1.25rem; margin-bottom: 0; }
-    h2 { font-size: 1.05rem; color: var(--accent); margin-bottom: 0.75rem; }
+
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: 1.05rem;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+
     label {
       display: block;
       font-size: 0.82rem;
@@ -69,7 +96,11 @@
       margin-bottom: 0.25rem;
       margin-top: 0.75rem;
     }
-    select, input[type="number"], input[type="range"], button {
+
+    select,
+    input[type="number"],
+    input[type="range"],
+    button {
       width: 100%;
       padding: 0.5rem 0.65rem;
       border-radius: 8px;
@@ -78,7 +109,12 @@
       color: var(--text);
       font-size: 0.9rem;
     }
-    input[type="range"] { padding: 0; border: none; }
+
+    input[type="range"] {
+      padding: 0;
+      border: none;
+    }
+
     button {
       margin-top: 1rem;
       background: var(--indigo);
@@ -86,27 +122,48 @@
       font-weight: 600;
       cursor: pointer;
     }
-    button:hover { opacity: 0.92; }
-    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
       gap: 0.75rem;
     }
+
     .metric {
       background: #0f172a;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 0.75rem;
     }
-    .metric .k { font-size: 0.75rem; color: var(--muted); }
-    .metric .v { font-size: 1.15rem; font-weight: 700; margin-top: 0.15rem; }
+
+    .metric .k {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .metric .v {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-top: 0.15rem;
+    }
+
     .checks-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 0.65rem;
       margin-top: 0.5rem;
     }
+
     .check-item {
       background: #0f172a;
       border: 1px solid var(--border);
@@ -114,9 +171,21 @@
       padding: 0.65rem 0.8rem;
       font-size: 0.82rem;
     }
-    .check-item.pass { border-left: 4px solid var(--good); }
-    .check-item.fail { border-left: 4px solid var(--bad); }
-    .check-item .ctitle { font-weight: 700; display: flex; justify-content: space-between; }
+
+    .check-item.pass {
+      border-left: 4px solid var(--good);
+    }
+
+    .check-item.fail {
+      border-left: 4px solid var(--bad);
+    }
+
+    .check-item .ctitle {
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+    }
+
     .rotation-card {
       background: #0f172a;
       border: 1px solid var(--border);
@@ -124,7 +193,11 @@
       padding: 1rem;
       margin-bottom: 0.75rem;
     }
-    .rotation-card.best { border-color: var(--accent); }
+
+    .rotation-card.best {
+      border-color: var(--accent);
+    }
+
     .rot-head {
       display: flex;
       justify-content: space-between;
@@ -132,6 +205,7 @@
       gap: 0.5rem;
       flex-wrap: wrap;
     }
+
     .badge {
       font-size: 0.72rem;
       padding: 0.15rem 0.55rem;
@@ -140,8 +214,17 @@
       background: rgba(20, 184, 166, 0.15);
       color: var(--accent);
     }
-    .badge.pos { background: rgba(34, 197, 94, 0.15); color: var(--good); }
-    .badge.neg { background: rgba(239, 68, 68, 0.15); color: var(--bad); }
+
+    .badge.pos {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--good);
+    }
+
+    .badge.neg {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--bad);
+    }
+
     .bars {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -149,6 +232,7 @@
       margin-top: 0.65rem;
       font-size: 0.78rem;
     }
+
     .bar-bg {
       height: 6px;
       background: #1e293b;
@@ -156,8 +240,18 @@
       overflow: hidden;
       margin-top: 0.25rem;
     }
-    .bar-fill { height: 100%; background: var(--accent); }
-    .status { font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+    }
+
+    .status {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
     .safety-box {
       border-left: 4px solid var(--good);
       background: rgba(34, 197, 94, 0.08);
@@ -166,10 +260,12 @@
       font-size: 0.85rem;
       margin-top: 0.75rem;
     }
+
     .safety-box.fail {
       border-left-color: var(--bad);
       background: rgba(239, 68, 68, 0.08);
     }
+
     .chart-wrap {
       margin-top: 0.9rem;
       background: #0f172a;
@@ -177,6 +273,7 @@
       border-radius: 8px;
       padding: 0.75rem;
     }
+
     .chart-legend {
       display: flex;
       gap: 1rem;
@@ -185,14 +282,23 @@
       margin-bottom: 0.4rem;
       flex-wrap: wrap;
     }
-    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
+
+    .dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <div>
       <h1>MilkyWays &mdash; Dairy Fodder &amp; Waste-Heat Decision Tool</h1>
-      <div style="font-size:0.8rem; color:var(--muted);">NASA Space Apps Challenge 2026 &middot; Challenge 7: Field Shift</div>
+      <div style="font-size:0.8rem; color:var(--muted);">NASA Space Apps Challenge 2026 &middot; Challenge 7: Field
+        Shift</div>
     </div>
     <a href="../">&larr; Back to Project Docs</a>
   </header>
@@ -257,12 +363,32 @@
 
     <main>
       <div class="card">
+        <div class="rot-head" style="margin-bottom:0.65rem;">
+          <h2 style="margin:0;">Dairy Diary &mdash; Global Farm &amp; Data Center Logbook</h2>
+          <button type="button" id="openDiagBtn" style="width:auto; margin:0; padding:0.4rem 0.85rem;">+ New Diary Entry / Run Diagnostic</button>
+        </div>
+        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Every logged season feeds back into <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.</div>
+        <div id="diaryFeed" class="checks-grid"></div>
+      </div>
+      <div class="card">
         <h2>NASA POWER Climate Baseline (<span id="coordLabel">44.08&deg;N, -79.88&deg;E</span>)</h2>
         <div class="metrics-grid">
-          <div class="metric"><div class="k">Mean Temp (T2M)</div><div class="v" id="mTemp">7.00 &deg;C</div></div>
-          <div class="metric"><div class="k">Precipitation (PRECTOTCORR)</div><div class="v" id="mRain">2.16 mm/d</div></div>
-          <div class="metric"><div class="k">Solar Irradiance (ALLSKY)</div><div class="v" id="mSolar">13.05 MJ/m&sup2;/d</div></div>
-          <div class="metric"><div class="k">Wind Speed (WS2M)</div><div class="v" id="mWind">2.98 m/s</div></div>
+          <div class="metric">
+            <div class="k">Mean Temp (T2M)</div>
+            <div class="v" id="mTemp">7.00 &deg;C</div>
+          </div>
+          <div class="metric">
+            <div class="k">Precipitation (PRECTOTCORR)</div>
+            <div class="v" id="mRain">2.16 mm/d</div>
+          </div>
+          <div class="metric">
+            <div class="k">Solar Irradiance (ALLSKY)</div>
+            <div class="v" id="mSolar">13.05 MJ/m&sup2;/d</div>
+          </div>
+          <div class="metric">
+            <div class="k">Wind Speed (WS2M)</div>
+            <div class="v" id="mWind">2.98 m/s</div>
+          </div>
         </div>
         <div class="chart-wrap">
           <div class="chart-legend">
@@ -272,18 +398,33 @@
           </div>
           <svg id="seasonalChart" viewBox="0 0 640 160" width="100%" height="160"></svg>
         </div>
-        <div class="status">Source: <a href="https://power.larc.nasa.gov/api/temporal/climatology/point" target="_blank" style="color:var(--accent);">NASA POWER Agroclimatology API</a> (~50 km grid). Complemented by GPM IMERG (~10 km rainfall), SMAP (9 km soil moisture), and MODIS MOD13Q1 (250 m NDVI).</div>
+        <div class="status">Source: <a href="https://power.larc.nasa.gov/api/temporal/climatology/point" target="_blank"
+            style="color:var(--accent);">NASA POWER Agroclimatology API</a> (~50 km grid). Complemented by GPM IMERG
+          (~10 km rainfall), SMAP (9 km soil moisture), and MODIS MOD13Q1 (250 m NDVI).</div>
       </div>
 
       <div class="card">
         <h2>Predictive Deep Learning Forecast (FodderWeatherNet &mdash; PyTorch MLP)</h2>
         <div class="metrics-grid">
-          <div class="metric"><div class="k">Next-Season C3 (Alfalfa/Maize)</div><div class="v" id="dlC3">-- / 100</div></div>
-          <div class="metric"><div class="k">Next-Season C4 (Sorghum/Cowpea)</div><div class="v" id="dlC4">-- / 100</div></div>
-          <div class="metric"><div class="k">Predicted Stress Risk</div><div class="v" id="dlRisk">-- / 100</div></div>
-          <div class="metric"><div class="k">Out-of-Sample R&sup2; (2023&ndash;2025)</div><div class="v" id="dlR2">0.8740</div></div>
+          <div class="metric">
+            <div class="k">Next-Season C3 (Alfalfa/Maize)</div>
+            <div class="v" id="dlC3">-- / 100</div>
+          </div>
+          <div class="metric">
+            <div class="k">Next-Season C4 (Sorghum/Cowpea)</div>
+            <div class="v" id="dlC4">-- / 100</div>
+          </div>
+          <div class="metric">
+            <div class="k">Predicted Stress Risk</div>
+            <div class="v" id="dlRisk">-- / 100</div>
+          </div>
+          <div class="metric">
+            <div class="k">Out-of-Sample R&sup2; (2023&ndash;2025)</div>
+            <div class="v" id="dlR2">0.8740</div>
+          </div>
         </div>
-        <div class="status" id="dlStatus">Trained on 10-year daily NASA POWER (2016&ndash;2025, 6 global dairy regions). Outperforms Ridge baseline (R&sup2; 0.8553).</div>
+        <div class="status" id="dlStatus">Trained on 10-year daily NASA POWER (2016&ndash;2025, 6 global dairy regions).
+          Outperforms Ridge baseline (R&sup2; 0.8553).</div>
       </div>
 
       <div class="card">
@@ -299,24 +440,38 @@
       <div class="card">
         <h2>Data Center Waste-Heat Balance</h2>
         <div class="metrics-grid">
-          <div class="metric"><div class="k">Dairy Thermal Demand</div><div class="v" id="hDemand">817 kWh/d</div></div>
-          <div class="metric"><div class="k">Avg Heat Load</div><div class="v" id="hKw">82 kW</div></div>
-          <div class="metric"><div class="k">HTST Pasteurization</div><div class="v" id="hHtst">72&ndash;78 &deg;C (PASS)</div></div>
-          <div class="metric"><div class="k">Absorption Chilling</div><div class="v">~7.2 &deg;C</div></div>
+          <div class="metric">
+            <div class="k">Dairy Thermal Demand</div>
+            <div class="v" id="hDemand">817 kWh/d</div>
+          </div>
+          <div class="metric">
+            <div class="k">Avg Heat Load</div>
+            <div class="v" id="hKw">82 kW</div>
+          </div>
+          <div class="metric">
+            <div class="k">HTST Pasteurization</div>
+            <div class="v" id="hHtst">72&ndash;78 &deg;C (PASS)</div>
+          </div>
+          <div class="metric">
+            <div class="k">Absorption Chilling</div>
+            <div class="v">~7.2 &deg;C</div>
+          </div>
         </div>
         <div class="safety-box" id="safetyBox"></div>
       </div>
 
       <div class="card">
         <h2>Log On-Farm Ground Truth (Improves Model Over Time)</h2>
-        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Any farm can enter its coordinates above, run live NASA POWER + FodderWeatherNet, and log real seasonal outcomes to grow the open training dataset.</div>
+        <div class="status" style="margin-top:0; margin-bottom:0.65rem;">Any farm can enter its coordinates above, run
+          live NASA POWER + FodderWeatherNet, and log real seasonal outcomes to grow the open training dataset.</div>
         <div class="row2">
           <div>
             <label for="obsCrop">Planted Fodder Crop</label>
             <select id="obsCrop">
               <option value="Maize Silage -> Alfalfa">Maize Silage &rarr; Alfalfa</option>
               <option value="Sorghum -> Cowpea">Sorghum &rarr; Cowpea</option>
-              <option value="Corn -> Soybeans -> Wheat -> Alfalfa">Corn &rarr; Soybeans &rarr; Wheat &rarr; Alfalfa</option>
+              <option value="Corn -> Soybeans -> Wheat -> Alfalfa">Corn &rarr; Soybeans &rarr; Wheat &rarr; Alfalfa
+              </option>
               <option value="Continuous Maize">Continuous Maize</option>
             </select>
           </div>
@@ -327,7 +482,8 @@
         </div>
         <div class="row2">
           <button id="saveObsBtn" type="button">Save Observation Locally</button>
-          <button id="exportObsBtn" type="button" style="background:var(--accent); color:#0b1120;">Export Dataset JSON</button>
+          <button id="exportObsBtn" type="button" style="background:var(--accent); color:#0b1120;">Export Dataset
+            JSON</button>
         </div>
         <div class="status" id="obsStatus">0 local observations logged in browser.</div>
       </div>
@@ -335,7 +491,7 @@
   </div>
 
   <script>
-    const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+    const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     const ROTATIONS = [
       {
         name: "Maize Silage -> Alfalfa (3 yr) -> Red Clover",
@@ -374,9 +530,9 @@
     let climate = {
       t2m: 7.0, rain: 2.16, solar: 13.05, wind: 2.98,
       monthly: {
-        T2M: [-7.25,-6.1,-1.0,6.1,11.67,17.3,21.2,20.1,15.8,8.84,2.8,-3.5],
-        PRECTOTCORR: [1.83,1.6,1.9,2.2,2.35,2.4,2.24,2.3,2.5,2.5,2.3,2.0],
-        ALLSKY_SFC_SW_DWN: [4.84,7.6,11.5,15.8,19.84,21.6,21.93,19.1,14.2,8.59,5.1,3.9]
+        T2M: [-7.25, -6.1, -1.0, 6.1, 11.67, 17.3, 21.2, 20.1, 15.8, 8.84, 2.8, -3.5],
+        PRECTOTCORR: [1.83, 1.6, 1.9, 2.2, 2.35, 2.4, 2.24, 2.3, 2.5, 2.5, 2.3, 2.0],
+        ALLSKY_SFC_SW_DWN: [4.84, 7.6, 11.5, 15.8, 19.84, 21.6, 21.93, 19.1, 14.2, 8.59, 5.1, 3.9]
       }
     };
 
@@ -461,7 +617,7 @@
     fetch("./model_weights.json")
       .then(r => r.ok ? r.json() : null)
       .then(m => { nnModel = m; renderAll(); })
-      .catch(() => {});
+      .catch(() => { });
 
     function runNeuralInference() {
       if (!nnModel) return;
@@ -588,11 +744,24 @@
 
     fetchNasaPower();
     function getObs() {
-      try { return JSON.parse(localStorage.getItem("milkyways_obs") || "[]"); } catch { return []; }
+      const defaults = [
+        { timestamp: "2026-11-14", lat: 44.08, lon: -79.88, soil: "loam", crop: "Maize Silage -> Alfalfa (3 yr) -> Red Clover", observed_score: 91, note: "Ontario Dairy Region · 25-30% N cut" },
+        { timestamp: "2026-11-14", lat: 47.36, lon: 9.45, soil: "loam", crop: "Maize Silage -> Alfalfa (3 yr) -> Red Clover", observed_score: 90, note: "Gais, CH · 1.5 GWh/yr waste heat" }
+      ];
+      try {
+        const saved = JSON.parse(localStorage.getItem("milkyways_obs") || "[]");
+        return saved.length ? saved : defaults;
+      } catch { return defaults; }
     }
     function updateObsStatus() {
       const list = getObs();
-      el("obsStatus").textContent = `${list.length} observation(s) logged locally (ready to export & retrain FodderWeatherNet).`;
+      el("obsStatus").textContent = `${list.length} observation(s) in Dairy Diary (ready to export & retrain FodderWeatherNet).`;
+      el("diaryFeed").innerHTML = list.slice().reverse().slice(0, 4).map(o => `
+        <div class="check-item pass">
+          <div class="ctitle"><span>${o.crop}</span><span>${o.observed_score}/100</span></div>
+          <div style="color:var(--muted); margin-top:0.2rem;">(${Number(o.lat).toFixed(2)}°, ${Number(o.lon).toFixed(2)}°) · ${o.soil} soil${o.note ? " · " + o.note : ""}</div>
+        </div>
+      `).join("");
     }
     el("saveObsBtn").addEventListener("click", () => {
       const list = getObs();
@@ -609,6 +778,9 @@
       });
       localStorage.setItem("milkyways_obs", JSON.stringify(list));
       updateObsStatus();
+    el("openDiagBtn").addEventListener("click", () => {
+      el("obsCrop").scrollIntoView({ behavior: "smooth" });
+    });
     });
     el("exportObsBtn").addEventListener("click", () => {
       const blob = new Blob([JSON.stringify(getObs(), null, 2)], { type: "application/json" });
@@ -618,6 +790,10 @@
       a.click();
     });
     updateObsStatus();
+    el("openDiagBtn").addEventListener("click", () => {
+      el("obsCrop").scrollIntoView({ behavior: "smooth" });
+    });
   </script>
 </body>
+
 </html>
