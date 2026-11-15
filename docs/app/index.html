@@ -47,7 +47,7 @@
 <select id="preset">
 <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
 <option value="2.03,103.32">Kluang Dairy Valley, Johor, Malaysia (2.03, 103.32)</option>
-<option value="44.08,-79.88">Ontario Dairy Region, Canada (44.08, -79.88)</option>
+<option value="44.08,-79.88">Sheldon Creek Dairy, Loretto, Ontario, Canada (44.08, -79.88)</option>
 <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
 <option value="43.07,-89.40">Wisconsin Dairy Belt, USA (43.07, -89.40)</option>
 <option value="-37.79,175.28">Waikato Pasture Dairy, New Zealand (-37.79, 175.28)</option>
@@ -901,7 +901,7 @@
 
       { key: "2.03,103.32", name: "Kluang Dairy Valley, Johor, Malaysia", lat: 2.03, lon: 103.32 },
 
-      { key: "44.08,-79.88", name: "Ontario Dairy Region, Canada", lat: 44.08, lon: -79.88 },
+      { key: "44.08,-79.88", name: "Sheldon Creek Dairy (Loretto, Ontario)", lat: 44.08, lon: -79.88 },
 
       { key: "47.36,9.45", name: "Gais Dairy Reference, Switzerland", lat: 47.36, lon: 9.45 },
 
@@ -1890,7 +1890,7 @@
       const topRotationShort = rankedRotations.length ? rankedRotations[0].title.replace(/^#\d+\s*/, "") : "See live ranking";
       const isSheldon = presetKey === "44.08,-79.88";
       const regionalCropNote = isSheldon
-        ? "Sheldon Creek / Ontario Seasonal Strategy: Perennial Alfalfa (3 yr) + Red Clover maintains living root cover through sub-zero frost windows (T_min < 0 °C) and spring snowmelt, eliminating bare-field erosion while cutting synthetic N by 25–30%."
+        ? "Sheldon Creek Dairy (Loretto, Ontario — farm partner: Marianne Den Haan): Perennial Alfalfa (3 yr) + Red Clover maintains living root cover through sub-zero frost windows (T_min < 0 °C) and spring snowmelt, eliminating bare-field erosion while cutting synthetic N by 25–30%."
         : "Seasonal Cover & Resilience Strategy: Pair legume N-fixation (25–30% synthetic N reduction) with heat- or frost-matched C3/C4 forage species to minimize bare-field intervals and buffer water stress.";
 
       const hDemand = el("hDemand")?.textContent || "—";
