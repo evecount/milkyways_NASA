@@ -40,7 +40,25 @@
   </div>
 </div>
 
-<div id="mooPilotSlideModal" class="moo-pilot-slide-modal" role="dialog" aria-label="Moo-Pilot Feature Slide"><div id="mooPilotSlideCard" class="moo-pilot-slide-card"></div></div><div class="container"><aside class="anchored-controls">
+<div id="mooPilotSlideModal" class="moo-pilot-slide-modal" role="dialog" aria-label="Moo-Pilot Feature Slide"><div id="mooPilotSlideCard" class="moo-pilot-slide-card"></div></div>
+<div id="mooPilotRing" class="mp-ring" aria-hidden="true"></div>
+<svg id="mooPilotSvg" class="mp-svg" aria-hidden="true"><line id="mpCoordLine" x1="0" y1="0" x2="0" y2="0" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/><circle id="mpCoordDot" cx="0" cy="0" r="4.5" fill="#f59e0b" stroke="#071018" stroke-width="1.5"/></svg>
+<div id="mooPilotFlightPill" class="mp-flight-pill">Singapore &#8594; Sheldon Creek Dairy, Ontario</div>
+<div id="mooPilotStepCard" class="mp-card" role="dialog" aria-live="polite">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
+    <span id="mpCardCounter" style="color:var(--primary);font-size:10px;font-weight:800;font-family:var(--font-mono);text-transform:uppercase;">Step 1 of 12</span>
+    <span id="mpPausedTag" style="display:none;color:var(--accent);font-size:10px;font-weight:800;">Paused</span>
+  </div>
+  <div id="mpCardText" style="font-size:12.5px;line-height:1.42;font-weight:600;margin-bottom:9px;">Hi, I am Moo Pilot. 30 second tour, no clicking needed.</div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;">
+    <div style="display:flex;gap:5px;">
+      <button type="button" id="mpBackBtn" class="mw-control" style="padding:3px 8px;font-size:11px;">Back</button>
+      <button type="button" id="mpNextBtn" class="mw-control" style="padding:3px 9px;font-size:11px;border-color:var(--primary);color:var(--primary);">Next</button>
+      <button type="button" id="mpResumeBtn" class="mw-control" style="display:none;padding:3px 9px;font-size:11px;border-color:var(--accent);color:var(--accent);">Resume</button>
+    </div>
+    <button type="button" id="mpSkipBtn" class="mw-control" style="padding:3px 8px;font-size:11px;">Skip tour</button>
+  </div>
+</div><div class="container"><aside class="anchored-controls">
 <div class="anchor-card" id="anchor-farm"><h2><span class="section-number">01</span>Farm location<button aria-expanded="true" aria-label="Collapse farm location" class="mw-control collapse-toggle" data-collapse="farm" type="button">−</button></h2><div class="anchor-content">
 
 <label for="preset">Dairy region</label>
@@ -2448,20 +2466,18 @@
       el("exportReportBtn").addEventListener("click", generateMunicipalReport);
     }
   
-    // Moo-Pilot: 10-step guided tour (Earth -> Singapore -> Sheldon Creek -> HUD -> Key -> Anchors -> Left/Right Nav -> Export Report -> Gaia Mission Slide)
-    let mpTimers = [];
-    let mpSubTimers = [];
+    // Moo-Pilot: Directed 12-Step Spotlight Tour (Singapore -> Flight -> Sheldon Creek -> Farmer Action)
+    let mpAutoTimer = null;
+    let mpFlightTimer = null;
     let mpActive = false;
+    let mpPaused = false;
+    let mpIdx = 0;
 
     function clearMooPilotHighlights() {
       document.querySelectorAll(".moo-pilot-highlight").forEach(n => n.classList.remove("moo-pilot-highlight"));
     }
 
-    function highlightEl(target) {
-      clearMooPilotHighlights();
-      const node = typeof target === "string" ? document.querySelector(target) : target;
-      if (node) node.classList.add("moo-pilot-highlight");
-    }
+    function highlightEl() {}
 
     function closeAllWorkspacePanels() {
       document.querySelectorAll(".workspace-panel").forEach(pn => { pn.hidden = true; pn.classList.remove("strip-open"); });
@@ -2497,21 +2513,96 @@
       document.querySelectorAll("[data-panel]").forEach(b => b.setAttribute("aria-expanded", b.dataset.panel === panelKey ? "true" : "false"));
     }
 
+    function getTargetRect(step) {
+      if (typeof step.customRect === "function") return step.customRect();
+      const node = typeof step.target === "string" ? document.querySelector(step.target) : null;
+      if (!node) return null;
+      node.scrollIntoView({ block: "nearest", inline: "nearest" });
+      return node.getBoundingClientRect();
+    }
+
+    function positionCardAndLine(rect, prefer) {
+      const ring = el("mooPilotRing");
+      const svg = el("mooPilotSvg");
+      const card = el("mooPilotStepCard");
+      const line = el("mpCoordLine");
+      const dot = el("mpCoordDot");
+      if (!ring || !svg || !card || !rect) return;
+
+      const pad = 6;
+      const rx = Math.max(4, rect.left - pad);
+      const ry = Math.max(4, rect.top - pad);
+      const rw = Math.max(24, rect.width + pad * 2);
+      const rh = Math.max(24, rect.height + pad * 2);
+
+      ring.style.left = rx + "px";
+      ring.style.top = ry + "px";
+      ring.style.width = rw + "px";
+      ring.style.height = rh + "px";
+      ring.classList.remove("show");
+      void ring.offsetWidth;
+      ring.classList.add("show");
+      svg.classList.add("show");
+      card.classList.add("show");
+
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const cw = card.offsetWidth || 292, ch = card.offsetHeight || 110;
+      const gap = 22;
+      let cx = rx + rw + gap, cy = ry;
+
+      if (prefer === "below" || vw < 760) {
+        cx = Math.min(Math.max(12, rx + rw / 2 - cw / 2), vw - cw - 12);
+        cy = ry + rh + gap;
+        if (cy + ch > vh - 14) cy = Math.max(12, ry - ch - gap);
+      } else if (prefer === "above") {
+        cx = Math.min(Math.max(12, rx), vw - cw - 12);
+        cy = Math.max(12, ry - ch - gap);
+        if (cy < 12) cy = Math.min(vh - ch - 12, ry + rh + gap);
+      } else if (prefer === "left") {
+        cx = Math.max(12, rx - cw - gap);
+        cy = Math.min(Math.max(12, ry), vh - ch - 12);
+        if (cx + cw > rx - 6) cx = Math.min(vw - cw - 12, rx + rw + gap);
+      } else {
+        cx = rx + rw + gap;
+        cy = Math.min(Math.max(12, ry), vh - ch - 12);
+        if (cx + cw > vw - 12) {
+          cx = Math.max(12, rx - cw - gap);
+        }
+        if (cx < rx + rw && cx + cw > rx && cy < ry + rh && cy + ch > ry) {
+          cy = ry + rh + gap < vh - ch - 12 ? ry + rh + gap : Math.max(12, ry - ch - gap);
+        }
+      }
+
+      card.style.left = Math.round(cx) + "px";
+      card.style.top = Math.round(cy) + "px";
+
+      const ringCx = rx + rw / 2, ringCy = ry + rh / 2;
+      const cardCx = cx + cw / 2, cardCy = cy + ch / 2;
+      const dx = ringCx - cardCx, dy = ringCy - cardCy;
+      let x1 = cardCx, y1 = cardCy, x2 = ringCx, y2 = ringCy;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        x1 = dx > 0 ? cx + cw : cx;
+        x2 = dx > 0 ? rx : rx + rw;
+      } else {
+        y1 = dy > 0 ? cy + ch : cy;
+        y2 = dy > 0 ? ry : ry + rh;
+      }
+      if (line) {
+        line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+      }
+      if (dot) { dot.setAttribute("cx", x2); dot.setAttribute("cy", y2); }
+    }
+
     const MOO_PILOT_STEPS = [
       {
-        delay: 0,
-        caption: "Earth from space: 14 global dairy regions mapped with NASA POWER climatology.",
-        run: () => {
-          hideMooSlide();
+        target: "#mooBtn",
+        prefer: "below",
+        duration: 3500,
+        caption: "Hi, I am Moo Pilot. 30 second tour, no clicking needed.",
+        prepare: () => {
           closeAllWorkspacePanels();
-          clearMooPilotHighlights();
-          if (el("worldViewBtn")) el("worldViewBtn").click();
-        }
-      },
-      {
-        delay: 3000,
-        caption: "Singapore Tropical Dairy Demo (1.42°, 103.72°): Sorghum -> Cowpea -> Berseem ranks #1 (88/100).",
-        run: () => {
+          hideMooSlide();
           if (el("preset")) {
             el("preset").value = "1.42,103.72";
             el("preset").dispatchEvent(new Event("change"));
@@ -2520,10 +2611,14 @@
         }
       },
       {
-        delay: 6500,
-        caption: "Sheldon Creek / Ontario Dairy Region (44.08°, -79.88°): temperate benchmark & 12 km corridor.",
-        run: () => {
-          if (el("preset")) {
+        target: "#preset",
+        prefer: "right",
+        duration: 3500,
+        caption: "Start here. Pick the farm. We are using Sheldon Creek Dairy.",
+        prepare: () => {
+          closeAllWorkspacePanels();
+          el("anchor-farm")?.classList.remove("collapsed");
+          if (el("preset") && el("preset").value !== "44.08,-79.88") {
             el("preset").value = "44.08,-79.88";
             el("preset").dispatchEvent(new Event("change"));
           }
@@ -2531,166 +2626,93 @@
         }
       },
       {
-        delay: 10000,
-        caption: "Always-visible HUD: Selected parcel, NASA LOCK coordinates, Suitability score & safety verdict.",
-        run: () => {
-          enterFarmMap(11);
-          highlightEl(".selection-readout");
+        target: ".selection-readout",
+        prefer: "below",
+        duration: 3500,
+        caption: "NASA locked the parcel here. Site Verdict: Suitable, 88 out of 100.",
+        prepare: () => { closeAllWorkspacePanels(); enterFarmMap(11); }
+      },
+      {
+        target: "#hudTopCropChip",
+        prefer: "below",
+        duration: 3500,
+        caption: "This is the rotation it picked for this parcel.",
+        prepare: () => { closeAllWorkspacePanels(); }
+      },
+      {
+        target: "#rotationsList",
+        prefer: "left",
+        duration: 4000,
+        caption: "Here are 4 rotations, compared, not just one. This is what the brief asks for.",
+        prepare: () => { openDrawerKey("rotations"); }
+      },
+      {
+        target: "#anchor-priorities",
+        prefer: "right",
+        duration: 3500,
+        caption: "You move these, the ranking moves.",
+        prepare: () => {
+          closeAllWorkspacePanels();
+          el("anchor-priorities")?.classList.remove("collapsed");
         }
       },
       {
-        delay: 13500,
-        caption: "Map Key: Candidate parcel, 1,500 ft setback, 12 km thermal pipe envelope & >12 km Position Beacons.",
-        run: () => {
+        target: '.edge-left [data-panel="layers"]',
+        prefer: "right",
+        duration: 3500,
+        caption: "This is where the NASA data lives. POWER, plus the GIBS map layers.",
+        prepare: () => { closeAllWorkspacePanels(); }
+      },
+      {
+        customRect: () => {
+          const mapEl = el("mcdaMap");
+          if (!mapEl || typeof mcdaMap === "undefined" || !mcdaMap) return null;
+          const r = mapEl.getBoundingClientRect();
+          const lat = parseFloat(el("lat").value) || 44.08;
+          const lon = parseFloat(el("lon").value) || -79.88;
+          const pt = mcdaMap.latLngToContainerPoint([lat, lon]);
+          return { left: r.left + pt.x - 16, top: r.top + pt.y - 16, width: 32, height: 32 };
+        },
+        prefer: "below",
+        duration: 3500,
+        caption: "That dot is the farm, on real satellite imagery.",
+        prepare: () => { closeAllWorkspacePanels(); enterFarmMap(11); }
+      },
+      {
+        target: ".map-key",
+        prefer: "above",
+        duration: 3500,
+        caption: "Green is a candidate parcel. Red is the 1,500 ft setback.",
+        prepare: () => {
+          closeAllWorkspacePanels();
           const det = document.querySelector(".map-key details");
           if (det) det.open = true;
-          highlightEl(".map-key");
         }
       },
       {
-        delay: 17000,
-        caption: "Anchored Farm & MCDA Priorities: adjusting Soil Health (55%) re-ranks rotations live.",
-        run: () => {
-          ["anchor-farm", "anchor-priorities"].forEach(id => {
-            const card = el(id);
-            if (card) card.classList.remove("collapsed");
-          });
-          highlightEl(".anchored-controls");
-          if (el("wSoil")) {
-            el("wSoil").value = 55;
-            el("wSoil").dispatchEvent(new Event("input"));
-          }
-        }
+        target: '.edge-left [data-panel="network"]',
+        prefer: "right",
+        duration: 3500,
+        caption: "This is where the data centre heat comes in.",
+        prepare: () => { closeAllWorkspacePanels(); }
       },
       {
-        delay: 20500,
-        caption: "Left navigation: Farm, Priorities, World view, Map layers, Parcel & heat network, and Project docs.",
-        run: () => {
+        target: "#topExportReportBtn",
+        prefer: "below",
+        duration: 3500,
+        caption: "One click, you get the whole packet.",
+        prepare: () => { closeAllWorkspacePanels(); }
+      },
+      {
+        target: "#anchor-farm",
+        prefer: "right",
+        duration: 4500,
+        caption: "Now your turn. Put in your farm, set your priorities, then export your report.",
+        prepare: () => {
           closeAllWorkspacePanels();
-          const leftStrip = document.querySelector(".edge-left");
-          if (leftStrip) leftStrip.classList.add("expanded");
-          highlightEl(".edge-left");
-          const leftSequence = [
-            () => { const b = document.querySelector('.edge-left [data-action="farm"]'); if (b) b.classList.add("moo-pilot-highlight"); },
-            () => { const b = document.querySelector('.edge-left [data-action="priorities"]'); if (b) b.classList.add("moo-pilot-highlight"); },
-            () => { openDrawerKey("layers"); },
-            () => { openDrawerKey("network"); },
-            () => { openDrawerKey("docs"); },
-            () => { closeAllWorkspacePanels(); clearMooPilotHighlights(); }
-          ];
-          leftSequence.forEach((fn, i) => {
-            mpSubTimers.push(setTimeout(() => { if (mpActive) fn(); }, i * 650));
-          });
-        }
-      },
-      {
-        delay: 24800,
-        caption: "Right navigation: CAPCOM, Calendar, Dairy Diary, Climate, Forecast, Checks, Rotations & Waste Heat.",
-        run: () => {
-          closeAllWorkspacePanels();
-          const rightStrip = document.querySelector(".edge-right");
-          if (rightStrip) rightStrip.classList.add("expanded");
-          highlightEl(".edge-right");
-          const rightPanels = ["chat", "calendar", "diary", "climate", "forecast", "checks", "rotations", "heat"];
-          rightPanels.forEach((key, i) => {
-            mpSubTimers.push(setTimeout(() => {
-              if (!mpActive) return;
-              openDrawerKey(key);
-            }, i * 650));
-          });
-          mpSubTimers.push(setTimeout(() => {
-            if (!mpActive) return;
-            closeAllWorkspacePanels();
-            clearMooPilotHighlights();
-          }, rightPanels.length * 650 + 250));
-        }
-      },
-      {
-        delay: 30600,
-        caption: "Export Report: Crop Rotations top-billed under the map, followed by the Municipal Feasibility Packet.",
-        run: () => {
-          closeAllWorkspacePanels();
-          highlightEl("#topExportReportBtn");
-          const farmName = el("workspaceFarmName") ? el("workspaceFarmName").textContent : "Selected Dairy Parcel";
-          const suitText = el("heroSuitabilityBadge") ? el("heroSuitabilityBadge").textContent : "Suitable";
-          const lockText = el("hudLockReadout") ? el("hudLockReadout").textContent.trim() : "NASA LOCK";
-          const topRot = document.querySelector("#rotationsList .rot-item, #rotationsList > div")?.textContent?.trim()?.replace(/\s+/g, " ")?.slice(0, 125) || "Sorghum -> Cowpea -> Berseem Clover";
-          const checksCount = document.querySelectorAll("#checksGrid > div").length || 4;
-          const failCount = document.querySelectorAll("#checksGrid .fail").length;
-          showMooSlide(`
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Exported Report · Crop Rotations + Municipal Feasibility</span>
-              <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
-            </div>
-            <h3 style="margin:0 0 4px;font-size:18px;color:var(--accent);">${farmName}</h3>
-            <div style="font-size:11px;color:#94a3b8;font-family:var(--font-mono);margin-bottom:10px;">${lockText} · Print-to-PDF ready</div>
-            <div class="moo-pilot-slide-box" style="margin-bottom:10px;border-color:var(--primary);">
-              <strong style="color:var(--primary);">1. Top-Ranked Crop Rotation (Challenge 7 Core)</strong><br/>${topRot}...
-            </div>
-            <div class="moo-pilot-slide-grid">
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Municipal Siting Verdict</strong><br/>${suitText} (${checksCount - failCount}/${checksCount} gates passed)</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Circular Thermal Loop</strong><br/>1,500 ft setback · 12 km pipe · 72–78 °C double-wall HX</div>
-            </div>
-            <div class="moo-pilot-actions">
-              <button type="button" class="moo-pilot-start" onclick="generateMunicipalReport()">Download Full HTML / PDF Packet</button>
-            </div>
-          `);
-        }
-      },
-      {
-        delay: 35000,
-        caption: "Candidate Parcel & Gaia: multi-use decision support uniting crop rotations with circular siting.",
-        run: () => {
-          clearMooPilotHighlights();
-          showMooSlide(`
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Candidate Parcel · Gaia-Inspired Multi-Use Decision Tool</span>
-              <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
-            </div>
-            <h3 style="margin:0 0 8px;font-size:19px;color:var(--accent);">From Crop Rotations to Candidate Parcels (Like Gaia)</h3>
-            <p style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--foreground);">
-              Just as <strong>Gaia</strong> and closed-loop biosphere experiments show that soil, crops, water, and energy regulate one another in coupled feedback loops, choosing the right <strong>fodder crop rotation</strong> cannot be separated from <strong>where the candidate parcel sits</strong>. MilkyWays turns one NASA Earth-observation engine into a <strong>multi-use decision tool</strong>—leading with agronomy while unlocking circular siting:
-            </p>
-            <div class="moo-pilot-slide-grid">
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">1. Crop Rotations First</strong><br/>NASA POWER climate + soil-water telemetry ranks N-fixing fodder rotations to cut synthetic nitrogen 25–30% and buffer heat/drought.</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Candidate Parcel Screening</strong><br/>The same NASA layers evaluate candidate farm &amp; co-location parcels against 1,500 ft setbacks, open-water gates, and flood zones.</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">3. Circular Energy Symbiosis</strong><br/>Where a parcel sits near compute, 55–70 °C liquid data-center waste heat is safely boosted to 72–78 °C HTST pasteurization (coolant never touches milk).</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">4. One Engine, Two Audiences</strong><br/>Farmers get resilient rotation schedules; municipalities get a print-ready Feasibility Packet—zero API keys, anywhere on Earth.</div>
-            </div>
-            <div class="moo-pilot-actions" style="margin-top:12px;">
-              <button type="button" id="mooPilotReplayBtn" class="moo-pilot-start">&#8634; Replay Moo-Pilot</button>
-              <button type="button" id="mooPilotExploreBtn" class="moo-pilot-skip">Explore Workspace</button>
-            </div>
-          `);
-          if (el("mooPilotReplayBtn")) el("mooPilotReplayBtn").onclick = (e) => { e.stopPropagation(); startMooPilotTour(); };
-          if (el("mooPilotExploreBtn")) el("mooPilotExploreBtn").onclick = (e) => { e.stopPropagation(); hideMooSlide(); stopMooPilotTour(); };
-        }
-      },
-      {
-        delay: 39500,
-        caption: "Top Crop chip & Ranked Rotations: compare all 4 rotations side by side.",
-        run: () => {
-          hideMooSlide();
-          openDrawerKey("rotations");
-          highlightEl("#hudTopCropChip");
-        }
-      },
-      {
-        delay: 43000,
-        caption: "Now your turn! Put in your farm, set your priorities, then export your report.",
-        run: () => {
-          closeAllWorkspacePanels();
-          ["anchor-farm", "anchor-priorities"].forEach(id => {
-            const card = el(id);
-            if (card) card.classList.remove("collapsed");
-          });
-          const farmDet = document.querySelector("#anchor-farm details");
-          if (farmDet) farmDet.open = true;
-          clearMooPilotHighlights();
-          document.querySelector(".anchored-controls")?.classList.add("moo-pilot-highlight");
-          el("topExportReportBtn")?.classList.add("moo-pilot-highlight");
-          mpActive = false;
-          if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+          el("anchor-farm")?.classList.remove("collapsed");
+          const det = document.querySelector("#anchor-farm details");
+          if (det) det.open = true;
         }
       }
     ];
@@ -2700,55 +2722,128 @@
     }
 
     function updateMooPilotHud(stepIdx) {
+      if (el("mpCardCounter")) el("mpCardCounter").textContent = `Step ${stepIdx + 1} of ${MOO_PILOT_STEPS.length}`;
+      if (el("mpCardText")) el("mpCardText").textContent = MOO_PILOT_STEPS[stepIdx].caption;
+      if (el("mpBackBtn")) el("mpBackBtn").disabled = stepIdx === 0;
+      if (el("mpNextBtn")) el("mpNextBtn").textContent = stepIdx === MOO_PILOT_STEPS.length - 1 ? "Done" : "Next";
       if (el("mooPilotStepLabel")) el("mooPilotStepLabel").textContent = `Moo-Pilot · Step ${stepIdx + 1}/${MOO_PILOT_STEPS.length}`;
       if (el("mooPilotCaption")) el("mooPilotCaption").textContent = MOO_PILOT_STEPS[stepIdx].caption;
-      if (el("mooPilotDots")) {
-        el("mooPilotDots").innerHTML = MOO_PILOT_STEPS.map((_, i) =>
-          `<span class="moo-pilot-dot ${i < stepIdx ? "done" : i === stepIdx ? "active" : ""}"></span>`
-        ).join("");
+    }
+
+    function redrawCurrentStep() {
+      if (!mpActive) return;
+      const step = MOO_PILOT_STEPS[mpIdx];
+      const rect = getTargetRect(step);
+      if (rect) positionCardAndLine(rect, step.prefer);
+    }
+
+    function renderStep(idx) {
+      clearTimeout(mpAutoTimer);
+      clearTimeout(mpFlightTimer);
+      mpIdx = Math.max(0, Math.min(MOO_PILOT_STEPS.length - 1, idx));
+      const step = MOO_PILOT_STEPS[mpIdx];
+      if (step.prepare) step.prepare();
+      updateMooPilotHud(mpIdx);
+      setTimeout(() => { if (mpActive) redrawCurrentStep(); }, 90);
+      if (!mpPaused) {
+        mpAutoTimer = setTimeout(() => {
+          if (!mpActive || mpPaused) return;
+          if (mpIdx === 0) {
+            runSingaporeToSheldonFlight();
+          } else if (mpIdx < MOO_PILOT_STEPS.length - 1) {
+            renderStep(mpIdx + 1);
+          } else {
+            stopMooPilotTour();
+          }
+        }, step.duration || 3500);
       }
     }
 
-    function stopMooPilotTour(keepSlide) {
-      mpTimers.forEach(t => clearTimeout(t));
-      mpTimers = [];
-      mpSubTimers.forEach(t => clearTimeout(t));
-      mpSubTimers = [];
-      clearMooPilotHighlights();
-      if (!keepSlide) hideMooSlide();
-      if (mpActive) {
-        mpActive = false;
-        if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
-        if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
+    function runSingaporeToSheldonFlight() {
+      clearTimeout(mpAutoTimer);
+      clearTimeout(mpFlightTimer);
+      el("mooPilotRing")?.classList.remove("show");
+      el("mooPilotSvg")?.classList.remove("show");
+      el("mooPilotStepCard")?.classList.remove("show");
+      el("mooPilotFlightPill")?.classList.add("show");
+      if (el("preset")) {
+        el("preset").value = "44.08,-79.88";
+        el("preset").dispatchEvent(new Event("change"));
       }
+      if (typeof mcdaMap !== "undefined" && mcdaMap) {
+        mcdaMap.flyTo([44.08, -79.88], 11, { duration: 2.0 });
+      }
+      mpFlightTimer = setTimeout(() => {
+        el("mooPilotFlightPill")?.classList.remove("show");
+        if (mpActive && !mpPaused) renderStep(1);
+      }, 2200);
+    }
+
+    function pauseMooPilotTour() {
+      if (!mpActive || mpPaused) return;
+      mpPaused = true;
+      clearTimeout(mpAutoTimer);
+      clearTimeout(mpFlightTimer);
+      el("mooPilotFlightPill")?.classList.remove("show");
+      if (el("mpPausedTag")) el("mpPausedTag").style.display = "inline";
+      if (el("mpResumeBtn")) el("mpResumeBtn").style.display = "inline-block";
+      if (el("mpSkipBtn")) el("mpSkipBtn").textContent = "Exit";
+    }
+
+    function resumeMooPilotTour() {
+      if (!mpActive) return;
+      mpPaused = false;
+      if (el("mpPausedTag")) el("mpPausedTag").style.display = "none";
+      if (el("mpResumeBtn")) el("mpResumeBtn").style.display = "none";
+      if (el("mpSkipBtn")) el("mpSkipBtn").textContent = "Skip tour";
+      renderStep(mpIdx);
+    }
+
+    function stopMooPilotTour() {
+      clearTimeout(mpAutoTimer);
+      clearTimeout(mpFlightTimer);
+      mpActive = false;
+      mpPaused = false;
+      el("mooPilotRing")?.classList.remove("show");
+      el("mooPilotSvg")?.classList.remove("show");
+      el("mooPilotStepCard")?.classList.remove("show");
+      el("mooPilotFlightPill")?.classList.remove("show");
+      if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+      if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
+      if (el("mooPilotToolbarBtn")) el("mooPilotToolbarBtn").innerHTML = "&#8634; Replay Moo-Pilot";
+      hideMooSlide();
     }
 
     function startMooPilotTour() {
       dismissMooPilotModal();
       stopMooPilotTour();
       mpActive = true;
+      mpPaused = false;
+      if (el("mpPausedTag")) el("mpPausedTag").style.display = "none";
+      if (el("mpResumeBtn")) el("mpResumeBtn").style.display = "none";
+      if (el("mpSkipBtn")) el("mpSkipBtn").textContent = "Skip tour";
       if (el("autopilotBadge")) el("autopilotBadge").style.display = "inline-flex";
-      if (el("mooPilotHud")) el("mooPilotHud").classList.add("show");
-      MOO_PILOT_STEPS.forEach((step, idx) => {
-        mpTimers.push(setTimeout(() => {
-          if (!mpActive) return;
-          updateMooPilotHud(idx);
-          step.run();
-        }, step.delay));
-      });
+      renderStep(0);
     }
 
     if (el("mooPilotStartBtn")) el("mooPilotStartBtn").addEventListener("click", (e) => { e.stopPropagation(); startMooPilotTour(); });
     if (el("mooPilotDismissBtn")) el("mooPilotDismissBtn").addEventListener("click", (e) => { e.stopPropagation(); dismissMooPilotModal(); });
     if (el("mooPilotToolbarBtn")) el("mooPilotToolbarBtn").addEventListener("click", (e) => { e.stopPropagation(); startMooPilotTour(); });
     if (el("mooPilotPauseBtn")) el("mooPilotPauseBtn").addEventListener("click", (e) => { e.stopPropagation(); stopMooPilotTour(); });
+    if (el("mpBackBtn")) el("mpBackBtn").addEventListener("click", (e) => { e.stopPropagation(); renderStep(mpIdx - 1); });
+    if (el("mpNextBtn")) el("mpNextBtn").addEventListener("click", (e) => { e.stopPropagation(); if (mpIdx === 0 && !mpPaused) runSingaporeToSheldonFlight(); else if (mpIdx < MOO_PILOT_STEPS.length - 1) renderStep(mpIdx + 1); else stopMooPilotTour(); });
+    if (el("mpResumeBtn")) el("mpResumeBtn").addEventListener("click", (e) => { e.stopPropagation(); resumeMooPilotTour(); });
+    if (el("mpSkipBtn")) el("mpSkipBtn").addEventListener("click", (e) => { e.stopPropagation(); stopMooPilotTour(); });
 
-    ["pointerdown", "keydown", "wheel", "touchstart", "input"].forEach(evt => {
+    window.addEventListener("resize", () => { if (mpActive) redrawCurrentStep(); });
+    window.addEventListener("scroll", () => { if (mpActive) redrawCurrentStep(); }, true);
+
+    ["pointerdown", "keydown", "wheel", "touchstart"].forEach(evt => {
       window.addEventListener(evt, (ev) => {
         const t = ev.target;
-        if (t && t.closest && (t.closest("#mooPilotModal") || t.closest("#mooPilotHud") || t.closest("#mooPilotToolbarBtn") || t.closest("#mooPilotSlideModal"))) return;
+        if (t && t.closest && (t.closest("#mooPilotModal") || t.closest("#mooPilotStepCard") || t.closest("#mooPilotToolbarBtn"))) return;
         dismissMooPilotModal();
-        stopMooPilotTour();
+        if (mpActive) pauseMooPilotTour();
       }, { passive: true });
     });
 
