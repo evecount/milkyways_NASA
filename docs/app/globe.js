@@ -73,7 +73,7 @@ try {
   function showMap(){stage.classList.remove('space-view');host.hidden=true;if(typeof mcdaMap!=='undefined')mcdaMap.invalidateSize();}
   mapButton.addEventListener('click',showMap);
   document.getElementById('worldViewBtn').addEventListener('click',showGlobe);
-  document.querySelector('[data-action="layers"]').addEventListener('click',showMap);
+  document.querySelector('[data-panel="layers"],[data-action="layers"]').addEventListener('click',showMap);
   const toggle=document.getElementById('rotationToggle');
   function rotationUI(){toggle.textContent=controls.autoRotate?'Ⅱ':'▶';toggle.setAttribute('aria-label',controls.autoRotate?'Pause Earth rotation':'Resume Earth rotation');toggle.title=toggle.getAttribute('aria-label');}
   toggle.addEventListener('click',()=>{controls.autoRotate=!controls.autoRotate;rotationUI();});
