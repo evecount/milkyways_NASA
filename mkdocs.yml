@@ -6,6 +6,8 @@ repo_name: evecount/milkyways_NASA
 
 theme:
   name: material
+  logo: assets/milkyways-logo.png
+  favicon: assets/milkyways-logo.png
   palette:
     - scheme: default
       primary: indigo
