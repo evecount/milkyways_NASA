@@ -61,8 +61,14 @@
     const safe=document.getElementById('workspaceSafety');
     safe.textContent=checks ? (failed ? failed+' / 4 domain checks failed' : '4 / 4 domain checks passed') : 'Checking domain guardrails…';
     safe.parentElement.classList.toggle('failed',Boolean(failed));
+    const cropChip=document.getElementById('hudTopCropChip');
+    const firstRot=document.querySelector('#rotationsList .rot-item strong, #rotationsList > div strong');
+    if(cropChip && firstRot){
+      const cleanRot=firstRot.textContent.replace(/^#\d+\s*/,'').trim();
+      cropChip.textContent='Top Crop: '+cleanRot;
+    }
   }
-  ['apiStatus','checksGrid','hudLockReadout'].forEach(id=>new MutationObserver(syncReadouts).observe(document.getElementById(id),{childList:true,subtree:true,characterData:true}));
+  ['apiStatus','checksGrid','hudLockReadout','rotationsList'].forEach(id=>{const elNode=document.getElementById(id);if(elNode)new MutationObserver(syncReadouts).observe(elNode,{childList:true,subtree:true,characterData:true});});
   document.getElementById('preset').addEventListener('change',syncReadouts);
   syncReadouts();
   // Recalculate map dimensions after moving the existing map into its full-screen stage.

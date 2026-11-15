@@ -10,7 +10,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="./workspace.css" rel="stylesheet"/><meta content="MilkyWays — Earth Workspace" property="og:title"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." property="og:description"/><meta content="website" property="og:type"/><meta content="summary_large_image" name="twitter:card"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." name="description"/></head>
 <body>
-<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
+<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><button type="button" class="badge" id="hudTopCropChip" onclick="window.focusFeature && window.focusFeature('rotationsList')" title="Click to inspect all ranked fodder crop rotations" style="cursor:pointer;border-color:var(--primary);color:var(--primary);background:rgba(20,184,166,0.12);">Top Crop: --</button><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
 <div id="mooPilotModal" class="moo-pilot-modal" role="dialog" aria-label="Moo-Pilot Guided Tour">
   <div class="moo-pilot-card">
     <img class="moo-pilot-banner" src="./hero-split.svg" alt="Milk &amp; Cows paired with Servers &amp; Heat" />
@@ -1887,6 +1887,11 @@
         return { rank: idx + 1, title: strongText, score: scoreText, summary: fullText };
       });
       const topRotationText = rankedRotations.length ? rankedRotations[0].summary : "See live ranking";
+      const topRotationShort = rankedRotations.length ? rankedRotations[0].title.replace(/^#\d+\s*/, "") : "See live ranking";
+      const isSheldon = presetKey === "44.08,-79.88";
+      const regionalCropNote = isSheldon
+        ? "Sheldon Creek / Ontario Seasonal Strategy: Perennial Alfalfa (3 yr) + Red Clover maintains living root cover through sub-zero frost windows (T_min < 0 °C) and spring snowmelt, eliminating bare-field erosion while cutting synthetic N by 25–30%."
+        : "Seasonal Cover & Resilience Strategy: Pair legume N-fixation (25–30% synthetic N reduction) with heat- or frost-matched C3/C4 forage species to minimize bare-field intervals and buffer water stress.";
 
       const hDemand = el("hDemand")?.textContent || "—";
       const hKw = el("hKw")?.textContent || "—";
@@ -2004,17 +2009,17 @@
     </div>
 
     <div class="verdict-banner">
+      <div class="stat-box ok">
+        <div class="stat-label">Top-Ranked Crop Rotation</div>
+        <div class="stat-val">${escHtml(topRotationShort)}</div>
+      </div>
       <div class="stat-box ${waterBlocked ? "alert" : "ok"}">
-        <div class="stat-label">Siting Verdict</div>
+        <div class="stat-label">Siting &amp; Crop Verdict</div>
         <div class="stat-val">${escHtml(badgeText)}</div>
       </div>
       <div class="stat-box ${waterBlocked ? "alert" : "ok"}">
-        <div class="stat-label">Open-Water Exclusion</div>
-        <div class="stat-val">${waterBlocked ? "BLOCKED (Open Water)" : "PASS (Terrestrial)"}</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Setback Buffer</div>
-        <div class="stat-val">1,500 ft Parlor/Watershed</div>
+        <div class="stat-label">Open-Water &amp; Setback</div>
+        <div class="stat-val">${waterBlocked ? "BLOCKED (Open Water)" : "PASS · 1,500 ft Buffer"}</div>
       </div>
       <div class="stat-box">
         <div class="stat-label">HTST 72–78 °C Loop</div>
@@ -2036,7 +2041,9 @@
     <h2>1. Ranked Fodder Crop Rotations &amp; Soil Adaptation (Challenge 7 Core)</h2>
     <div class="note-box">
       <strong>Top-Ranked Rotation:</strong> ${escHtml(topRotationText)}<br/>
-      <em>Method:</em> Weighted Linear Combination (WLC) over live NASA POWER agroclimatology, local soil-water capacity, legume N-fixation (25–30% synthetic N reduction), and thermal/grid priorities.
+      <em>Method:</em> Weighted Linear Combination (WLC) over live NASA POWER agroclimatology, local soil-water capacity, legume N-fixation (25–30% synthetic N reduction), and thermal/grid priorities.<br/>
+      <strong>Agronomic Cover &amp; Bare-Field Note:</strong> ${escHtml(regionalCropNote)}<br/>
+      <em>Advisory Notice:</em> Decision support only — validate rotation timing, frost windows, and soil fertility with local farmers and agronomists.
     </div>
     <table>
       <tr><th>Rank</th><th>Fodder Rotation &amp; Agronomic Rationale</th></tr>
