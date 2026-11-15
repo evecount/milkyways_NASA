@@ -1960,34 +1960,36 @@
       const waterBlocked = ${waterBlocked ? "true" : "false"};
       const nodes = ${JSON.stringify(synergyNodes)};
       const maxPipeKm = ${MAX_PIPE_KM};
-      const map = L.map("reportMap", { zoomControl: true }).setView([lat, lon], 10);
+      const map = L.map("reportMap", { zoomControl: true }).setView([lat, lon], 12);
       L.control.scale({ metric: true, imperial: true, position: "bottomright" }).addTo(map);
       L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
         attribution: "Esri World Imagery", maxZoom: 18
       }).addTo(map);
       L.circle([lat, lon], { radius: 457.2, color: "#38bdf8", weight: 1.5, fillOpacity: 0.08 }).addTo(map);
-      L.circle([lat, lon], { radius: maxPipeKm * 1000, color: "#14b8a6", weight: 1.2, dashArray: "5 5", fillOpacity: 0.03 }).addTo(map);
+      const pipeCircle = L.circle([lat, lon], { radius: maxPipeKm * 1000, color: "#14b8a6", weight: 1.2, dashArray: "5 5", fillOpacity: 0.03 }).addTo(map);
       L.circleMarker([lat, lon], {
         radius: 8, color: "#ffffff", weight: 2, fillColor: waterBlocked ? "#ef4444" : "#10b981", fillOpacity: 0.95
       }).bindPopup("<strong>Candidate Parcel</strong><br/>" + lat.toFixed(5) + "°, " + lon.toFixed(5) + "°").addTo(map);
       const bounds = [[lat, lon]];
       nodes.forEach(n => {
         if (n.lat == null || n.lon == null) return;
-        bounds.push([n.lat, n.lon]);
         const viable = n.kmNum != null && n.kmNum <= maxPipeKm;
         const col = n.type === "dc" ? "#14b8a6" : "#6366f1";
         if (viable) {
+          bounds.push([n.lat, n.lon]);
           L.polyline([[lat, lon], [n.lat, n.lon]], { color: col, weight: 2.5, dashArray: "6 5", opacity: 0.9 }).addTo(map);
           L.circleMarker([n.lat, n.lon], { radius: 6, color: "#fff", weight: 2, fillColor: col, fillOpacity: 0.95 })
             .bindPopup("<strong>" + n.name + "</strong><br/>" + n.distKm + " · " + n.pipeStatus).addTo(map);
         } else {
-          L.circleMarker([n.lat, n.lon], { radius: 10, color: "#f59e0b", fillColor: "#f59e0b", fillOpacity: 0.14, weight: 1.5, dashArray: "3 3" }).addTo(map);
+          L.circleMarker([n.lat, n.lon], { radius: 10, color: "#f59e0b", fillColor: "#f59e0b", fillOpacity: 0.14, weight: 1.5, dashArray: "3 3", interactive: false }).addTo(map);
           L.circleMarker([n.lat, n.lon], { radius: 5, color: "#fff", weight: 1.5, fillColor: "#f59e0b", fillOpacity: 0.95 })
             .bindPopup("<strong>" + n.name + "</strong><br/>" + n.distKm + " · " + n.pipeStatus).addTo(map);
         }
       });
       if (bounds.length > 1) {
-        map.fitBounds(bounds, { padding: [28, 28], maxZoom: 11 });
+        map.fitBounds(bounds, { padding: [36, 36], maxZoom: 12 });
+      } else {
+        map.fitBounds(pipeCircle.getBounds(), { padding: [20, 20], maxZoom: 11 });
       }
     })();
   <\/script>
