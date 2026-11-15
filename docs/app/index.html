@@ -2430,6 +2430,7 @@
     <div class="note-box">
       <strong>Pasteurization &amp; Waste-Heat Match:</strong> Daily thermal demand is <strong>${escHtml(hDemand)}</strong> against <strong>${escHtml(hKw)}</strong> continuous data-center recovery capacity (${escHtml(hHtst)}).<br/>
       <strong>Food Safety &amp; Plumbing Isolation:</strong> ${escHtml(safetyText)}
+      ${isSheldon ? `<br/><strong>Reference Framing:</strong> Sheldon Creek Dairy (non-homogenized A2 milk, 600 acres home-grown feed) is modeled here for fodder rotation &amp; soil stewardship only; data-center waste-heat recovery is modeled from the Gais, Switzerland benchmark (1.5 GWh/yr) as a separate co-location scenario.` : ""}
     </div>
 
     <h2>3. Mandatory Regulatory &amp; Engineering Checks</h2>
@@ -3028,7 +3029,7 @@
         target: '.edge-left [data-panel="network"]',
         prefer: "right",
         duration: 3500,
-        caption: "This is where the data centre heat comes in.",
+        caption: "And separately, here is the heat-recovery model (proven at Gais, Switzerland, 1.5 GWh/yr) — showing how co-located data centres can supply pasteurisation heat, while Sheldon Creek models the fodder rotation.",
         prepare: () => { closeAllWorkspacePanels(); }
       },
       {
