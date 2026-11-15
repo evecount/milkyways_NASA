@@ -1,4 +1,6 @@
-# MilkyWays &mdash; Data Center Dairy Diary
+![milkyways](assets/milkyways-logo.png){ width="64" align="left" style="border-radius:14px;margin-right:14px;" }
+
+# milkyways &mdash; earth observation · fodder & dairy systems
 
 **The decision tool that learns from farms and data centers around the world.** &mdash; *NASA Space Apps Challenge Singapore 2026 (Challenge 7: Field Shift)*
 
