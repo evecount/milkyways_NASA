@@ -34,7 +34,7 @@ The project is creative because it bridges space-based Earth observation with a 
 ## Use of Artificial Intelligence (AI)
 
 - We used AI-assisted coding and documentation tools during the hackathon to accelerate `MkDocs Material` scaffolding, frontend layout boilerplate, and submission copy drafting.
-- The core rotation-scoring engine and thermodynamic heat-balance model are deterministic and rule-based, paired with `FodderWeatherNet` (a PyTorch-trained MLP exported to `model_weights.json` executing a client-side JS forward pass, documented in `docs/model-card.md`) that is always guarded by our four mandatory deterministic checks.
+- The core rotation-scoring engine and thermodynamic heat-balance model are deterministic and rule-based, paired with `FodderWeatherNet` (`R² = 0.8740`, `MAE = 5.27` vs. Ridge `R² = 0.8553`; PyTorch-trained MLP exported to `model_weights.json`, training script: https://github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py, model card: https://github.com/evecount/milkyways_NASA/blob/main/docs/model-card.md) that is always guarded by our four mandatory deterministic checks.
 - Any AI-generated code or documentation was reviewed, tested, and refined by the team before integration.
 - No AI-generated images, logos, or NASA branding were used or modified.
 - All AI involvement is documented transparently in the repository.
