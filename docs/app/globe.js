@@ -65,7 +65,7 @@ try {
     pin.position.copy(position(lat,lon));pin.userData={key:option.value,name:option.textContent.replace(/\s*\([^)]*\)\s*$/,'')};planet.add(pin);return pin;
   });
   function selection(){pins.forEach(pin=>{const selected=pin.userData.key===preset.value;pin.scale.setScalar(selected?1.5:1);pin.material.color.copy(resolvedColor(selected?'--accent':'--primary'));});}
-  selection();preset.addEventListener('change',selection);
+  selection();preset.addEventListener('change',()=>{selection();showMap();});
   new MutationObserver(selection).observe(document.getElementById('hudLockReadout'),{childList:true,subtree:true});
   function resize(){const {width,height}=canvasHost.getBoundingClientRect();if(!width||!height)return;camera.aspect=width/height;camera.updateProjectionMatrix();renderer.setSize(width,height);}
   new ResizeObserver(resize).observe(canvasHost);resize();

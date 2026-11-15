@@ -1054,7 +1054,7 @@
       if (!mcdaMap) return;
       hasUserPickedRegion = true;
       mcdaMap.stop();
-      mcdaMap.flyTo([lat, lon], 11, { duration: 1.0, easeLinearity: 0.35 });
+      const stage = document.querySelector(".map-stage"); const globeHost = document.querySelector(".globe-stage"); const wasSpace = stage && stage.classList.contains("space-view"); if (stage) stage.classList.remove("space-view"); if (globeHost) globeHost.hidden = true; mcdaMap.invalidateSize(); mcdaMap.stop(); if (wasSpace) mcdaMap.setView([lat, lon], 4, { animate: false }); mcdaMap.flyTo([lat, lon], 11, { duration: 1.1, easeLinearity: 0.35 });
     }
 
     const MAX_PIPE_KM = 12.0;
