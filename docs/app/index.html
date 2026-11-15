@@ -10,7 +10,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="./workspace.css" rel="stylesheet"/><meta content="MilkyWays — Earth Workspace" property="og:title"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." property="og:description"/><meta content="website" property="og:type"/><meta content="summary_large_image" name="twitter:card"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." name="description"/></head>
 <body>
-<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><button type="button" class="badge" id="hudTopCropChip" onclick="window.focusFeature && window.focusFeature('rotationsList')" title="Click to inspect all ranked fodder crop rotations" style="cursor:pointer;border-color:var(--primary);color:var(--primary);background:rgba(20,184,166,0.12);">Top Crop: --</button><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
+<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><button type="button" class="badge" id="hudTopCropChip" onclick="window.focusFeature && window.focusFeature('rotationsList')" title="Click to inspect all ranked fodder crop rotations" style="cursor:pointer;border-color:var(--primary);color:var(--primary);background:rgba(20,184,166,0.12);">Top Crop: --</button><span class="badge" id="advisoryBadge" title="Supports — never replaces — farmer judgment or local agronomic expertise." style="border-color:rgba(148,163,184,0.35);color:#cbd5e1;background:rgba(15,23,42,0.72);font-weight:600;">Advisory only — validate with local agronomists &amp; soil tests</span><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
 <div id="mooPilotModal" class="moo-pilot-modal" role="dialog" aria-label="Moo-Pilot Guided Tour">
   <div class="moo-pilot-card">
     <img class="moo-pilot-banner" src="./hero-split.svg" alt="Milk &amp; Cows paired with Servers &amp; Heat" />
@@ -1340,18 +1340,29 @@
       if (!cal) return;
       const tArr = climate.monthly.T2M;
       const rArr = climate.monthly.PRECTOTCORR;
-      cal.innerHTML = MONTHS.map((m, i) => {
+      let bareRiskMonths = 0;
+      const cards = MONTHS.map((m, i) => {
         const t = tArr[i], r = rArr[i];
         let crop = (climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy") ? "Berseem Cover" : "Red Clover Cover";
         let stage = "Soil Rest / Cover", col = "rgba(148,163,184,0.12)", brd = "#334155";
+        let isBareWindow = false;
         const useC4 = (climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy");
         if (t >= 8 && t < 16 && i < 6) { crop = useC4 ? "Cowpea (N-Fix)" : "Alfalfa (N-Fix)"; stage = "Seed Legume"; col = "rgba(20,184,166,0.16)"; brd = "#14b8a6"; }
         else if (t >= 16 && i < 8) { crop = useC4 ? "Sorghum Silage" : "Maize Silage"; stage = r < 2 ? "Grow + Irrigate" : "Peak Silage"; col = "rgba(34,197,94,0.16)"; brd = "#22c55e"; }
         else if (t >= 6 && i >= 8) { crop = useC4 ? "Cowpea -> Berseem" : "Harvest -> Clover"; stage = "Cut & Re-seed"; col = "rgba(245,158,11,0.16)"; brd = "#f59e0b"; }
+        else { isBareWindow = true; bareRiskMonths += 1; }
+        const bareBadge = isBareWindow
+          ? `<div style="margin-top:3px;padding:1px 4px;border-radius:4px;background:rgba(245,158,11,0.18);border:1px solid #f59e0b;color:#fde68a;font-size:0.62rem;font-weight:700;">Bare-Field Guard</div>`
+          : "";
         return `<div style="background:${col}; border:1px solid ${brd}; border-radius:6px; padding:0.4rem; font-size:0.72rem; text-align:center;">
-          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div style="font-weight:600;">${crop}</div><div>${stage}</div>
+          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div style="font-weight:600;">${crop}</div><div>${stage}</div>${bareBadge}
         </div>`;
       }).join("");
+      const bareSummary = `<div style="grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0.45rem 0.65rem;border-radius:7px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.45);font-size:0.74rem;color:#fde68a;margin-bottom:4px;">
+        <strong>Bare-Field Vulnerability Window: ${bareRiskMonths} mo/yr</strong>
+        <span>Protected by living legume/cover crop instead of exposed fallow soil</span>
+      </div>`;
+      cal.innerHTML = bareSummary + cards;
     }
 
     async function checkLandMask(lat, lon) {

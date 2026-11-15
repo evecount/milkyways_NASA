@@ -175,6 +175,11 @@
     }
     .cta-primary { background: var(--primary); color: #041315; }
     .cta-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+    .rot-table { width: 100%; border-collapse: collapse; margin-top: 0.65rem; font-size: 0.8rem; }
+    .rot-table th, .rot-table td { border: 1px solid var(--border); padding: 0.48rem 0.6rem; text-align: left; vertical-align: top; line-height: 1.38; }
+    .rot-table th { background: rgba(20, 184, 166, 0.14); color: var(--primary); font-weight: 800; }
+    .rot-table tr.neg { background: rgba(239, 68, 68, 0.08); }
+    .advisory-bar { margin-top: 0.65rem; padding: 0.5rem 0.75rem; border-radius: 8px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.42); font-size: 0.84rem; color: #fde68a; }
     @media (max-width: 860px) {
       .hero-split, .split-shot, .dual-shots, .pill-grid { grid-template-columns: 1fr; }
       .video-frame { max-width: 340px; margin: 0 auto; }
@@ -233,7 +238,7 @@
         </div>
       </div>
       <div class="slide-foot">
-        <span>Zero-install browser SDSS · Zero API keys required</span>
+        <span>Supports — never replaces — farmer judgment or local agricultural expertise</span>
         <span>https://evecount.github.io/milkyways_NASA/app/</span>
       </div>
     </section>
@@ -300,7 +305,7 @@
             <ul>
               <li><strong>Zero-Key NASA GIBS Tiles:</strong> Toggle <em>MODIS Cloud Cover</em>, <em>GPM IMERG Rainfall</em>, <em>SMAP L4 Root-Zone Moisture</em>, <em>MODIS NDVI</em>, <em>MODIS LST Heat Stress</em>, and <em>VIIRS Nighttime Lights</em>.</li>
               <li><strong>Multi-Day Animation:</strong> Step or play across recent days (<code>-14d</code> to <code>-2d</code>) to watch cloud systems and precipitation bands move across regions.</li>
-              <li><strong>Left Navigation:</strong> Also houses Parcel &amp; Heat Network topology and Project Documents.</li>
+              <li><strong>Dataset Honesty (Resolutions):</strong> Pairs <code>NASA POWER (~50 km)</code>, <code>GPM IMERG (~10 km)</code>, <code>SMAP L4 (9 km)</code>, and <code>MODIS NDVI (250 m–1 km)</code> with farmer CSV soil facts—because coarse satellite pixels cannot replace field soil tests.</li>
             </ul>
           </div>
         </div>
@@ -311,27 +316,54 @@
       </div>
     </section>
 
-    <!-- SLIDE 5: MOO-PILOT STEP 8 (RIGHT NAV ANALYSIS SUITE) -->
+    <!-- SLIDE 5: 4-ROTATION COMPARISON MATRIX (MEETS >=3 ROTATIONS + EVIDENCE + GAPS/RISKS) -->
     <section class="slide" id="slide-5">
       <div>
-        <div class="slide-num">Slide 5 / 7 · Moo-Pilot Replay (Step 8) · Right Analysis Suite</div>
-        <h2>Right-Edge Analysis: FodderWeatherNet, Checks, Rotations &amp; Heat</h2>
-        <div class="split-shot">
-          <div class="shot-card">
-            <img src="./shots/05_rotations_panel.png" alt="Right-side Ranked Fodder Rotations Drawer" />
-            <div class="shot-cap">Ranked fodder rotations drawer backed by NASA POWER, <code>FodderWeatherNet</code>, and thermal balance checks.</div>
-          </div>
-          <div>
-            <ul>
-              <li><strong>8 Instant Analysis Drawers:</strong> CAPCOM Dairy Diary, 12-Month Crop &amp; Heat Calendar, Climate Baseline, <code>FodderWeatherNet</code> Forecast (<code>R² = 0.8740</code>), Mandatory Checks, Ranked Rotations, and Waste-Heat Balance.</li>
-              <li><strong>Hard Safety Guardrails:</strong> Open-water exclusion gate + <code>1,500 ft</code> parlor setback + double-wall HX isolation (<code>55–70 °C</code> loop boosted to <code>72–78 °C</code> HTST—<em>coolant never touches milk</em>).</li>
-            </ul>
-          </div>
+        <div class="slide-num">Slide 5 / 7 · Rotation Strategy Comparison (Baseline + 3 Adaptive Rotations)</div>
+        <h2>Comparing 4 Fodder Rotations: Evidence, Benefits, Gaps &amp; Local Risks</h2>
+        <table class="rot-table">
+          <thead>
+            <tr>
+              <th>Rotation Strategy</th>
+              <th>Why Suggested &amp; NASA Evidence</th>
+              <th>Agronomic &amp; Soil Benefits</th>
+              <th>Info Gaps &amp; Local Review Risks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="neg">
+              <td><strong>1. Continuous Maize Silage</strong><br/><span style="color:#fca5a5;">Existing Baseline (Negative Control)</span></td>
+              <td>Reference benchmark; fails N-fixation &amp; pest-cycle checks in NASA POWER + MCDA scoring.</td>
+              <td>Familiar equipment &amp; high short-term silage tonnage under ideal moisture.</td>
+              <td><strong>Gap:</strong> Field residual N &amp; pest pressure. <strong>Risk:</strong> Depletes soil N, worsens bare-soil erosion &amp; rootworm carry-over.</td>
+            </tr>
+            <tr>
+              <td><strong>2. Maize Silage → Alfalfa (3 yr) → Red Clover</strong><br/><span style="color:var(--primary);">Temperate (Sheldon Creek, ON)</span></td>
+              <td>Matched to cool/frost climate (<code>T_min &lt; 0 °C</code>) and loam water-holding capacity.</td>
+              <td>Cuts synthetic N <code>25–30%</code>, adds deep-root organic matter &amp; eliminates winter bare-field erosion.</td>
+              <td><strong>Gap:</strong> Subsurface tile drainage &amp; soil pH. <strong>Risk:</strong> Alfalfa winterkill or compaction on poorly drained heavy clay.</td>
+            </tr>
+            <tr>
+              <td><strong>3. Sorghum Silage → Cowpea → Berseem Clover</strong><br/><span style="color:var(--primary);">Tropical / Heat-Stressed (Singapore)</span></td>
+              <td>C4 heat tolerance triggered when NASA POWER <code>T2M ≥ 18 °C</code> or rainfall is erratic.</td>
+              <td>High drought/heat resilience, warm-season legume N-fixation, and lower irrigation demand.</td>
+              <td><strong>Gap:</strong> Local seed/inoculant supply &amp; dairy ration digestibility. <strong>Risk:</strong> Monsoon waterlogging if drainage lags.</td>
+            </tr>
+            <tr>
+              <td><strong>4. Winter Rye / Triticale → Maize → Crimson Clover</strong><br/><span style="color:var(--accent);">Bare-Field Cover Bridge</span></td>
+              <td>Targets shoulder-season bare-field windows flagged in the 12-Month Crop &amp; Heat Calendar.</td>
+              <td>Traps residual nitrate, suppresses weeds, and protects topsoil during snowmelt &amp; heavy rain.</td>
+              <td><strong>Gap:</strong> Spring termination window &amp; planter readiness. <strong>Risk:</strong> Delayed maize seeding in wet springs.</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="advisory-bar">
+          <strong>Human-Judgment Reminder:</strong> MilkyWays is an advisory decision-support tool — it <strong>supports, never replaces, farmer judgment or local agricultural expertise</strong>. Validate rotation timing and soil fertility with local agronomists.
         </div>
       </div>
       <div class="slide-foot">
-        <span>Moo-Pilot Step 8: 8 Right-Rail Analysis Panels</span>
-        <span>Agronomy + Engineering Safety in One Workspace</span>
+        <span>Driven by 6 farmer priority sliders: Soil, Water, Heat, Feed Quality, Grid Proximity &amp; Flood Buffer</span>
+        <span>Right-edge panels: FodderWeatherNet (R² = 0.8740) + Mandatory Checks</span>
       </div>
     </section>
 
