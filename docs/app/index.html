@@ -606,10 +606,7 @@
               <div class="v" id="dlMae">5.27 / 7.75</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><a class="mw-control" href="https://github.com/evecount/milkyways_NASA/blob/main/docs/model-card.md" target="_blank" rel="noopener" style="text-decoration:none;border-color:var(--primary);color:var(--primary);font-weight:800;padding:5px 10px;font-size:11px;">Model Card</a><a class="mw-control" href="https://github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py" target="_blank" rel="noopener" style="text-decoration:none;border-color:var(--accent);color:var(--accent);font-weight:800;padding:5px 10px;font-size:11px;">Training Script</a></div>
             </div>
           </div>
-          <div class="status" id="dlStatus">Global 6-region test-set metrics (2023–2025 holdout: Ontario, Gais,
-            Singapore, Wisconsin, Waikato, Punjab): R² = 0.8740 · MAE = 5.27 · RMSE = 7.75 (vs. Ridge R² = 0.8553, MAE =
-            6.04). C3/C4/Stress above are live per-farm JS forward-pass scores; other 8 pins run generalized inference.
-          </div>
+          <div class="status" id="dlStatus">Global 6-region test-set metrics (2023–2025 6-region holdout): R² = 0.8740 · MAE = 5.27 · RMSE = 7.75 (vs. Ridge R² = 0.8553, MAE = 6.04). C3/C4/Stress above are live per-farm JS forward-pass scores; other 8 pins run generalized inference.</div>
         </div>
       </div>
     </section>
@@ -2782,7 +2779,7 @@
       el("exportReportBtn").addEventListener("click", generateMunicipalReport);
     }
 
-    // Moo-Pilot: Directed 12-Step Spotlight Tour (Singapore -> Flight -> Sheldon Creek -> Farmer Action + FodderWeatherNet)
+    // Moo-Pilot: Directed 12-Step Spotlight Tour (Singapore -> Flight -> Gais, Switzerland -> Farmer Action + FodderWeatherNet)
     let mpAutoTimer = null;
     let mpFlightTimer = null;
     let mpActive = false;
@@ -3084,7 +3081,7 @@
         mpAutoTimer = setTimeout(() => {
           if (!mpActive || mpPaused) return;
           if (mpIdx === 0) {
-            runSingaporeToSheldonFlight();
+            runSingaporeToGaisFlight();
           } else if (mpIdx < MOO_PILOT_STEPS.length - 1) {
             renderStep(mpIdx + 1);
           } else {
@@ -3094,7 +3091,7 @@
       }
     }
 
-    function runSingaporeToSheldonFlight() {
+    function runSingaporeToGaisFlight() {
       clearTimeout(mpAutoTimer);
       clearTimeout(mpFlightTimer);
       el("mooPilotRing")?.classList.remove("show");
@@ -3166,7 +3163,7 @@
     if (el("mooPilotToolbarBtn")) el("mooPilotToolbarBtn").addEventListener("click", (e) => { e.stopPropagation(); startMooPilotTour(); });
     if (el("mooPilotPauseBtn")) el("mooPilotPauseBtn").addEventListener("click", (e) => { e.stopPropagation(); stopMooPilotTour(); });
     if (el("mpBackBtn")) el("mpBackBtn").addEventListener("click", (e) => { e.stopPropagation(); renderStep(mpIdx - 1); });
-    if (el("mpNextBtn")) el("mpNextBtn").addEventListener("click", (e) => { e.stopPropagation(); if (mpIdx === 0 && !mpPaused) runSingaporeToSheldonFlight(); else if (mpIdx < MOO_PILOT_STEPS.length - 1) renderStep(mpIdx + 1); else { stopMooPilotTour(); el("anchor-farm")?.classList.remove("collapsed"); const det = document.querySelector("#anchor-farm details"); if (det) det.open = true; el("lat")?.focus(); } });
+    if (el("mpNextBtn")) el("mpNextBtn").addEventListener("click", (e) => { e.stopPropagation(); if (mpIdx === 0 && !mpPaused) runSingaporeToGaisFlight(); else if (mpIdx < MOO_PILOT_STEPS.length - 1) renderStep(mpIdx + 1); else { stopMooPilotTour(); el("anchor-farm")?.classList.remove("collapsed"); const det = document.querySelector("#anchor-farm details"); if (det) det.open = true; el("lat")?.focus(); } });
     if (el("mpResumeBtn")) el("mpResumeBtn").addEventListener("click", (e) => { e.stopPropagation(); resumeMooPilotTour(); });
     if (el("mpSkipBtn")) el("mpSkipBtn").addEventListener("click", (e) => { e.stopPropagation(); stopMooPilotTour(); });
 
