@@ -6,12 +6,12 @@
 
 **MilkyWays** is a predictive decision-support and diagnostic tool for an industrial dairy farm located next to an AI data center. It queries **live NASA POWER 25-year agroclimatology (`2001–2025`, `~50 km` grid)** in the browser, combines it with **local soil characteristics**, **fodder crop traits**, and **farmer priorities**, and runs a **PyTorch-trained MLP (`FodderWeatherNet`, exported to `model_weights.json` for live JS inference)** guarded by **four mandatory agronomic and thermodynamic checks**—while pairing the dairy plant's thermal load with closed-loop data center waste heat. *(GPM IMERG, SMAP, MODIS, HLS, and SoilGrids are documented as planned field-scale integration layers; see [NASA Datasets](datasets.md).)*
 
-[Launch Interactive Tool](app/index.html){ .md-button .md-button--primary }
+[Launch APP / Decision Tool](app/index.html){ .md-button .md-button--primary }
 [Read Technical Paper](paper.md){ .md-button }
 [Model Card](model-card.md){ .md-button }
 
 !!! tip "Try it in 3 steps"
-    1. **[Open the Interactive Tool](app/index.html)** &rarr; 2. Pick **Gais Dairy Reference, Switzerland** (or **Singapore Tropical Dairy Demo**) &rarr; 3. Click **Fetch NASA POWER Climatology & Rank** (or **Export Municipal Report**).  
+    1. **[Open the APP / Decision Tool](app/index.html)** &rarr; 2. Pick **Gais Dairy Reference, Switzerland** (or **Singapore Tropical Dairy Demo**) &rarr; 3. Click **Fetch NASA POWER Climatology & Rank** (or **Export Municipal Report**).  
     *Why Singapore?* Singapore is our high-density urban cooling and import-resilience testbed—where tropical heat (`~27.1 °C`) stresses temperate dairy fodder and circular data-center waste heat (`55–70 °C`) bridges pasteurization and absorption chilling.
 
 ---

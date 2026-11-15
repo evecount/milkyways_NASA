@@ -37,7 +37,7 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Interactive Tool: app/index.html
+  - APP / Decision Tool: app/index.html
   - 7-Slide Demo: slides/index.html
   - Technical Paper: paper.md
   - Model Card: model-card.md
