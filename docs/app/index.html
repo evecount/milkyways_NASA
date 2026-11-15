@@ -1,369 +1,693 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>MilkyWays — Earth Workspace</title>
-<link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet"/>
-<script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="./workspace.css" rel="stylesheet"/><meta content="MilkyWays — Earth Workspace" property="og:title"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." property="og:description"/><meta content="website" property="og:type"/><meta content="summary_large_image" name="twitter:card"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." name="description"/></head>
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>MilkyWays — Earth Workspace</title>
+  <link crossorigin="" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
+  <script crossorigin="" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
+    rel="stylesheet" />
+  <link href="./workspace.css" rel="stylesheet" />
+  <meta content="MilkyWays — Earth Workspace" property="og:title" />
+  <meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace."
+    property="og:description" />
+  <meta content="website" property="og:type" />
+  <meta content="summary_large_image" name="twitter:card" />
+  <meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace."
+    name="description" />
+</head>
+
 <body>
-<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><button type="button" class="badge" id="hudTopCropChip" onclick="window.focusFeature && window.focusFeature('rotationsList')" title="Click to inspect all ranked fodder crop rotations" style="cursor:pointer;border-color:var(--primary);color:var(--primary);background:rgba(20,184,166,0.12);">Top Crop: --</button><span class="badge" id="advisoryBadge" title="Supports — never replaces — farmer judgment or local agronomic expertise." style="border-color:rgba(148,163,184,0.35);color:#cbd5e1;background:rgba(15,23,42,0.72);font-weight:600;">Advisory only — validate with local agronomists &amp; soil tests</span><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
-<div id="mooPilotModal" class="moo-pilot-modal" role="dialog" aria-label="Moo-Pilot Guided Tour">
-  <div class="moo-pilot-card">
-    <img class="moo-pilot-banner" src="./hero-split.svg" alt="Milk &amp; Cows paired with Servers &amp; Heat" />
-    <div class="moo-pilot-body">
-      <img src="./stickers/moo-pilot.png" alt="Moo Pilot Cow Astronaut" />
-      <div>
-        <div style="color:var(--primary); font-size:10px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-mono);">Welcome to MilkyWays · Guided Tour</div>
-        <h3 style="margin:3px 0 5px; font-size:18px; color:var(--accent);">Moo-pilot?</h3>
-        <div style="color:var(--foreground); font-size:12px; line-height:1.45;">Take the guided tour, no clicking needed. Pauses the second you touch any control.</div>
-        <div class="moo-pilot-actions">
-          <button type="button" id="mooPilotStartBtn" class="moo-pilot-start">&#9654; Start the tour</button>
-          <button type="button" id="mooPilotDismissBtn" class="moo-pilot-skip">No thanks, I will explore</button>
+  <header class="workspace-header"><a class="workspace-brand" href="../"><span
+        class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a>
+    <div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div>
+    <div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report"
+        id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control"
+        id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!"
+          src="./moo_button.png" /><span id="mooCount">0</span></button></div>
+  </header>
+  <div aria-label="Global dairy farm map" class="map-stage">
+    <div class="earth-map" id="mcdaMap"></div>
+    <div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button"
+        style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button
+        class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div>
+    <div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong
+        id="workspaceFarmName">Singapore Tropical Dairy Demo</strong>
+      <div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA
+            LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge"
+          title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability:
+          --/100</span><button type="button" class="badge" id="hudTopCropChip"
+          onclick="window.focusFeature && window.focusFeature('rotationsList')"
+          title="Click to inspect all ranked fodder crop rotations"
+          style="cursor:pointer;border-color:var(--primary);color:var(--primary);background:rgba(20,184,166,0.12);">Top
+          Crop: --</button><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to
+          pause</span></div>
+    </div>
+  </div>
+  <div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
+  <div id="mooPilotModal" class="moo-pilot-modal" role="dialog" aria-label="Moo-Pilot Guided Tour">
+    <div class="moo-pilot-card">
+      <img class="moo-pilot-banner" src="./hero-split.svg" alt="Milk &amp; Cows paired with Servers &amp; Heat" />
+      <div class="moo-pilot-body">
+        <img src="./stickers/moo-pilot.png" alt="Moo Pilot Cow Astronaut" />
+        <div>
+          <div
+            style="color:var(--primary); font-size:10px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-mono);">
+            Welcome to MilkyWays · Guided Tour</div>
+          <h3 style="margin:3px 0 5px; font-size:18px; color:var(--accent);">Moo-pilot?</h3>
+          <div style="color:var(--foreground); font-size:12px; line-height:1.45;">Take the guided tour, no clicking
+            needed. Pauses the second you touch any control.</div>
+          <div class="moo-pilot-actions">
+            <button type="button" id="mooPilotStartBtn" class="moo-pilot-start">&#9654; Start the tour</button>
+            <button type="button" id="mooPilotDismissBtn" class="moo-pilot-skip">No thanks, I will explore</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div id="mooPilotHud" class="moo-pilot-hud" aria-live="polite">
-  <img src="./stickers/moo-pilot.png" alt="Moo Pilot" style="width:42px; height:42px; border-radius:8px; object-fit:contain; flex-shrink:0;" />
-  <div style="flex:1; min-width:0;">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-      <span id="mooPilotStepLabel" style="color:var(--accent); font-size:11px; font-weight:800;">Moo-Pilot · Step 1/12</span>
-      <button type="button" id="mooPilotPauseBtn" class="mw-control" style="padding:2px 8px; font-size:10px;">Pause</button>
+  <div id="mooPilotHud" class="moo-pilot-hud" aria-live="polite">
+    <img src="./stickers/moo-pilot.png" alt="Moo Pilot"
+      style="width:42px; height:42px; border-radius:8px; object-fit:contain; flex-shrink:0;" />
+    <div style="flex:1; min-width:0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <span id="mooPilotStepLabel" style="color:var(--accent); font-size:11px; font-weight:800;">Moo-Pilot · Step
+          1/10</span>
+        <button type="button" id="mooPilotPauseBtn" class="mw-control"
+          style="padding:2px 8px; font-size:10px;">Pause</button>
+      </div>
+      <div id="mooPilotCaption" style="color:var(--foreground); font-size:11px; line-height:1.35; margin-top:2px;">
+        Touring global dairy sites...</div>
+      <div id="mooPilotDots" class="moo-pilot-dots"></div>
     </div>
-    <div id="mooPilotCaption" style="color:var(--foreground); font-size:11px; line-height:1.35; margin-top:2px;">Touring global dairy sites...</div>
-    <div id="mooPilotDots" class="moo-pilot-dots"></div>
   </div>
-</div>
 
-<div id="mooPilotSlideModal" class="moo-pilot-slide-modal" role="dialog" aria-label="Moo-Pilot Feature Slide"><div id="mooPilotSlideCard" class="moo-pilot-slide-card"></div></div>
-<div id="mooPilotRing" class="mp-ring" aria-hidden="true"></div>
-<svg id="mooPilotSvg" class="mp-svg" aria-hidden="true"><line id="mpCoordLine" x1="0" y1="0" x2="0" y2="0" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/><circle id="mpCoordDot" cx="0" cy="0" r="4.5" fill="#f59e0b" stroke="#071018" stroke-width="1.5"/></svg>
-<div id="mooPilotFlightPill" class="mp-flight-pill">Singapore &#8594; Sheldon Creek Dairy, Ontario</div>
-<div id="mooPilotStepCard" class="mp-card" role="dialog" aria-live="polite">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
-    <span id="mpCardCounter" style="color:var(--primary);font-size:10px;font-weight:800;font-family:var(--font-mono);text-transform:uppercase;">Step 1 of 12</span>
-    <span id="mpPausedTag" style="display:none;color:var(--accent);font-size:10px;font-weight:800;">Paused</span>
+  <div id="mooPilotSlideModal" class="moo-pilot-slide-modal" role="dialog" aria-label="Moo-Pilot Feature Slide">
+    <div id="mooPilotSlideCard" class="moo-pilot-slide-card"></div>
   </div>
-  <div id="mpCardText" style="font-size:12.5px;line-height:1.42;font-weight:600;margin-bottom:9px;">Hi, I am Moo Pilot. 30 second tour, no clicking needed.</div>
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;">
-    <div style="display:flex;gap:5px;">
-      <button type="button" id="mpBackBtn" class="mw-control" style="padding:3px 8px;font-size:11px;">Back</button>
-      <button type="button" id="mpNextBtn" class="mw-control" style="padding:3px 9px;font-size:11px;border-color:var(--primary);color:var(--primary);">Next</button>
-      <button type="button" id="mpResumeBtn" class="mw-control" style="display:none;padding:3px 9px;font-size:11px;border-color:var(--accent);color:var(--accent);">Resume</button>
-    </div>
-    <button type="button" id="mpSkipBtn" class="mw-control" style="padding:3px 8px;font-size:11px;">Skip tour</button>
-  </div>
-</div><div class="container"><aside class="anchored-controls">
-<div class="anchor-card" id="anchor-farm"><h2><span class="section-number">01</span>Farm location<button aria-expanded="true" aria-label="Collapse farm location" class="mw-control collapse-toggle" data-collapse="farm" type="button">−</button></h2><div class="anchor-content">
+  <div class="container">
+    <aside class="anchored-controls">
+      <div class="anchor-card" id="anchor-farm">
+        <h2><span class="section-number">01</span>Farm location<button aria-expanded="true"
+            aria-label="Collapse farm location" class="mw-control collapse-toggle" data-collapse="farm"
+            type="button">−</button></h2>
+        <div class="anchor-content">
 
-<label for="preset">Dairy region</label>
-<select id="preset">
-<option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
-<option value="2.03,103.32">Kluang Dairy Valley, Johor, Malaysia (2.03, 103.32)</option>
-<option value="44.08,-79.88">Sheldon Creek Dairy, Loretto, Ontario, Canada (44.08, -79.88)</option>
-<option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
-<option value="43.07,-89.40">Wisconsin Dairy Belt, USA (43.07, -89.40)</option>
-<option value="-37.79,175.28">Waikato Pasture Dairy, New Zealand (-37.79, 175.28)</option>
-<option value="-0.30,36.08">Nakuru Highland Dairy, Kenya (-0.30, 36.08)</option>
-<option value="53.12,5.79">Friesland Dairy Polder, Netherlands (53.12, 5.79)</option>
-<option value="51.90,-8.47">Cork Pasture Belt, Ireland (51.90, -8.47)</option>
-<option value="42.92,143.20">Hokkaido Tokachi Dairy, Japan (42.92, 143.20)</option>
-<option value="22.56,72.93">Anand Cooperative Dairy, India (22.56, 72.93)</option>
-<option value="-24.79,-50.01">Castro Parana Dairy, Brazil (-24.79, -50.01)</option>
-<option value="-38.16,146.53">Gippsland Dairy Valley, Australia (-38.16, 146.53)</option>
-<option value="30.40,-9.55">Souss-Massa Dairy Belt, Morocco (30.40, -9.55)</option>
-</select>
-<details>
-<summary>Edit Coordinates, Herd &amp; CSV Facts</summary>
-<div class="row2">
-<div>
-<label for="lat">Latitude</label>
-<input id="lat" step="0.01" type="number" value="1.42"/>
-</div>
-<div>
-<label for="lon">Longitude</label>
-<input id="lon" step="0.01" type="number" value="103.72"/>
-</div>
-</div>
-<label for="soil">Local Soil Profile (SoilGrids / Farm Input)</label>
-<select id="soil">
-<option value="clay">Heavy Clay (High water retention, compaction risk)</option>
-<option value="loam">Clay Loam (Moderate drainage, high CEC)</option>
-<option value="sandy">Sandy Loam (Fast drainage, drought-prone)</option>
-</select>
-<label for="milk">Daily Milk Volume (Liters/day)</label>
-<input id="milk" min="500" step="500" type="number" value="1200"/>
-<div class="row2">
-<div>
-<label for="cows">Milking Herd (Cows)</label>
-<input id="cows" min="10" step="5" type="number" value="40"/>
-</div>
-<div>
-<label for="acres">Fodder Land (Acres)</label>
-<input id="acres" min="5" step="10" type="number" value="45"/>
-</div>
-</div>
-<div class="row2">
-<div>
-<label for="yieldTon">Silage Yield (t/ac)</label>
-<input id="yieldTon" min="1" step="0.5" type="number" value="18.5"/>
-</div>
-<div>
-<label for="synthN">Synthetic N (kg/ha)</label>
-<input id="synthN" min="0" step="5" type="number" value="110"/>
-</div>
-</div>
-<label for="csvUpload">Upload Farm Facts CSV (Plain-Language)</label>
-<input accept=".csv" id="csvUpload" type="file"/>
-<div class="status"><a href="#" id="downloadSampleCsv">Download sample farm-facts.csv</a></div>
-<label for="heatMode">Data Center Heat Loop (Control Test)</label>
-<select id="heatMode">
-<option value="boosted">Positive Control: 55-70°C Liquid + Heat Pump (70-90°C)</option>
-<option value="unboosted">Negative Control: 30-45°C Air Waste Heat (Unboosted)</option>
-</select>
-</details>
-<button class="mw-control" id="fetchBtn" title="Queries live NASA POWER daily climatology (T2M, rain, solar, wind) for these coordinates and re-ranks all fodder rotations.">Fetch NASA POWER &amp; rank</button>
-<div class="status" id="apiStatus">Ready. Querying NASA POWER 2001–2025 climatology (~50 km)...</div>
-</div></div>
-<div class="anchor-card" id="anchor-priorities"><h2><span class="section-number">02</span>Farm &amp; municipal priorities<button aria-expanded="true" aria-label="Collapse farm &amp; municipal priorities" class="mw-control collapse-toggle" data-collapse="priorities" type="button">−</button></h2><div class="anchor-content"><p class="panel-kicker">MCDA WEIGHTS</p>
-
-<label>Soil Health &amp; N-Fixation (<span id="wSoilVal">30</span>%)</label>
-<input id="wSoil" max="100" min="0" title="Prioritizes legume N-fixation (25–30% synthetic N reduction) and soil organic carbon protection." type="range" value="30"/>
-<label>Water Efficiency (<span id="wWaterVal">20</span>%)</label>
-<input id="wWater" max="100" min="0" title="Penalizes water-intensive crops under low NASA POWER rainfall or drought stress." type="range" value="20"/>
-<label>Heat Resilience (<span id="wHeatVal">15</span>%)</label>
-<input id="wHeat" max="100" min="0" title="Favors heat-tolerant C4 rotations (e.g., Sorghum + Cowpea) when NASA T2M exceeds C3 thermal limits." type="range" value="15"/>
-<label>Dairy Feed Quality (<span id="wFeedVal">15</span>%)</label>
-<input id="wFeed" max="100" min="0" title="Weights digestible energy and crude protein for consistent dairy herd milk yield." type="range" value="15"/>
-<label>Grid &amp; Heat Proximity (<span id="wGridVal">10</span>%)</label>
-<input id="wGrid" max="100" min="0" title="Weights proximity to AI data-center waste-heat corridors (12 km thermal pipe cutoff) and grid infrastructure." type="range" value="10"/>
-<label>Flood &amp; Zoning Buffer (<span id="wFloodVal">10</span>%)</label>
-<input id="wFlood" max="100" min="0" title="Enforces 1,500 ft agricultural/watershed setback and flood-zone resilience." type="range" value="10"/>
-</div></div>
-</aside></div>
-
-<nav aria-label="Workspace navigation" class="edge-strip edge-left"><div class="strip-top"><button aria-label="Farm location" class="mw-control strip-button" data-action="farm" title="Farm location" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M3 10 12 3l9 7v11H3z"></path><path d="M9 21v-8h6v8"></path></svg></button><button aria-label="Farm priorities" class="mw-control strip-button" data-action="priorities" title="Farm priorities" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M4 7h16M4 17h16"></path><circle cx="8" cy="7" r="3"></circle><circle cx="16" cy="17" r="3"></circle></svg></button><button aria-label="World view" class="mw-control strip-button" data-action="world" title="World view" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c-5 5-5 13 0 18 5-5 5-13 0-18"></path></svg></button><button aria-expanded="false" aria-label="NASA Earth Layers" class="mw-control strip-button" data-panel="layers" title="NASA Earth Layers" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="m12 3 10 6-10 6L2 9zM2 13l10 6 10-6M2 17l10 6 10-6"></path></svg><span class="strip-tooltip">NASA Earth Layers</span></button></div><div class="strip-bottom"><button aria-expanded="false" aria-label="Parcel &amp; heat network" class="mw-control strip-button" data-panel="network" title="Parcel &amp; heat network" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><circle cx="12" cy="5" r="3"></circle><circle cx="5" cy="19" r="3"></circle><circle cx="19" cy="19" r="3"></circle><path d="m10 8-4 8m8-8 4 8M8 19h8"></path></svg><span class="strip-tooltip">Parcel &amp; heat network</span></button><button aria-expanded="false" aria-label="Project documents" class="mw-control strip-button" data-panel="docs" title="Project documents" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h8"></path></svg><span class="strip-tooltip">Project documents</span></button><button aria-expanded="false" aria-label="Expand left navigation" class="mw-control strip-button expand-strip" data-expand="left" type="button"><span>☰</span></button></div></nav><nav aria-label="Analysis navigation" class="edge-strip edge-right"><div class="strip-top"><button aria-expanded="false" aria-label="CAPCOM · Dairy Diary" class="mw-control strip-button" data-panel="chat" title="CAPCOM · Dairy Diary" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M3 3h18v14H9l-6 4zM7 8h10M7 12h6"></path></svg><span class="strip-tooltip">CAPCOM · Dairy Diary</span></button><button aria-expanded="false" aria-label="Crop &amp; heat calendar" class="mw-control strip-button" data-panel="calendar" title="Crop &amp; heat calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><rect height="16" rx="2" width="18" x="3" y="5"></rect><path d="M7 3v4M17 3v4M3 10h18M7 14h3M14 14h3M7 17h3"></path></svg><span class="strip-tooltip">Crop &amp; heat calendar</span></button><button aria-expanded="false" aria-label="Dairy Diary" class="mw-control strip-button" data-panel="diary" title="Dairy Diary" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M4 3h16v18H4zM8 7h8M8 11h8M8 15h5"></path></svg><span class="strip-tooltip">Dairy Diary</span></button><button aria-expanded="false" aria-label="Climate baseline" class="mw-control strip-button" data-panel="climate" title="Climate baseline" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M16 13a5 5 0 1 0-9-4 4 4 0 1 0-1 8h11a4 4 0 0 0 0-8"></path></svg><span class="strip-tooltip">Climate baseline</span></button><button aria-expanded="false" aria-label="FodderWeatherNet forecast" class="mw-control strip-button" data-panel="forecast" title="FodderWeatherNet forecast" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M3 19h18M5 15l5-6 5 3 5-8"></path><path d="M15 4h5v5"></path></svg><span class="strip-tooltip">FodderWeatherNet forecast</span></button><button aria-expanded="false" aria-label="Mandatory domain checks" class="mw-control strip-button" data-panel="checks" title="Mandatory domain checks" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z"></path><path d="m8 12 3 3 5-6"></path></svg><span class="strip-tooltip">Mandatory domain checks</span></button><button aria-expanded="false" aria-label="Ranked fodder rotations" class="mw-control strip-button" data-panel="rotations" title="Ranked fodder rotations" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M20 7A9 9 0 0 0 4 7M4 17a9 9 0 0 0 16 0"></path><path d="M20 3v5h-5M4 21v-5h5"></path></svg><span class="strip-tooltip">Ranked fodder rotations</span></button><button aria-expanded="false" aria-label="Waste-heat balance" class="mw-control strip-button" data-panel="heat" title="Waste-heat balance" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24"><path d="M12 3c3 5-1 6 2 9 2-1 3-3 3-3 5 6 2 12-5 12S2 15 7 9c0 3 2 4 2 4-1-5 3-6 3-10z"></path></svg><span class="strip-tooltip">Waste-heat balance</span></button></div><div class="strip-bottom"><button aria-expanded="false" aria-label="Expand right navigation" class="mw-control strip-button expand-strip" data-expand="right" type="button"><span>☰</span></button></div></nav><div class="drawer-area"><section aria-label="NASA Earth Layers" class="workspace-panel panel-left" hidden="" id="panel-layers"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / NASA GIBS</p><h2>NASA Earth Layers</h2></div><button aria-label="Close NASA Earth Layers" class="mw-control close-panel" data-close="layers" type="button">×</button></div><div class="panel-content">
-<p class="panel-kicker" style="margin-top:0;">BASE MAP</p>
-<div style="display:flex;gap:8px;margin-bottom:12px;">
-  <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="radio" name="mwBaseMap" value="sat" checked/> Satellite</label>
-  <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="radio" name="mwBaseMap" value="topo"/> Topographic</label>
-</div>
-<p class="panel-kicker">LIVE NASA GIBS OVERLAYS (ZERO API KEY)</p>
-<div id="gibsLayerToggles" style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;font-size:12px;">
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-gibs="clouds"/> <span>Cloud Cover <em style="color:#94a3b8;">(MODIS Terra)</em></span></label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-gibs="rain"/> <span>Rainfall Rate <em style="color:#94a3b8;">(GPM IMERG)</em></span></label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-gibs="smap"/> <span>Root-Zone Soil Moisture <em style="color:#94a3b8;">(SMAP L4)</em></span></label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-gibs="ndvi"/> <span>Fodder Vigor <em style="color:#94a3b8;">(MODIS NDVI 8-Day)</em></span></label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-gibs="lst"/> <span>Daytime Heat Stress <em style="color:#94a3b8;">(MODIS LST)</em></span></label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-gibs="lights"/> <span>Grid &amp; Compute Lights <em style="color:#94a3b8;">(VIIRS)</em></span></label>
-</div>
-<label for="gibsOpacity">Overlay Opacity (<span id="gibsOpacityVal">68</span>%)</label>
-<input id="gibsOpacity" type="range" min="15" max="100" value="68" style="width:100%;margin-bottom:12px;"/>
-<p class="panel-kicker">MULTI-DAY CLOUD &amp; RAINFALL ANIMATION</p>
-<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
-  <span id="gibsDateLabel" style="font-family:var(--font-mono);font-size:11px;color:var(--primary);">Date: --</span>
-  <button type="button" id="gibsPlayBtn" class="mw-control" style="padding:4px 10px;font-size:11px;">&#9654; Animate</button>
-</div>
-<input id="gibsDaySlider" type="range" min="2" max="14" value="3" style="width:100%;margin-bottom:6px;"/>
-<div class="status" style="margin-bottom:12px;">Step across recent days to watch cloud systems &amp; GPM rainfall bands move across your region.</div>
-<p class="panel-kicker">PARCEL &amp; CORRIDOR OVERLAYS</p>
-<div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-local-layer="farms" checked/> Global 14-Farm Network</label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-local-layer="spider" checked/> Synergy Spider (Zoom Out)</label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-local-layer="raster" checked/> NASA MCDA Raster Grid</label>
-  <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox" data-local-layer="buffer" checked/> Co-Location Buffer Rings</label>
-</div>
-</div></section><section aria-label="Parcel &amp; heat network" class="workspace-panel panel-left" hidden="" id="panel-network"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Parcel &amp; heat network</h2></div><button aria-label="Close Parcel &amp; heat network" class="mw-control close-panel" data-close="network" type="button">×</button></div><div class="panel-content"><div id="topologyBoard"></div></div></section><section aria-label="CAPCOM · Dairy Diary" class="workspace-panel panel-right" hidden="" id="panel-chat"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>CAPCOM · Dairy Diary</h2></div><button aria-label="Close CAPCOM · Dairy Diary" class="mw-control close-panel" data-close="chat" type="button">×</button></div><div class="panel-content"><div id="diaryChatBox">
-<div>
-<div>
-<span class="hud-dot"></span>
-<span>CAPCOM // DAIRY DIARY</span>
-<span id="chatModeBadge">Zero-Token Local Engine</span>
-</div>
-<div>
-<button class="outcome-chip chat-q mw-control" data-q="What should I plant next here?" type="button">Plant?</button>
-<button class="outcome-chip chat-q mw-control" data-q="Can a data center heat my pasteurizer safely?" type="button">Heat Safe?</button>
-<button class="outcome-chip chat-q mw-control" data-q="Why did I get this suitability score?" type="button">Score?</button>
-<button class="outcome-chip chat-q mw-control" data-q="Log harvest: 21 t/ac, 89/100" type="button">Log Yield</button>
-<select id="chatPersona" title="Select your role">
-<option value="farmer">Farmer</option>
-<option value="planner">Planner</option>
-<option value="dc">DC Operator</option>
-<option value="judge">NASA Judge</option>
-</select>
-<button class="mw-control" id="byoKeyToggle" title="Optional session-only Gemini or OpenAI key" type="button">BYO Key</button>
-</div>
-</div>
-<div id="byoKeyRow" style="display:none">
-<input id="byoApiKey" placeholder="Optional Gemini (AIza...) or OpenAI (sk-...) key — session memory only" type="password"/>
-<button class="mw-control" id="byoKeyClear" type="button">Clear</button>
-</div>
-<div class="capcom-latest" id="capcomLatest"><strong>CAPCOM:</strong> Pick your role or drop a silage cut (e.g. <em>"21 t/ac, 89/100"</em>) to tune your site.</div>
-<div>
-<input id="chatInput" placeholder="&gt; Ask CAPCOM in plain English or log farm data (e.g. 21 t/ac, 89/100)..." title="Ask about siting, waste heat, or rotations — or log field yields/observations to feed the FodderWeatherNet calibration loop." type="text"/>
-<button class="mw-control" id="chatSendBtn" type="button">Transmit</button>
-</div>
-<details id="chatDrawerDetails">
-<summary>Comms Log ▾</summary>
-<div id="chatFeed">
-<div><strong>MilkyWays:</strong> Ready on CAPCOM channel.</div>
-</div>
-</details>
-</div></div></section><section aria-label="Crop &amp; heat calendar" class="workspace-panel panel-right" hidden="" id="panel-calendar"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Crop &amp; heat calendar</h2></div><button aria-label="Close Crop &amp; heat calendar" class="mw-control close-panel" data-close="calendar" type="button">×</button></div><div class="panel-content"><div class="cal-grid" id="diaryCalendar"></div><details>
-<summary>Inside the Tuning: MCDA + FodderWeatherNet Pipeline</summary>
-<div id="tuningInsides"></div>
-</details></div></section><section aria-label="Dairy Diary" class="workspace-panel panel-right" hidden="" id="panel-diary"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Dairy Diary</h2></div><button aria-label="Close Dairy Diary" class="mw-control close-panel" data-close="diary" type="button">×</button></div><div class="panel-content"><div class="legacy-panel-content">
-<div class="rot-head">
-
-<button class="mw-control" id="openDiagBtn" type="button">+ New Diary Entry
-            / Run Diagnostic</button>
-</div>
-<div class="status">Every logged season feeds back into
-          <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.
+          <label for="preset">Dairy region</label>
+          <select id="preset">
+            <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
+            <option value="2.03,103.32">Kluang Dairy Valley, Johor, Malaysia (2.03, 103.32)</option>
+            <option value="44.08,-79.88">Sheldon Creek Dairy, Loretto, Ontario, Canada (44.08, -79.88)</option>
+            <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
+            <option value="43.07,-89.40">Wisconsin Dairy Belt, USA (43.07, -89.40)</option>
+            <option value="-37.79,175.28">Waikato Pasture Dairy, New Zealand (-37.79, 175.28)</option>
+            <option value="-0.30,36.08">Nakuru Highland Dairy, Kenya (-0.30, 36.08)</option>
+            <option value="53.12,5.79">Friesland Dairy Polder, Netherlands (53.12, 5.79)</option>
+            <option value="51.90,-8.47">Cork Pasture Belt, Ireland (51.90, -8.47)</option>
+            <option value="42.92,143.20">Hokkaido Tokachi Dairy, Japan (42.92, 143.20)</option>
+            <option value="22.56,72.93">Anand Cooperative Dairy, India (22.56, 72.93)</option>
+            <option value="-24.79,-50.01">Castro Parana Dairy, Brazil (-24.79, -50.01)</option>
+            <option value="-38.16,146.53">Gippsland Dairy Valley, Australia (-38.16, 146.53)</option>
+            <option value="30.40,-9.55">Souss-Massa Dairy Belt, Morocco (30.40, -9.55)</option>
+          </select>
+          <details>
+            <summary>Edit Coordinates, Herd &amp; CSV Facts</summary>
+            <div class="row2">
+              <div>
+                <label for="lat">Latitude</label>
+                <input id="lat" step="0.01" type="number" value="1.42" />
+              </div>
+              <div>
+                <label for="lon">Longitude</label>
+                <input id="lon" step="0.01" type="number" value="103.72" />
+              </div>
+            </div>
+            <label for="soil">Local Soil Profile (SoilGrids / Farm Input)</label>
+            <select id="soil">
+              <option value="clay">Heavy Clay (High water retention, compaction risk)</option>
+              <option value="loam">Clay Loam (Moderate drainage, high CEC)</option>
+              <option value="sandy">Sandy Loam (Fast drainage, drought-prone)</option>
+            </select>
+            <label for="milk">Daily Milk Volume (Liters/day)</label>
+            <input id="milk" min="500" step="500" type="number" value="1200" />
+            <div class="row2">
+              <div>
+                <label for="cows">Milking Herd (Cows)</label>
+                <input id="cows" min="10" step="5" type="number" value="40" />
+              </div>
+              <div>
+                <label for="acres">Fodder Land (Acres)</label>
+                <input id="acres" min="5" step="10" type="number" value="45" />
+              </div>
+            </div>
+            <div class="row2">
+              <div>
+                <label for="yieldTon">Silage Yield (t/ac)</label>
+                <input id="yieldTon" min="1" step="0.5" type="number" value="18.5" />
+              </div>
+              <div>
+                <label for="synthN">Synthetic N (kg/ha)</label>
+                <input id="synthN" min="0" step="5" type="number" value="110" />
+              </div>
+            </div>
+            <label for="csvUpload">Upload Farm Facts CSV (Plain-Language)</label>
+            <input accept=".csv" id="csvUpload" type="file" />
+            <div class="status"><a href="#" id="downloadSampleCsv">Download sample farm-facts.csv</a></div>
+            <label for="heatMode">Data Center Heat Loop (Control Test)</label>
+            <select id="heatMode">
+              <option value="boosted">Positive Control: 55-70°C Liquid + Heat Pump (70-90°C)</option>
+              <option value="unboosted">Negative Control: 30-45°C Air Waste Heat (Unboosted)</option>
+            </select>
+          </details>
+          <button class="mw-control" id="fetchBtn"
+            title="Queries live NASA POWER daily climatology (T2M, rain, solar, wind) for these coordinates and re-ranks all fodder rotations.">Fetch
+            NASA POWER &amp; rank</button>
+          <div class="status" id="apiStatus">Ready. Querying NASA POWER 2001–2025 climatology (~50 km)...</div>
         </div>
-<div class="metrics-grid">
-<div class="metric">
-<div class="k">Milking Herd</div>
-<div class="v" id="ffCows">75 cows</div>
-</div>
-<div class="metric">
-<div class="k">Yield / Cow</div>
-<div class="v" id="ffYield">33.3 L/d</div>
-</div>
-<div class="metric">
-<div class="k">Fodder Base</div>
-<div class="v" id="ffAcres">600 ac</div>
-</div>
-<div class="metric">
-<div class="k">Pasteurization Need</div>
-<div class="v" id="ffHeat">102 kWh/d</div>
-</div>
-</div>
-<div class="checks-grid" id="diaryFeed"></div>
-<details id="logGroundTruthPanel">
-<summary>Log On-Farm Ground Truth (Improves FodderWeatherNet Over Time)</summary>
-<div>
-<div id="diagResultBox"></div>
-<div>
-<span>1-Tap Season Outcome:</span>
-<button class="outcome-chip mw-control" data-score="92" type="button">Thriving (92)</button>
-<button class="outcome-chip mw-control" data-score="78" type="button">Steady (78)</button>
-<button class="outcome-chip mw-control" data-score="54" type="button">Heat/Water Stress (54)</button>
-</div>
-<div class="row2">
-<div>
-<label for="obsCrop">Planted Fodder Crop</label>
-<select id="obsCrop">
-<option value="Maize Silage -&gt; Alfalfa">Maize Silage → Alfalfa</option>
-<option value="Sorghum -&gt; Cowpea">Sorghum → Cowpea</option>
-<option value="Corn -&gt; Soybeans -&gt; Wheat -&gt; Alfalfa">Corn → Soybeans → Wheat → Alfalfa</option>
-<option value="Continuous Maize">Continuous Maize</option>
-</select>
-</div>
-<div>
-<label for="obsOutcome">Observed Season Outcome (1–100)</label>
-<input id="obsOutcome" max="100" min="1" type="number" value="92"/>
-</div>
-</div>
-<div class="row2">
-<button class="mw-control" id="saveObsBtn" type="button">Save &amp; Log to Dairy Diary</button>
-<button class="mw-control" id="exportObsBtn" type="button">Export Dataset JSON</button>
-</div>
-<div class="status" id="obsStatus">0 local observations logged in browser.</div>
-</div>
-</details>
-</div></div></section><section aria-label="Climate baseline" class="workspace-panel panel-right" hidden="" id="panel-climate"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Climate baseline</h2></div><button aria-label="Close Climate baseline" class="mw-control close-panel" data-close="climate" type="button">×</button></div><div class="panel-content"><div class="legacy-panel-content"><span id="coordLabel">1.42°N, 103.72°E</span>
+      </div>
+      <div class="anchor-card" id="anchor-priorities">
+        <h2><span class="section-number">02</span>Farm &amp; municipal priorities<button aria-expanded="true"
+            aria-label="Collapse farm &amp; municipal priorities" class="mw-control collapse-toggle"
+            data-collapse="priorities" type="button">−</button></h2>
+        <div class="anchor-content">
+          <p class="panel-kicker">MCDA WEIGHTS</p>
 
-<div>
-<div class="metrics-grid">
-<div class="metric">
-<div class="k">Mean Temp (T2M)</div>
-<div class="v" id="mTemp">7.00 °C</div>
-</div>
-<div class="metric">
-<div class="k">Precipitation (PRECTOTCORR)</div>
-<div class="v" id="mRain">2.16 mm/d</div>
-</div>
-<div class="metric">
-<div class="k">Solar Irradiance (ALLSKY)</div>
-<div class="v" id="mSolar">13.05 MJ/m²/d</div>
-</div>
-<div class="metric">
-<div class="k">Wind Speed (WS2M)</div>
-<div class="v" id="mWind">2.98 m/s</div>
-</div>
-</div>
-<div class="chart-wrap">
-<div class="chart-legend">
-<span><span class="dot"></span>Temp (T2M °C)</span>
-<span><span class="dot"></span>Solar Irradiance (MJ/m²/d)</span>
-<span><span class="dot"></span>Precipitation (mm/d)</span>
-</div>
-<svg height="160" id="seasonalChart" viewbox="0 0 640 160" width="100%"></svg>
-</div>
-<div class="status">Source: <a href="https://power.larc.nasa.gov/api/temporal/climatology/point" target="_blank">NASA POWER Agroclimatology API</a> (~50 km grid). Complemented by GPM IMERG
-          (~10 km rainfall), SMAP (9 km soil moisture), and MODIS MOD13Q1 (250 m NDVI).</div>
-</div>
-</div></div></section><section aria-label="FodderWeatherNet forecast" class="workspace-panel panel-right" hidden="" id="panel-forecast"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>FodderWeatherNet forecast</h2></div><button aria-label="Close FodderWeatherNet forecast" class="mw-control close-panel" data-close="forecast" type="button">×</button></div><div class="panel-content"><div class="legacy-panel-content">
+          <label>Soil Health &amp; N-Fixation (<span id="wSoilVal">30</span>%)</label>
+          <input id="wSoil" max="100" min="0" step="1"
+            title="Prioritizes legume N-fixation (25–30% synthetic N reduction) and soil organic carbon protection."
+            type="range" value="30" />
+          <label>Water Efficiency (<span id="wWaterVal">20</span>%)</label>
+          <input id="wWater" max="100" min="0" step="1"
+            title="Penalizes water-intensive crops under low NASA POWER rainfall or drought stress." type="range"
+            value="20" />
+          <label>Heat Resilience (<span id="wHeatVal">15</span>%)</label>
+          <input id="wHeat" max="100" min="0" step="1"
+            title="Favors heat-tolerant C4 rotations (e.g., Sorghum + Cowpea) when NASA T2M exceeds C3 thermal limits."
+            type="range" value="15" />
+          <label>Dairy Feed Quality (<span id="wFeedVal">15</span>%)</label>
+          <input id="wFeed" max="100" min="0" step="1"
+            title="Weights digestible energy and crude protein for consistent dairy herd milk yield." type="range"
+            value="15" />
+          <label>Grid &amp; Heat Proximity (<span id="wGridVal">10</span>%)</label>
+          <input id="wGrid" max="100" min="0" step="1"
+            title="Weights proximity to AI data-center waste-heat corridors (12 km thermal pipe cutoff) and grid infrastructure."
+            type="range" value="10" />
+          <label>Flood &amp; Zoning Buffer (<span id="wFloodVal">10</span>%)</label>
+          <input id="wFlood" max="100" min="0" step="1"
+            title="Enforces 1,500 ft agricultural/watershed setback and flood-zone resilience." type="range"
+            value="10" />
+        </div>
+      </div>
+    </aside>
+  </div>
 
-<div class="metrics-grid">
-<div class="metric">
-<div class="k">Next-Season C3 (Alfalfa/Maize)</div>
-<div class="v" id="dlC3">-- / 100</div>
-</div>
-<div class="metric">
-<div class="k">Next-Season C4 (Sorghum/Cowpea)</div>
-<div class="v" id="dlC4">-- / 100</div>
-</div>
-<div class="metric">
-<div class="k">Predicted Stress Risk</div>
-<div class="v" id="dlRisk">-- / 100</div>
-</div>
-<div class="metric">
-<div class="k">Global Holdout R² (2023–2025)</div>
-<div class="v" id="dlR2">0.8740</div>
-</div>
-<div class="metric">
-<div class="k">Global Holdout MAE / RMSE</div>
-<div class="v" id="dlMae">5.27 / 7.75</div>
-</div>
-</div>
-<div class="status" id="dlStatus">Global 6-region test-set metrics (2023–2025 holdout: Ontario, Gais, Singapore, Wisconsin, Waikato, Punjab): R² = 0.8740 · MAE = 5.27 · RMSE = 7.75 (vs. Ridge R² = 0.8553, MAE = 6.04). C3/C4/Stress above are live per-farm JS forward-pass scores; other 8 pins run generalized inference.</div>
-</div></div></section><section aria-label="Mandatory domain checks" class="workspace-panel panel-right" hidden="" id="panel-checks"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Mandatory domain checks</h2></div><button aria-label="Close Mandatory domain checks" class="mw-control close-panel" data-close="checks" type="button">×</button></div><div class="panel-content"><div class="legacy-panel-content">
+  <nav aria-label="Workspace navigation" class="edge-strip edge-left">
+    <div class="strip-top"><button aria-label="Farm location" class="mw-control strip-button" data-action="farm"
+        title="Farm location" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M3 10 12 3l9 7v11H3z"></path>
+          <path d="M9 21v-8h6v8"></path>
+        </svg></button><button aria-label="Farm priorities" class="mw-control strip-button" data-action="priorities"
+        title="Farm priorities" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M4 7h16M4 17h16"></path>
+          <circle cx="8" cy="7" r="3"></circle>
+          <circle cx="16" cy="17" r="3"></circle>
+        </svg></button><button aria-label="World view" class="mw-control strip-button" data-action="world"
+        title="World view" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M3 12h18M12 3c-5 5-5 13 0 18 5-5 5-13 0-18"></path>
+        </svg></button><button aria-expanded="false" aria-label="NASA Earth Layers" class="mw-control strip-button"
+        data-panel="layers" title="NASA Earth Layers" type="button"><svg aria-hidden="true" fill="none"
+          stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="m12 3 10 6-10 6L2 9zM2 13l10 6 10-6M2 17l10 6 10-6"></path>
+        </svg><span class="strip-tooltip">NASA Earth Layers</span></button></div>
+    <div class="strip-bottom"><button aria-expanded="false" aria-label="Parcel &amp; heat network"
+        class="mw-control strip-button" data-panel="network" title="Parcel &amp; heat network" type="button"><svg
+          aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="1.6" viewbox="0 0 24 24">
+          <circle cx="12" cy="5" r="3"></circle>
+          <circle cx="5" cy="19" r="3"></circle>
+          <circle cx="19" cy="19" r="3"></circle>
+          <path d="m10 8-4 8m8-8 4 8M8 19h8"></path>
+        </svg><span class="strip-tooltip">Parcel &amp; heat network</span></button><button aria-expanded="false"
+        aria-label="Project documents" class="mw-control strip-button" data-panel="docs" title="Project documents"
+        type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M5 3h10l4 4v14H5zM14 3v5h5M8 12h8M8 16h8"></path>
+        </svg><span class="strip-tooltip">Project documents</span></button><button aria-expanded="false"
+        aria-label="Expand left navigation" class="mw-control strip-button expand-strip" data-expand="left"
+        type="button"><span>☰</span></button></div>
+  </nav>
+  <nav aria-label="Analysis navigation" class="edge-strip edge-right">
+    <div class="strip-top"><button aria-expanded="false" aria-label="CAPCOM · Dairy Diary"
+        class="mw-control strip-button" data-panel="chat" title="CAPCOM · Dairy Diary" type="button"><svg
+          aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+          stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M3 3h18v14H9l-6 4zM7 8h10M7 12h6"></path>
+        </svg><span class="strip-tooltip">CAPCOM · Dairy Diary</span></button><button aria-expanded="false"
+        aria-label="Crop &amp; heat calendar" class="mw-control strip-button" data-panel="calendar"
+        title="Crop &amp; heat calendar" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <rect height="16" rx="2" width="18" x="3" y="5"></rect>
+          <path d="M7 3v4M17 3v4M3 10h18M7 14h3M14 14h3M7 17h3"></path>
+        </svg><span class="strip-tooltip">Crop &amp; heat calendar</span></button><button aria-expanded="false"
+        aria-label="Dairy Diary" class="mw-control strip-button" data-panel="diary" title="Dairy Diary"
+        type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M4 3h16v18H4zM8 7h8M8 11h8M8 15h5"></path>
+        </svg><span class="strip-tooltip">Dairy Diary</span></button><button aria-expanded="false"
+        aria-label="Climate baseline" class="mw-control strip-button" data-panel="climate" title="Climate baseline"
+        type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M16 13a5 5 0 1 0-9-4 4 4 0 1 0-1 8h11a4 4 0 0 0 0-8"></path>
+        </svg><span class="strip-tooltip">Climate baseline</span></button><button aria-expanded="false"
+        aria-label="FodderWeatherNet forecast" class="mw-control strip-button" data-panel="forecast"
+        title="FodderWeatherNet forecast" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M3 19h18M5 15l5-6 5 3 5-8"></path>
+          <path d="M15 4h5v5"></path>
+        </svg><span class="strip-tooltip">FodderWeatherNet forecast</span></button><button aria-expanded="false"
+        aria-label="Mandatory domain checks" class="mw-control strip-button" data-panel="checks"
+        title="Mandatory domain checks" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6z"></path>
+          <path d="m8 12 3 3 5-6"></path>
+        </svg><span class="strip-tooltip">Mandatory domain checks</span></button><button aria-expanded="false"
+        aria-label="Ranked fodder rotations" class="mw-control strip-button" data-panel="rotations"
+        title="Ranked fodder rotations" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M20 7A9 9 0 0 0 4 7M4 17a9 9 0 0 0 16 0"></path>
+          <path d="M20 3v5h-5M4 21v-5h5"></path>
+        </svg><span class="strip-tooltip">Ranked fodder rotations</span></button><button aria-expanded="false"
+        aria-label="Waste-heat balance" class="mw-control strip-button" data-panel="heat" title="Waste-heat balance"
+        type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round"
+          stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24">
+          <path d="M12 3c3 5-1 6 2 9 2-1 3-3 3-3 5 6 2 12-5 12S2 15 7 9c0 3 2 4 2 4-1-5 3-6 3-10z"></path>
+        </svg><span class="strip-tooltip">Waste-heat balance</span></button></div>
+    <div class="strip-bottom"><button aria-expanded="false" aria-label="Expand right navigation"
+        class="mw-control strip-button expand-strip" data-expand="right" type="button"><span>☰</span></button></div>
+  </nav>
+  <div class="drawer-area">
+    <section aria-label="NASA Earth Layers" class="workspace-panel panel-left" hidden="" id="panel-layers">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / NASA GIBS</p>
+          <h2>NASA Earth Layers</h2>
+        </div><button aria-label="Close NASA Earth Layers" class="mw-control close-panel" data-close="layers"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <p class="panel-kicker" style="margin-top:0;">BASE MAP</p>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="radio"
+              name="mwBaseMap" value="sat" checked /> Satellite</label>
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;"><input type="radio"
+              name="mwBaseMap" value="topo" /> Topographic</label>
+        </div>
+        <p class="panel-kicker">LIVE NASA GIBS OVERLAYS (ZERO API KEY)</p>
+        <div id="gibsLayerToggles"
+          style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;font-size:12px;">
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-gibs="clouds" /> <span>Cloud Cover <em style="color:#94a3b8;">(MODIS Terra)</em></span></label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-gibs="rain" /> <span>Rainfall Rate <em style="color:#94a3b8;">(GPM IMERG)</em></span></label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-gibs="smap" /> <span>Root-Zone Soil Moisture <em style="color:#94a3b8;">(SMAP L4)</em></span></label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-gibs="ndvi" /> <span>Fodder Vigor <em style="color:#94a3b8;">(MODIS NDVI 8-Day)</em></span></label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-gibs="lst" /> <span>Daytime Heat Stress <em style="color:#94a3b8;">(MODIS LST)</em></span></label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-gibs="lights" /> <span>Grid &amp; Compute Lights <em
+                style="color:#94a3b8;">(VIIRS)</em></span></label>
+        </div>
+        <label for="gibsOpacity">Overlay Opacity (<span id="gibsOpacityVal">50</span>%)</label>
+        <input id="gibsOpacity" type="range" min="15" max="100" value="50" style="width:100%;margin-bottom:12px;" />
+        <p class="panel-kicker">MULTI-DAY CLOUD &amp; RAINFALL ANIMATION</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+          <span id="gibsDateLabel" style="font-family:var(--font-mono);font-size:11px;color:var(--primary);">Date:
+            --</span>
+          <button type="button" id="gibsPlayBtn" class="mw-control" style="padding:4px 10px;font-size:11px;">&#9654;
+            Animate</button>
+        </div>
+        <input id="gibsDaySlider" type="range" min="2" max="14" value="3" style="width:100%;margin-bottom:6px;" />
+        <div class="status" style="margin-bottom:12px;">Step across recent days to watch cloud systems &amp; GPM
+          rainfall bands move across your region.</div>
+        <p class="panel-kicker">PARCEL &amp; CORRIDOR OVERLAYS</p>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-local-layer="farms" checked /> Global 14-Farm Network</label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-local-layer="spider" checked /> Synergy Spider (Zoom Out)</label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-local-layer="raster" checked /> NASA MCDA Raster Grid</label>
+          <label style="display:flex;align-items:center;gap:7px;cursor:pointer;"><input type="checkbox"
+              data-local-layer="buffer" checked /> Co-Location Buffer Rings</label>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Parcel &amp; heat network" class="workspace-panel panel-left" hidden="" id="panel-network">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Parcel &amp; heat network</h2>
+        </div><button aria-label="Close Parcel &amp; heat network" class="mw-control close-panel" data-close="network"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div id="topologyBoard"></div>
+      </div>
+    </section>
+    <section aria-label="CAPCOM · Dairy Diary" class="workspace-panel panel-right" hidden="" id="panel-chat">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>CAPCOM · Dairy Diary</h2>
+        </div><button aria-label="Close CAPCOM · Dairy Diary" class="mw-control close-panel" data-close="chat"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div id="diaryChatBox">
+          <div>
+            <div>
+              <span class="hud-dot"></span>
+              <span>CAPCOM // DAIRY DIARY</span>
+              <span id="chatModeBadge">Zero-Token Local Engine</span>
+            </div>
+            <div>
+              <button class="outcome-chip chat-q mw-control" data-q="What should I plant next here?"
+                type="button">Plant?</button>
+              <button class="outcome-chip chat-q mw-control" data-q="Can a data center heat my pasteurizer safely?"
+                type="button">Heat Safe?</button>
+              <button class="outcome-chip chat-q mw-control" data-q="Why did I get this suitability score?"
+                type="button">Score?</button>
+              <button class="outcome-chip chat-q mw-control" data-q="Log harvest: 21 t/ac, 89/100" type="button">Log
+                Yield</button>
+              <select id="chatPersona" title="Select your role">
+                <option value="farmer">Farmer</option>
+                <option value="planner">Planner</option>
+                <option value="dc">DC Operator</option>
+                <option value="judge">NASA Judge</option>
+              </select>
+              <button class="mw-control" id="byoKeyToggle" title="Optional session-only Gemini or OpenAI key"
+                type="button">BYO Key</button>
+            </div>
+          </div>
+          <div id="byoKeyRow" style="display:none">
+            <input id="byoApiKey" placeholder="Optional Gemini (AIza...) or OpenAI (sk-...) key — session memory only"
+              type="password" />
+            <button class="mw-control" id="byoKeyClear" type="button">Clear</button>
+          </div>
+          <div class="capcom-latest" id="capcomLatest"><strong>CAPCOM:</strong> Pick your role or drop a silage cut
+            (e.g. <em>"21 t/ac, 89/100"</em>) to tune your site.</div>
+          <div>
+            <input id="chatInput"
+              placeholder="&gt; Ask CAPCOM in plain English or log farm data (e.g. 21 t/ac, 89/100)..."
+              title="Ask about siting, waste heat, or rotations — or log field yields/observations to feed the FodderWeatherNet calibration loop."
+              type="text" />
+            <button class="mw-control" id="chatSendBtn" type="button">Transmit</button>
+          </div>
+          <details id="chatDrawerDetails">
+            <summary>Comms Log ▾</summary>
+            <div id="chatFeed">
+              <div><strong>MilkyWays:</strong> Ready on CAPCOM channel.</div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Crop &amp; heat calendar" class="workspace-panel panel-right" hidden="" id="panel-calendar">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Crop &amp; heat calendar</h2>
+        </div><button aria-label="Close Crop &amp; heat calendar" class="mw-control close-panel" data-close="calendar"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="cal-grid" id="diaryCalendar"></div>
+        <details>
+          <summary>Inside the Tuning: MCDA + FodderWeatherNet Pipeline</summary>
+          <div id="tuningInsides"></div>
+        </details>
+      </div>
+    </section>
+    <section aria-label="Dairy Diary" class="workspace-panel panel-right" hidden="" id="panel-diary">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Dairy Diary</h2>
+        </div><button aria-label="Close Dairy Diary" class="mw-control close-panel" data-close="diary"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="legacy-panel-content">
+          <div class="rot-head">
 
-<div class="checks-grid" id="checksGrid"></div>
-</div></div></section><section aria-label="Ranked fodder rotations" class="workspace-panel panel-right" hidden="" id="panel-rotations"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Ranked fodder rotations</h2></div><button aria-label="Close Ranked fodder rotations" class="mw-control close-panel" data-close="rotations" type="button">×</button></div><div class="panel-content"><div class="legacy-panel-content">
+            <button class="mw-control" id="openDiagBtn" type="button">+ New Diary Entry
+              / Run Diagnostic</button>
+          </div>
+          <div class="status">Every logged season feeds back into
+            <code>FodderWeatherNet</code> so the tool learns from farms and data centers around the world.
+          </div>
+          <div class="metrics-grid">
+            <div class="metric">
+              <div class="k">Milking Herd</div>
+              <div class="v" id="ffCows">75 cows</div>
+            </div>
+            <div class="metric">
+              <div class="k">Yield / Cow</div>
+              <div class="v" id="ffYield">33.3 L/d</div>
+            </div>
+            <div class="metric">
+              <div class="k">Fodder Base</div>
+              <div class="v" id="ffAcres">600 ac</div>
+            </div>
+            <div class="metric">
+              <div class="k">Pasteurization Need</div>
+              <div class="v" id="ffHeat">102 kWh/d</div>
+            </div>
+          </div>
+          <div class="checks-grid" id="diaryFeed"></div>
+          <details id="logGroundTruthPanel">
+            <summary>Log On-Farm Ground Truth (Improves FodderWeatherNet Over Time)</summary>
+            <div>
+              <div id="diagResultBox"></div>
+              <div>
+                <span>1-Tap Season Outcome:</span>
+                <button class="outcome-chip mw-control" data-score="92" type="button">Thriving (92)</button>
+                <button class="outcome-chip mw-control" data-score="78" type="button">Steady (78)</button>
+                <button class="outcome-chip mw-control" data-score="54" type="button">Heat/Water Stress (54)</button>
+              </div>
+              <div class="row2">
+                <div>
+                  <label for="obsCrop">Planted Fodder Crop</label>
+                  <select id="obsCrop">
+                    <option value="Maize Silage -&gt; Alfalfa">Maize Silage → Alfalfa</option>
+                    <option value="Sorghum -&gt; Cowpea">Sorghum → Cowpea</option>
+                    <option value="Corn -&gt; Soybeans -&gt; Wheat -&gt; Alfalfa">Corn → Soybeans → Wheat → Alfalfa
+                    </option>
+                    <option value="Continuous Maize">Continuous Maize</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="obsOutcome">Observed Season Outcome (1–100)</label>
+                  <input id="obsOutcome" max="100" min="1" type="number" value="92" />
+                </div>
+              </div>
+              <div class="row2">
+                <button class="mw-control" id="saveObsBtn" type="button">Save &amp; Log to Dairy Diary</button>
+                <button class="mw-control" id="exportObsBtn" type="button">Export Dataset JSON</button>
+              </div>
+              <div class="status" id="obsStatus">0 local observations logged in browser.</div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Climate baseline" class="workspace-panel panel-right" hidden="" id="panel-climate">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Climate baseline</h2>
+        </div><button aria-label="Close Climate baseline" class="mw-control close-panel" data-close="climate"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="legacy-panel-content"><span id="coordLabel">1.42°N, 103.72°E</span>
 
-<div id="rotationsList"></div>
-</div></div></section><section aria-label="Waste-heat balance" class="workspace-panel panel-right" hidden="" id="panel-heat"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Waste-heat balance</h2></div><button aria-label="Close Waste-heat balance" class="mw-control close-panel" data-close="heat" type="button">×</button></div><div class="panel-content"><div class="legacy-panel-content">
+          <div>
+            <div class="metrics-grid">
+              <div class="metric">
+                <div class="k">Mean Temp (T2M)</div>
+                <div class="v" id="mTemp">7.00 °C</div>
+              </div>
+              <div class="metric">
+                <div class="k">Precipitation (PRECTOTCORR)</div>
+                <div class="v" id="mRain">2.16 mm/d</div>
+              </div>
+              <div class="metric">
+                <div class="k">Solar Irradiance (ALLSKY)</div>
+                <div class="v" id="mSolar">13.05 MJ/m²/d</div>
+              </div>
+              <div class="metric">
+                <div class="k">Wind Speed (WS2M)</div>
+                <div class="v" id="mWind">2.98 m/s</div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="chart-legend">
+                <span><span class="dot"></span>Temp (T2M °C)</span>
+                <span><span class="dot"></span>Solar Irradiance (MJ/m²/d)</span>
+                <span><span class="dot"></span>Precipitation (mm/d)</span>
+              </div>
+              <svg height="160" id="seasonalChart" viewbox="0 0 640 160" width="100%"></svg>
+            </div>
+            <div class="status">Source: <a href="https://power.larc.nasa.gov/api/temporal/climatology/point"
+                target="_blank">NASA POWER Agroclimatology API</a> (~50 km grid). Complemented by GPM IMERG
+              (~10 km rainfall), SMAP (9 km soil moisture), and MODIS MOD13Q1 (250 m NDVI).</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="FodderWeatherNet forecast" class="workspace-panel panel-right" hidden="" id="panel-forecast">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>FodderWeatherNet forecast</h2>
+        </div><button aria-label="Close FodderWeatherNet forecast" class="mw-control close-panel" data-close="forecast"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="legacy-panel-content">
 
-<div>
-<div class="metrics-grid">
-<div class="metric">
-<div class="k">Dairy Thermal Demand</div>
-<div class="v" id="hDemand">817 kWh/d</div>
-</div>
-<div class="metric">
-<div class="k">Avg Heat Load</div>
-<div class="v" id="hKw">82 kW</div>
-</div>
-<div class="metric">
-<div class="k">HTST Pasteurization</div>
-<div class="v" id="hHtst" title="High-Temperature Short-Time milk pasteurization (72–78 °C) via double-wall food-grade heat exchanger + heat pump boost.">72–78 °C (PASS)</div>
-</div>
-<div class="metric">
-<div class="k">Absorption Chilling</div>
-<div class="v">~7.2 °C</div>
-</div>
-</div>
-<div class="safety-box" id="safetyBox"></div>
-</div>
-</div></div></section><section aria-label="Project documents" class="workspace-panel panel-left" hidden="" id="panel-docs"><div class="panel-heading"><div><p class="panel-kicker">MILKYWAYS / ANALYSIS</p><h2>Project documents</h2></div><button aria-label="Close Project documents" class="mw-control close-panel" data-close="docs" type="button">×</button></div><div class="panel-content"><div class="document-links"><p class="panel-kicker">NASA SPACE APPS CHALLENGE</p><a href="../">Project Home ↗</a><a href="../slides/">7-slide demo ↗</a><a href="../paper/">Technical paper ↗</a><a href="../model-card/">FodderWeatherNet Model Card ↗</a><a href="../datasets/">Earth observation datasets ↗</a><p class="status">Uses open NASA data. Not endorsed by NASA.</p><p class="status">Sticker artwork is AI-generated.</p></div></div></section></div><footer class="workspace-status"><span class="status-heading">OBSERVATION STATUS</span><span id="workspaceDataStatus">Connecting to NASA POWER…</span><button aria-label="Open safety checks" class="mw-control safety-readout" data-panel="checks"><span id="workspaceSafety">Checking domain guardrails…</span></button><span class="status-credit">NASA SPACE APPS · FIELD SHIFT</span></footer><script>
+          <div class="metrics-grid">
+            <div class="metric">
+              <div class="k">Next-Season C3 (Alfalfa/Maize)</div>
+              <div class="v" id="dlC3">-- / 100</div>
+            </div>
+            <div class="metric">
+              <div class="k">Next-Season C4 (Sorghum/Cowpea)</div>
+              <div class="v" id="dlC4">-- / 100</div>
+            </div>
+            <div class="metric">
+              <div class="k">Predicted Stress Risk</div>
+              <div class="v" id="dlRisk">-- / 100</div>
+            </div>
+            <div class="metric">
+              <div class="k">Global Holdout R² (2023–2025)</div>
+              <div class="v" id="dlR2">0.8740</div>
+            </div>
+            <div class="metric">
+              <div class="k">Global Holdout MAE / RMSE</div>
+              <div class="v" id="dlMae">5.27 / 7.75</div>
+            </div>
+          </div>
+          <div class="status" id="dlStatus">Global 6-region test-set metrics (2023–2025 holdout: Ontario, Gais,
+            Singapore, Wisconsin, Waikato, Punjab): R² = 0.8740 · MAE = 5.27 · RMSE = 7.75 (vs. Ridge R² = 0.8553, MAE =
+            6.04). C3/C4/Stress above are live per-farm JS forward-pass scores; other 8 pins run generalized inference.
+          </div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Mandatory domain checks" class="workspace-panel panel-right" hidden="" id="panel-checks">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Mandatory domain checks</h2>
+        </div><button aria-label="Close Mandatory domain checks" class="mw-control close-panel" data-close="checks"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="legacy-panel-content">
+
+          <div class="checks-grid" id="checksGrid"></div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Ranked fodder rotations" class="workspace-panel panel-right" hidden="" id="panel-rotations">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Ranked fodder rotations</h2>
+        </div><button aria-label="Close Ranked fodder rotations" class="mw-control close-panel" data-close="rotations"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="legacy-panel-content">
+
+          <div id="rotationsList"></div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Waste-heat balance" class="workspace-panel panel-right" hidden="" id="panel-heat">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Waste-heat balance</h2>
+        </div><button aria-label="Close Waste-heat balance" class="mw-control close-panel" data-close="heat"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="legacy-panel-content">
+
+          <div>
+            <div class="metrics-grid">
+              <div class="metric">
+                <div class="k">Dairy Thermal Demand</div>
+                <div class="v" id="hDemand">817 kWh/d</div>
+              </div>
+              <div class="metric">
+                <div class="k">Avg Heat Load</div>
+                <div class="v" id="hKw">82 kW</div>
+              </div>
+              <div class="metric">
+                <div class="k">HTST Pasteurization</div>
+                <div class="v" id="hHtst"
+                  title="High-Temperature Short-Time milk pasteurization (72–78 °C) via double-wall food-grade heat exchanger + heat pump boost.">
+                  72–78 °C (PASS)</div>
+              </div>
+              <div class="metric">
+                <div class="k">Absorption Chilling</div>
+                <div class="v">~7.2 °C</div>
+              </div>
+            </div>
+            <div class="safety-box" id="safetyBox"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section aria-label="Project documents" class="workspace-panel panel-left" hidden="" id="panel-docs">
+      <div class="panel-heading">
+        <div>
+          <p class="panel-kicker">MILKYWAYS / ANALYSIS</p>
+          <h2>Project documents</h2>
+        </div><button aria-label="Close Project documents" class="mw-control close-panel" data-close="docs"
+          type="button">×</button>
+      </div>
+      <div class="panel-content">
+        <div class="document-links">
+          <p class="panel-kicker">NASA SPACE APPS CHALLENGE</p><a href="../">Project Home ↗</a><a
+            href="../slides/">7-slide demo ↗</a><a href="../paper/">Technical paper ↗</a><a
+            href="../model-card/">FodderWeatherNet Model Card ↗</a><a href="../datasets/">Earth observation datasets
+            ↗</a>
+          <p class="status">Uses open NASA data. Not endorsed by NASA.</p>
+          <p class="status">Sticker artwork is AI-generated.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer class="workspace-status"><span class="status-heading">OBSERVATION STATUS</span><span
+      id="workspaceDataStatus">Connecting to NASA POWER…</span><button aria-label="Open safety checks"
+      class="mw-control safety-readout" data-panel="checks"><span id="workspaceSafety">Checking domain
+        guardrails…</span></button><span class="status-credit">NASA SPACE APPS · FIELD SHIFT</span></footer>
+  <script>
     const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
     const ROTATIONS = [
       {
@@ -974,7 +1298,7 @@
 
       });
 
-      const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+      const topo = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
 
         maxZoom: 17,
 
@@ -992,7 +1316,7 @@
 
       spiderLayer = L.layerGroup().addTo(mcdaMap);
       const keyCtrl = L.control({ position: "bottomleft" });
-      keyCtrl.onAdd = function() {
+      keyCtrl.onAdd = function () {
         const div = L.DomUtil.create("div", "map-key");
         div.innerHTML = `
           <details open>
@@ -1091,7 +1415,7 @@
         <strong>Candidate Dairy Parcel</strong> (${lat.toFixed(3)}°, ${lon.toFixed(3)}°)<br/>
         <strong>MCDA Score:</strong> ${score}/100 &middot; <strong>HTST:</strong> ${htstOk ? "72–78 °C PASS" : "FAIL"}<br/>
         <strong>NASA POWER:</strong> ${climate.t2m.toFixed(1)} °C &middot; ${climate.rain.toFixed(1)} mm/d &middot; ${climate.solar.toFixed(1)} MJ/m²/d<br/>
-        <strong>FodderWeatherNet:</strong> C3 ${c3Txt.replace(/\s+/g,"")} | C4 ${c4Txt.replace(/\s+/g,"")} (Risk ${riskTxt.replace(/\s+/g,"")})<br/>
+        <strong>FodderWeatherNet:</strong> C3 ${c3Txt.replace(/\s+/g, "")} | C4 ${c4Txt.replace(/\s+/g, "")} (Risk ${riskTxt.replace(/\s+/g, "")})<br/>
         <strong>Top Rotation:</strong> ${topName}
 
         <button type="button" class="popup-export-btn" onclick="generateMunicipalReport()">Export Municipal Feasibility Report</button>
@@ -1106,11 +1430,11 @@
     }
 
     const GIBS_SPECS = {
-      clouds: { layer: "MODIS_Terra_Cloud_Fraction_Day", tms: "GoogleMapsCompatible_Level6", ext: "png", maxNativeZoom: 6 },
-      rain:   { layer: "IMERG_Precipitation_Rate", tms: "GoogleMapsCompatible_Level6", ext: "png", maxNativeZoom: 6 },
-      smap:   { layer: "SMAP_L4_Analyzed_Root_Zone_Soil_Moisture", tms: "GoogleMapsCompatible_Level6", ext: "png", maxNativeZoom: 6, minDaysAgo: 5 },
-      ndvi:   { layer: "MODIS_Terra_NDVI_8Day", tms: "GoogleMapsCompatible_Level9", ext: "png", maxNativeZoom: 9, fixedDaysAgo: 12 },
-      lst:    { layer: "MODIS_Terra_Land_Surface_Temp_Day", tms: "GoogleMapsCompatible_Level7", ext: "png", maxNativeZoom: 7 },
+      clouds: { layer: "MODIS_Terra_CorrectedReflectance_TrueColor", tms: "GoogleMapsCompatible_Level9", ext: "jpg", maxNativeZoom: 9 },
+      rain: { layer: "IMERG_Precipitation_Rate", tms: "GoogleMapsCompatible_Level6", ext: "png", maxNativeZoom: 6 },
+      smap: { layer: "SMAP_L4_Analyzed_Root_Zone_Soil_Moisture", tms: "GoogleMapsCompatible_Level6", ext: "png", maxNativeZoom: 6, minDaysAgo: 5 },
+      ndvi: { layer: "MODIS_Terra_NDVI_8Day", tms: "GoogleMapsCompatible_Level9", ext: "png", maxNativeZoom: 9, fixedDaysAgo: 12 },
+      lst: { layer: "MODIS_Terra_Land_Surface_Temp_Day", tms: "GoogleMapsCompatible_Level7", ext: "png", maxNativeZoom: 7 },
       lights: { layer: "VIIRS_Black_Marble", tms: "GoogleMapsCompatible_Level8", ext: "png", maxNativeZoom: 8, staticDate: "2016-01-01" }
     };
     const gibsActiveLayers = {};
@@ -1153,7 +1477,7 @@
         cb.addEventListener("change", () => {
           const key = cb.dataset.gibs;
           const d = updateDateReadout();
-          const op = (opacitySlider ? parseInt(opacitySlider.value, 10) : 68) / 100;
+          const op = (opacitySlider ? parseInt(opacitySlider.value, 10) : 50) / 100;
           if (cb.checked) {
             if (!gibsActiveLayers[key]) {
               const spec = GIBS_SPECS[key];
@@ -1358,29 +1682,18 @@
       if (!cal) return;
       const tArr = climate.monthly.T2M;
       const rArr = climate.monthly.PRECTOTCORR;
-      let bareRiskMonths = 0;
-      const cards = MONTHS.map((m, i) => {
+      cal.innerHTML = MONTHS.map((m, i) => {
         const t = tArr[i], r = rArr[i];
         let crop = (climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy") ? "Berseem Cover" : "Red Clover Cover";
         let stage = "Soil Rest / Cover", col = "rgba(148,163,184,0.12)", brd = "#334155";
-        let isBareWindow = false;
         const useC4 = (climate.t2m >= 18 || climate.rain < 2.2 || el("soil").value === "sandy");
         if (t >= 8 && t < 16 && i < 6) { crop = useC4 ? "Cowpea (N-Fix)" : "Alfalfa (N-Fix)"; stage = "Seed Legume"; col = "rgba(20,184,166,0.16)"; brd = "#14b8a6"; }
         else if (t >= 16 && i < 8) { crop = useC4 ? "Sorghum Silage" : "Maize Silage"; stage = r < 2 ? "Grow + Irrigate" : "Peak Silage"; col = "rgba(34,197,94,0.16)"; brd = "#22c55e"; }
         else if (t >= 6 && i >= 8) { crop = useC4 ? "Cowpea -> Berseem" : "Harvest -> Clover"; stage = "Cut & Re-seed"; col = "rgba(245,158,11,0.16)"; brd = "#f59e0b"; }
-        else { isBareWindow = true; bareRiskMonths += 1; }
-        const bareBadge = isBareWindow
-          ? `<div style="margin-top:3px;padding:1px 4px;border-radius:4px;background:rgba(245,158,11,0.18);border:1px solid #f59e0b;color:#fde68a;font-size:0.62rem;font-weight:700;">Bare-Field Guard</div>`
-          : "";
         return `<div style="background:${col}; border:1px solid ${brd}; border-radius:6px; padding:0.4rem; font-size:0.72rem; text-align:center;">
-          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div style="font-weight:600;">${crop}</div><div>${stage}</div>${bareBadge}
+          <strong>${m}</strong><div style="color:var(--muted);">${t.toFixed(0)}&deg;C</div><div style="font-weight:600;">${crop}</div><div>${stage}</div>
         </div>`;
       }).join("");
-      const bareSummary = `<div style="grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0.45rem 0.65rem;border-radius:7px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.45);font-size:0.74rem;color:#fde68a;margin-bottom:4px;">
-        <strong>Bare-Field Vulnerability Window: ${bareRiskMonths} mo/yr</strong>
-        <span>Protected by living legume/cover crop instead of exposed fallow soil</span>
-      </div>`;
-      cal.innerHTML = bareSummary + cards;
     }
 
     async function checkLandMask(lat, lon) {
@@ -1553,7 +1866,7 @@
       el("obsStatus").textContent = `${list.length} observation(s) in Dairy Diary (ready to export & retrain FodderWeatherNet).`;
       el("diaryFeed").innerHTML = list.slice().reverse().slice(0, 4).map((o, idx) => `
         <div class="check-item pass ${highlightFirst && idx === 0 ? "diary-pop" : ""}">
-          <div class="ctitle"><span>${o.crop}</span><span>${o.observed_score}/100</span></div>
+          <div class="ctitle"><span>${o.crop}</span><span>${o.observed_score ?? o.score ?? 80}/100</span></div>
           <div style="color:var(--muted); margin-top:0.2rem;">(${Number(o.lat).toFixed(2)}°, ${Number(o.lon).toFixed(2)}°) · ${o.soil} soil${o.note ? " · " + o.note : ""}</div>
         </div>
       `).join("");
@@ -1720,7 +2033,7 @@
       const now = Date.now();
       if (now - lastChatTs < 900) return; // Anti-bot cooldown
       lastChatTs = now;
-            appendChat("You", msg.replace(/</g, "&lt;"));
+      appendChat("You", msg.replace(/</g, "&lt;"));
       const low = msg.toLowerCase();
       const persona = el("chatPersona") ? el("chatPersona").value : "farmer";
 
@@ -1753,7 +2066,7 @@
           rain: climate.rain,
           solar: climate.solar,
           crop,
-          score: sc,
+          observed_score: sc,
           note: `Chat log · ${yieldMatch ? yieldMatch[1] + " t/ac · " : ""}T2M ${climate.t2m.toFixed(1)}°C`
         });
         localStorage.setItem("milkyways_obs", JSON.stringify(list));
@@ -2140,7 +2453,7 @@
       </tr>
       <tr>
         <td><strong>Complementary NASA Layers</strong></td>
-        <td><strong>Live GIBS Tiles:</strong> MODIS Cloud Cover, GPM IMERG Rainfall, SMAP L4 Soil Moisture, MODIS NDVI &amp; LST, VIIRS Lights. <strong>Complementary / Planned Point Fusion:</strong> GRACE-FO, ECOSTRESS &amp; SoilGrids numeric APIs.</td>
+        <td>GPM IMERG (rainfall), SMAP (root-zone moisture), MODIS/HLS (NDVI vigor), GRACE-FO (aquifer trend), ECOSTRESS (heat stress), VIIRS Black Marble (nighttime grid proximity), ISRIC SoilGrids (texture/pH).</td>
         <td>Multi-resolution regional screening overlay</td>
       </tr>
       <tr>
@@ -2277,7 +2590,7 @@
         osc1.stop(now + 0.8);
         osc2.stop(now + 0.8);
         setTimeout(() => ctx.close && ctx.close(), 950);
-      } catch (_) {}
+      } catch (_) { }
     }
 
     let mooHopIdx = 0;
@@ -2459,25 +2772,27 @@
     if (el("topExportReportBtn")) {
       el("topExportReportBtn").addEventListener("click", generateMunicipalReport);
     }
-    ["wSoil","wWater","wHeat","wFeed","wGrid","wFlood"].forEach(id => {
+    ["wSoil", "wWater", "wHeat", "wFeed", "wGrid", "wFlood"].forEach(id => {
       if (el(id)) el(id).addEventListener("input", () => markJourneyStep(2));
     });
     if (el("exportReportBtn")) {
       el("exportReportBtn").addEventListener("click", generateMunicipalReport);
     }
-  
-    // Moo-Pilot: Directed 12-Step Spotlight Tour (Singapore -> Flight -> Sheldon Creek -> Farmer Action)
-    let mpAutoTimer = null;
-    let mpFlightTimer = null;
+
+    // Moo-Pilot: 10-step guided tour (Earth -> Singapore -> Sheldon Creek -> HUD -> Key -> Anchors -> Left/Right Nav -> Export Report -> Gaia Mission Slide)
+    let mpTimers = [];
+    let mpSubTimers = [];
     let mpActive = false;
-    let mpPaused = false;
-    let mpIdx = 0;
 
     function clearMooPilotHighlights() {
       document.querySelectorAll(".moo-pilot-highlight").forEach(n => n.classList.remove("moo-pilot-highlight"));
     }
 
-    function highlightEl() {}
+    function highlightEl(target) {
+      clearMooPilotHighlights();
+      const node = typeof target === "string" ? document.querySelector(target) : target;
+      if (node) node.classList.add("moo-pilot-highlight");
+    }
 
     function closeAllWorkspacePanels() {
       document.querySelectorAll(".workspace-panel").forEach(pn => { pn.hidden = true; pn.classList.remove("strip-open"); });
@@ -2513,96 +2828,21 @@
       document.querySelectorAll("[data-panel]").forEach(b => b.setAttribute("aria-expanded", b.dataset.panel === panelKey ? "true" : "false"));
     }
 
-    function getTargetRect(step) {
-      if (typeof step.customRect === "function") return step.customRect();
-      const node = typeof step.target === "string" ? document.querySelector(step.target) : null;
-      if (!node) return null;
-      node.scrollIntoView({ block: "nearest", inline: "nearest" });
-      return node.getBoundingClientRect();
-    }
-
-    function positionCardAndLine(rect, prefer) {
-      const ring = el("mooPilotRing");
-      const svg = el("mooPilotSvg");
-      const card = el("mooPilotStepCard");
-      const line = el("mpCoordLine");
-      const dot = el("mpCoordDot");
-      if (!ring || !svg || !card || !rect) return;
-
-      const pad = 6;
-      const rx = Math.max(4, rect.left - pad);
-      const ry = Math.max(4, rect.top - pad);
-      const rw = Math.max(24, rect.width + pad * 2);
-      const rh = Math.max(24, rect.height + pad * 2);
-
-      ring.style.left = rx + "px";
-      ring.style.top = ry + "px";
-      ring.style.width = rw + "px";
-      ring.style.height = rh + "px";
-      ring.classList.remove("show");
-      void ring.offsetWidth;
-      ring.classList.add("show");
-      svg.classList.add("show");
-      card.classList.add("show");
-
-      const vw = window.innerWidth, vh = window.innerHeight;
-      const cw = card.offsetWidth || 292, ch = card.offsetHeight || 110;
-      const gap = 22;
-      let cx = rx + rw + gap, cy = ry;
-
-      if (prefer === "below" || vw < 760) {
-        cx = Math.min(Math.max(12, rx + rw / 2 - cw / 2), vw - cw - 12);
-        cy = ry + rh + gap;
-        if (cy + ch > vh - 14) cy = Math.max(12, ry - ch - gap);
-      } else if (prefer === "above") {
-        cx = Math.min(Math.max(12, rx), vw - cw - 12);
-        cy = Math.max(12, ry - ch - gap);
-        if (cy < 12) cy = Math.min(vh - ch - 12, ry + rh + gap);
-      } else if (prefer === "left") {
-        cx = Math.max(12, rx - cw - gap);
-        cy = Math.min(Math.max(12, ry), vh - ch - 12);
-        if (cx + cw > rx - 6) cx = Math.min(vw - cw - 12, rx + rw + gap);
-      } else {
-        cx = rx + rw + gap;
-        cy = Math.min(Math.max(12, ry), vh - ch - 12);
-        if (cx + cw > vw - 12) {
-          cx = Math.max(12, rx - cw - gap);
-        }
-        if (cx < rx + rw && cx + cw > rx && cy < ry + rh && cy + ch > ry) {
-          cy = ry + rh + gap < vh - ch - 12 ? ry + rh + gap : Math.max(12, ry - ch - gap);
-        }
-      }
-
-      card.style.left = Math.round(cx) + "px";
-      card.style.top = Math.round(cy) + "px";
-
-      const ringCx = rx + rw / 2, ringCy = ry + rh / 2;
-      const cardCx = cx + cw / 2, cardCy = cy + ch / 2;
-      const dx = ringCx - cardCx, dy = ringCy - cardCy;
-      let x1 = cardCx, y1 = cardCy, x2 = ringCx, y2 = ringCy;
-      if (Math.abs(dx) > Math.abs(dy)) {
-        x1 = dx > 0 ? cx + cw : cx;
-        x2 = dx > 0 ? rx : rx + rw;
-      } else {
-        y1 = dy > 0 ? cy + ch : cy;
-        y2 = dy > 0 ? ry : ry + rh;
-      }
-      if (line) {
-        line.setAttribute("x1", x1); line.setAttribute("y1", y1);
-        line.setAttribute("x2", x2); line.setAttribute("y2", y2);
-      }
-      if (dot) { dot.setAttribute("cx", x2); dot.setAttribute("cy", y2); }
-    }
-
     const MOO_PILOT_STEPS = [
       {
-        target: "#mooBtn",
-        prefer: "below",
-        duration: 3500,
-        caption: "Hi, I am Moo Pilot. 30 second tour, no clicking needed.",
-        prepare: () => {
-          closeAllWorkspacePanels();
+        delay: 0,
+        caption: "Earth from space: 14 global dairy regions mapped with NASA POWER climatology.",
+        run: () => {
           hideMooSlide();
+          closeAllWorkspacePanels();
+          clearMooPilotHighlights();
+          if (el("worldViewBtn")) el("worldViewBtn").click();
+        }
+      },
+      {
+        delay: 3000,
+        caption: "Singapore Tropical Dairy Demo (1.42°, 103.72°): Sorghum -> Cowpea -> Berseem ranks #1 (88/100).",
+        run: () => {
           if (el("preset")) {
             el("preset").value = "1.42,103.72";
             el("preset").dispatchEvent(new Event("change"));
@@ -2611,14 +2851,10 @@
         }
       },
       {
-        target: "#preset",
-        prefer: "right",
-        duration: 3500,
-        caption: "Start here. Pick the farm. We are using Sheldon Creek Dairy.",
-        prepare: () => {
-          closeAllWorkspacePanels();
-          el("anchor-farm")?.classList.remove("collapsed");
-          if (el("preset") && el("preset").value !== "44.08,-79.88") {
+        delay: 6500,
+        caption: "Sheldon Creek / Ontario Dairy Region (44.08°, -79.88°): temperate benchmark & 12 km corridor.",
+        run: () => {
+          if (el("preset")) {
             el("preset").value = "44.08,-79.88";
             el("preset").dispatchEvent(new Event("change"));
           }
@@ -2626,93 +2862,142 @@
         }
       },
       {
-        target: ".selection-readout",
-        prefer: "below",
-        duration: 3500,
-        caption: "NASA locked the parcel here. Site Verdict: Suitable, 88 out of 100.",
-        prepare: () => { closeAllWorkspacePanels(); enterFarmMap(11); }
-      },
-      {
-        target: "#hudTopCropChip",
-        prefer: "below",
-        duration: 3500,
-        caption: "This is the rotation it picked for this parcel.",
-        prepare: () => { closeAllWorkspacePanels(); }
-      },
-      {
-        target: "#rotationsList",
-        prefer: "left",
-        duration: 4000,
-        caption: "Here are 4 rotations, compared, not just one. This is what the brief asks for.",
-        prepare: () => { openDrawerKey("rotations"); }
-      },
-      {
-        target: "#anchor-priorities",
-        prefer: "right",
-        duration: 3500,
-        caption: "You move these, the ranking moves.",
-        prepare: () => {
-          closeAllWorkspacePanels();
-          el("anchor-priorities")?.classList.remove("collapsed");
+        delay: 10000,
+        caption: "Always-visible HUD: Selected parcel, NASA LOCK coordinates, Suitability score & safety verdict.",
+        run: () => {
+          enterFarmMap(11);
+          highlightEl(".selection-readout");
         }
       },
       {
-        target: '.edge-left [data-panel="layers"]',
-        prefer: "right",
-        duration: 3500,
-        caption: "This is where the NASA data lives. POWER, plus the GIBS map layers.",
-        prepare: () => { closeAllWorkspacePanels(); }
-      },
-      {
-        customRect: () => {
-          const mapEl = el("mcdaMap");
-          if (!mapEl || typeof mcdaMap === "undefined" || !mcdaMap) return null;
-          const r = mapEl.getBoundingClientRect();
-          const lat = parseFloat(el("lat").value) || 44.08;
-          const lon = parseFloat(el("lon").value) || -79.88;
-          const pt = mcdaMap.latLngToContainerPoint([lat, lon]);
-          return { left: r.left + pt.x - 16, top: r.top + pt.y - 16, width: 32, height: 32 };
-        },
-        prefer: "below",
-        duration: 3500,
-        caption: "That dot is the farm, on real satellite imagery.",
-        prepare: () => { closeAllWorkspacePanels(); enterFarmMap(11); }
-      },
-      {
-        target: ".map-key",
-        prefer: "above",
-        duration: 3500,
-        caption: "Green is a candidate parcel. Red is the 1,500 ft setback.",
-        prepare: () => {
-          closeAllWorkspacePanels();
+        delay: 13500,
+        caption: "Map Key: Candidate parcel, 1,500 ft setback, 12 km thermal pipe envelope & >12 km Position Beacons.",
+        run: () => {
           const det = document.querySelector(".map-key details");
           if (det) det.open = true;
+          highlightEl(".map-key");
         }
       },
       {
-        target: '.edge-left [data-panel="network"]',
-        prefer: "right",
-        duration: 3500,
-        caption: "This is where the data centre heat comes in.",
-        prepare: () => { closeAllWorkspacePanels(); }
+        delay: 17000,
+        caption: "Anchored Farm & MCDA Priorities: adjusting Soil Health (55%) re-ranks rotations live.",
+        run: () => {
+          ["anchor-farm", "anchor-priorities"].forEach(id => {
+            const card = el(id);
+            if (card) card.classList.remove("collapsed");
+          });
+          highlightEl(".anchored-controls");
+          if (el("wSoil")) {
+            el("wSoil").value = 55;
+            el("wSoil").dispatchEvent(new Event("input"));
+          }
+        }
       },
       {
-        target: "#topExportReportBtn",
-        prefer: "below",
-        duration: 3500,
-        caption: "One click, you get the whole packet.",
-        prepare: () => { closeAllWorkspacePanels(); }
-      },
-      {
-        target: "#anchor-farm",
-        prefer: "right",
-        duration: 4500,
-        caption: "Now your turn. Put in your farm, set your priorities, then export your report.",
-        prepare: () => {
+        delay: 20500,
+        caption: "Left navigation: Farm, Priorities, World view, Map layers, Parcel & heat network, and Project docs.",
+        run: () => {
           closeAllWorkspacePanels();
-          el("anchor-farm")?.classList.remove("collapsed");
-          const det = document.querySelector("#anchor-farm details");
-          if (det) det.open = true;
+          const leftStrip = document.querySelector(".edge-left");
+          if (leftStrip) leftStrip.classList.add("expanded");
+          highlightEl(".edge-left");
+          const leftSequence = [
+            () => { const b = document.querySelector('.edge-left [data-action="farm"]'); if (b) b.classList.add("moo-pilot-highlight"); },
+            () => { const b = document.querySelector('.edge-left [data-action="priorities"]'); if (b) b.classList.add("moo-pilot-highlight"); },
+            () => { openDrawerKey("layers"); },
+            () => { openDrawerKey("network"); },
+            () => { openDrawerKey("docs"); },
+            () => { closeAllWorkspacePanels(); clearMooPilotHighlights(); }
+          ];
+          leftSequence.forEach((fn, i) => {
+            mpSubTimers.push(setTimeout(() => { if (mpActive) fn(); }, i * 650));
+          });
+        }
+      },
+      {
+        delay: 24800,
+        caption: "Right navigation: CAPCOM, Calendar, Dairy Diary, Climate, Forecast, Checks, Rotations & Waste Heat.",
+        run: () => {
+          closeAllWorkspacePanels();
+          const rightStrip = document.querySelector(".edge-right");
+          if (rightStrip) rightStrip.classList.add("expanded");
+          highlightEl(".edge-right");
+          const rightPanels = ["chat", "calendar", "diary", "climate", "forecast", "checks", "rotations", "heat"];
+          rightPanels.forEach((key, i) => {
+            mpSubTimers.push(setTimeout(() => {
+              if (!mpActive) return;
+              openDrawerKey(key);
+            }, i * 650));
+          });
+          mpSubTimers.push(setTimeout(() => {
+            if (!mpActive) return;
+            closeAllWorkspacePanels();
+            clearMooPilotHighlights();
+          }, rightPanels.length * 650 + 250));
+        }
+      },
+      {
+        delay: 30600,
+        caption: "Export Report: Crop Rotations top-billed under the map, followed by the Municipal Feasibility Packet.",
+        run: () => {
+          closeAllWorkspacePanels();
+          highlightEl("#topExportReportBtn");
+          const farmName = el("workspaceFarmName") ? el("workspaceFarmName").textContent : "Selected Dairy Parcel";
+          const suitText = el("heroSuitabilityBadge") ? el("heroSuitabilityBadge").textContent : "Suitable";
+          const lockText = el("hudLockReadout") ? el("hudLockReadout").textContent.trim() : "NASA LOCK";
+          const topRot = document.querySelector("#rotationsList .rot-item, #rotationsList > div")?.textContent?.trim()?.replace(/\s+/g, " ")?.slice(0, 125) || "Sorghum -> Cowpea -> Berseem Clover";
+          const checksCount = document.querySelectorAll("#checksGrid > div").length || 4;
+          const failCount = document.querySelectorAll("#checksGrid .fail").length;
+          showMooSlide(`
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Exported Report · Crop Rotations + Municipal Feasibility</span>
+              <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
+            </div>
+            <h3 style="margin:0 0 4px;font-size:18px;color:var(--accent);">${farmName}</h3>
+            <div style="font-size:11px;color:#94a3b8;font-family:var(--font-mono);margin-bottom:10px;">${lockText} · Print-to-PDF ready</div>
+            <div class="moo-pilot-slide-box" style="margin-bottom:10px;border-color:var(--primary);">
+              <strong style="color:var(--primary);">1. Top-Ranked Crop Rotation (Challenge 7 Core)</strong><br/>${topRot}...
+            </div>
+            <div class="moo-pilot-slide-grid">
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Municipal Siting Verdict</strong><br/>${suitText} (${checksCount - failCount}/${checksCount} gates passed)</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Circular Thermal Loop</strong><br/>1,500 ft setback · 12 km pipe · 72–78 °C double-wall HX</div>
+            </div>
+            <div class="moo-pilot-actions">
+              <button type="button" class="moo-pilot-start" onclick="generateMunicipalReport()">Download Full HTML / PDF Packet</button>
+            </div>
+          `);
+        }
+      },
+      {
+        delay: 35000,
+        caption: "Candidate Parcel & Gaia: multi-use decision support uniting crop rotations with circular siting.",
+        run: () => {
+          clearMooPilotHighlights();
+          showMooSlide(`
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Candidate Parcel · Gaia-Inspired Multi-Use Decision Tool</span>
+              <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
+            </div>
+            <h3 style="margin:0 0 8px;font-size:19px;color:var(--accent);">From Crop Rotations to Candidate Parcels (Like Gaia)</h3>
+            <p style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--foreground);">
+              Just as <strong>Gaia</strong> and closed-loop biosphere experiments show that soil, crops, water, and energy regulate one another in coupled feedback loops, choosing the right <strong>fodder crop rotation</strong> cannot be separated from <strong>where the candidate parcel sits</strong>. MilkyWays turns one NASA Earth-observation engine into a <strong>multi-use decision tool</strong>—leading with agronomy while unlocking circular siting:
+            </p>
+            <div class="moo-pilot-slide-grid">
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">1. Crop Rotations First</strong><br/>NASA POWER climate + soil-water telemetry ranks N-fixing fodder rotations to cut synthetic nitrogen 25–30% and buffer heat/drought.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Candidate Parcel Screening</strong><br/>The same NASA layers evaluate candidate farm &amp; co-location parcels against 1,500 ft setbacks, open-water gates, and flood zones.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">3. Circular Energy Symbiosis</strong><br/>Where a parcel sits near compute, 55–70 °C liquid data-center waste heat is safely boosted to 72–78 °C HTST pasteurization (coolant never touches milk).</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">4. One Engine, Two Audiences</strong><br/>Farmers get resilient rotation schedules; municipalities get a print-ready Feasibility Packet—zero API keys, anywhere on Earth.</div>
+            </div>
+            <div class="moo-pilot-actions" style="margin-top:12px;">
+              <button type="button" id="mooPilotReplayBtn" class="moo-pilot-start">&#8634; Replay Moo-Pilot</button>
+              <button type="button" id="mooPilotExploreBtn" class="moo-pilot-skip">Explore Workspace</button>
+            </div>
+          `);
+          if (el("mooPilotReplayBtn")) el("mooPilotReplayBtn").onclick = (e) => { e.stopPropagation(); startMooPilotTour(); };
+          if (el("mooPilotExploreBtn")) el("mooPilotExploreBtn").onclick = (e) => { e.stopPropagation(); hideMooSlide(); stopMooPilotTour(); };
+          mpActive = false;
+          if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+          if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
         }
       }
     ];
@@ -2722,130 +3007,64 @@
     }
 
     function updateMooPilotHud(stepIdx) {
-      if (el("mpCardCounter")) el("mpCardCounter").textContent = `Step ${stepIdx + 1} of ${MOO_PILOT_STEPS.length}`;
-      if (el("mpCardText")) el("mpCardText").textContent = MOO_PILOT_STEPS[stepIdx].caption;
-      if (el("mpBackBtn")) el("mpBackBtn").disabled = stepIdx === 0;
-      if (el("mpNextBtn")) el("mpNextBtn").textContent = stepIdx === MOO_PILOT_STEPS.length - 1 ? "Done" : "Next";
       if (el("mooPilotStepLabel")) el("mooPilotStepLabel").textContent = `Moo-Pilot · Step ${stepIdx + 1}/${MOO_PILOT_STEPS.length}`;
       if (el("mooPilotCaption")) el("mooPilotCaption").textContent = MOO_PILOT_STEPS[stepIdx].caption;
-    }
-
-    function redrawCurrentStep() {
-      if (!mpActive) return;
-      const step = MOO_PILOT_STEPS[mpIdx];
-      const rect = getTargetRect(step);
-      if (rect) positionCardAndLine(rect, step.prefer);
-    }
-
-    function renderStep(idx) {
-      clearTimeout(mpAutoTimer);
-      clearTimeout(mpFlightTimer);
-      mpIdx = Math.max(0, Math.min(MOO_PILOT_STEPS.length - 1, idx));
-      const step = MOO_PILOT_STEPS[mpIdx];
-      if (step.prepare) step.prepare();
-      updateMooPilotHud(mpIdx);
-      setTimeout(() => { if (mpActive) redrawCurrentStep(); }, 90);
-      if (!mpPaused) {
-        mpAutoTimer = setTimeout(() => {
-          if (!mpActive || mpPaused) return;
-          if (mpIdx === 0) {
-            runSingaporeToSheldonFlight();
-          } else if (mpIdx < MOO_PILOT_STEPS.length - 1) {
-            renderStep(mpIdx + 1);
-          } else {
-            stopMooPilotTour();
-          }
-        }, step.duration || 3500);
+      if (el("mooPilotDots")) {
+        el("mooPilotDots").innerHTML = MOO_PILOT_STEPS.map((_, i) =>
+          `<span class="moo-pilot-dot ${i < stepIdx ? "done" : i === stepIdx ? "active" : ""}"></span>`
+        ).join("");
       }
     }
 
-    function runSingaporeToSheldonFlight() {
-      clearTimeout(mpAutoTimer);
-      clearTimeout(mpFlightTimer);
-      el("mooPilotRing")?.classList.remove("show");
-      el("mooPilotSvg")?.classList.remove("show");
-      el("mooPilotStepCard")?.classList.remove("show");
-      el("mooPilotFlightPill")?.classList.add("show");
-      if (el("preset")) {
-        el("preset").value = "44.08,-79.88";
-        el("preset").dispatchEvent(new Event("change"));
+    function stopMooPilotTour(keepSlide) {
+      mpTimers.forEach(t => clearTimeout(t));
+      mpTimers = [];
+      mpSubTimers.forEach(t => clearTimeout(t));
+      mpSubTimers = [];
+      clearMooPilotHighlights();
+      if (!keepSlide) hideMooSlide();
+      if (mpActive) {
+        mpActive = false;
+        if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+        if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
       }
-      if (typeof mcdaMap !== "undefined" && mcdaMap) {
-        mcdaMap.flyTo([44.08, -79.88], 11, { duration: 2.0 });
-      }
-      mpFlightTimer = setTimeout(() => {
-        el("mooPilotFlightPill")?.classList.remove("show");
-        if (mpActive && !mpPaused) renderStep(1);
-      }, 2200);
-    }
-
-    function pauseMooPilotTour() {
-      if (!mpActive || mpPaused) return;
-      mpPaused = true;
-      clearTimeout(mpAutoTimer);
-      clearTimeout(mpFlightTimer);
-      el("mooPilotFlightPill")?.classList.remove("show");
-      if (el("mpPausedTag")) el("mpPausedTag").style.display = "inline";
-      if (el("mpResumeBtn")) el("mpResumeBtn").style.display = "inline-block";
-      if (el("mpSkipBtn")) el("mpSkipBtn").textContent = "Exit";
-    }
-
-    function resumeMooPilotTour() {
-      if (!mpActive) return;
-      mpPaused = false;
-      if (el("mpPausedTag")) el("mpPausedTag").style.display = "none";
-      if (el("mpResumeBtn")) el("mpResumeBtn").style.display = "none";
-      if (el("mpSkipBtn")) el("mpSkipBtn").textContent = "Skip tour";
-      renderStep(mpIdx);
-    }
-
-    function stopMooPilotTour() {
-      clearTimeout(mpAutoTimer);
-      clearTimeout(mpFlightTimer);
-      mpActive = false;
-      mpPaused = false;
-      el("mooPilotRing")?.classList.remove("show");
-      el("mooPilotSvg")?.classList.remove("show");
-      el("mooPilotStepCard")?.classList.remove("show");
-      el("mooPilotFlightPill")?.classList.remove("show");
-      if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
-      if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
-      if (el("mooPilotToolbarBtn")) el("mooPilotToolbarBtn").innerHTML = "&#8634; Replay Moo-Pilot";
-      hideMooSlide();
     }
 
     function startMooPilotTour() {
       dismissMooPilotModal();
       stopMooPilotTour();
       mpActive = true;
-      mpPaused = false;
-      if (el("mpPausedTag")) el("mpPausedTag").style.display = "none";
-      if (el("mpResumeBtn")) el("mpResumeBtn").style.display = "none";
-      if (el("mpSkipBtn")) el("mpSkipBtn").textContent = "Skip tour";
       if (el("autopilotBadge")) el("autopilotBadge").style.display = "inline-flex";
-      renderStep(0);
+      if (el("mooPilotHud")) el("mooPilotHud").classList.add("show");
+      MOO_PILOT_STEPS.forEach((step, idx) => {
+        mpTimers.push(setTimeout(() => {
+          if (!mpActive) return;
+          updateMooPilotHud(idx);
+          step.run();
+        }, step.delay));
+      });
     }
 
     if (el("mooPilotStartBtn")) el("mooPilotStartBtn").addEventListener("click", (e) => { e.stopPropagation(); startMooPilotTour(); });
     if (el("mooPilotDismissBtn")) el("mooPilotDismissBtn").addEventListener("click", (e) => { e.stopPropagation(); dismissMooPilotModal(); });
     if (el("mooPilotToolbarBtn")) el("mooPilotToolbarBtn").addEventListener("click", (e) => { e.stopPropagation(); startMooPilotTour(); });
     if (el("mooPilotPauseBtn")) el("mooPilotPauseBtn").addEventListener("click", (e) => { e.stopPropagation(); stopMooPilotTour(); });
-    if (el("mpBackBtn")) el("mpBackBtn").addEventListener("click", (e) => { e.stopPropagation(); renderStep(mpIdx - 1); });
-    if (el("mpNextBtn")) el("mpNextBtn").addEventListener("click", (e) => { e.stopPropagation(); if (mpIdx === 0 && !mpPaused) runSingaporeToSheldonFlight(); else if (mpIdx < MOO_PILOT_STEPS.length - 1) renderStep(mpIdx + 1); else stopMooPilotTour(); });
-    if (el("mpResumeBtn")) el("mpResumeBtn").addEventListener("click", (e) => { e.stopPropagation(); resumeMooPilotTour(); });
-    if (el("mpSkipBtn")) el("mpSkipBtn").addEventListener("click", (e) => { e.stopPropagation(); stopMooPilotTour(); });
 
-    window.addEventListener("resize", () => { if (mpActive) redrawCurrentStep(); });
-    window.addEventListener("scroll", () => { if (mpActive) redrawCurrentStep(); }, true);
-
-    ["pointerdown", "keydown", "wheel", "touchstart"].forEach(evt => {
+    ["pointerdown", "keydown", "wheel", "touchstart", "input"].forEach(evt => {
       window.addEventListener(evt, (ev) => {
         const t = ev.target;
-        if (t && t.closest && (t.closest("#mooPilotModal") || t.closest("#mooPilotStepCard") || t.closest("#mooPilotToolbarBtn"))) return;
+        if (t && t.closest && (t.closest("#mooPilotModal") || t.closest("#mooPilotHud") || t.closest("#mooPilotToolbarBtn") || t.closest("#mooPilotSlideModal"))) return;
         dismissMooPilotModal();
-        if (mpActive) pauseMooPilotTour();
+        stopMooPilotTour();
       }, { passive: true });
     });
 
-  </script><script id="workspace-asset-map" type="application/json">{"moo_button.png": "./moo_button.png", "nasa-power.png": "./stickers/nasa-power.png", "rotations.png": "./stickers/rotations.png", "waste-heat.png": "./stickers/waste-heat.png", "four-checks.png": "./stickers/four-checks.png", "dairy-diary.png": "./stickers/dairy-diary.png"}</script><script src="./workspace.js"></script><script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script><script type="module" src="./globe.js"></script></body>
+  </script>
+  <script id="workspace-asset-map"
+    type="application/json">{"moo_button.png": "./moo_button.png", "nasa-power.png": "./stickers/nasa-power.png", "rotations.png": "./stickers/rotations.png", "waste-heat.png": "./stickers/waste-heat.png", "four-checks.png": "./stickers/four-checks.png", "dairy-diary.png": "./stickers/dairy-diary.png"}</script>
+  <script src="./workspace.js"></script>
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+  <script type="module" src="./globe.js"></script>
+</body>
+
 </html>
