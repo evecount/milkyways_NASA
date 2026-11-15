@@ -32,7 +32,7 @@
   <img src="./stickers/moo-pilot.png" alt="Moo Pilot" style="width:42px; height:42px; border-radius:8px; object-fit:contain; flex-shrink:0;" />
   <div style="flex:1; min-width:0;">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-      <span id="mooPilotStepLabel" style="color:var(--accent); font-size:11px; font-weight:800;">Moo-Pilot · Step 1/10</span>
+      <span id="mooPilotStepLabel" style="color:var(--accent); font-size:11px; font-weight:800;">Moo-Pilot · Step 1/12</span>
       <button type="button" id="mooPilotPauseBtn" class="mw-control" style="padding:2px 8px; font-size:10px;">Pause</button>
     </div>
     <div id="mooPilotCaption" style="color:var(--foreground); font-size:11px; line-height:1.35; margin-top:2px;">Touring global dairy sites...</div>
@@ -2122,7 +2122,7 @@
       </tr>
       <tr>
         <td><strong>Complementary NASA Layers</strong></td>
-        <td>GPM IMERG (rainfall), SMAP (root-zone moisture), MODIS/HLS (NDVI vigor), GRACE-FO (aquifer trend), ECOSTRESS (heat stress), VIIRS Black Marble (nighttime grid proximity), ISRIC SoilGrids (texture/pH).</td>
+        <td><strong>Live GIBS Tiles:</strong> MODIS Cloud Cover, GPM IMERG Rainfall, SMAP L4 Soil Moisture, MODIS NDVI &amp; LST, VIIRS Lights. <strong>Complementary / Planned Point Fusion:</strong> GRACE-FO, ECOSTRESS &amp; SoilGrids numeric APIs.</td>
         <td>Multi-resolution regional screening overlay</td>
       </tr>
       <tr>
@@ -2664,9 +2664,33 @@
           `);
           if (el("mooPilotReplayBtn")) el("mooPilotReplayBtn").onclick = (e) => { e.stopPropagation(); startMooPilotTour(); };
           if (el("mooPilotExploreBtn")) el("mooPilotExploreBtn").onclick = (e) => { e.stopPropagation(); hideMooSlide(); stopMooPilotTour(); };
+        }
+      },
+      {
+        delay: 39500,
+        caption: "Top Crop chip & Ranked Rotations: compare all 4 rotations side by side.",
+        run: () => {
+          hideMooSlide();
+          openDrawerKey("rotations");
+          highlightEl("#hudTopCropChip");
+        }
+      },
+      {
+        delay: 43000,
+        caption: "Now your turn! Put in your farm, set your priorities, then export your report.",
+        run: () => {
+          closeAllWorkspacePanels();
+          ["anchor-farm", "anchor-priorities"].forEach(id => {
+            const card = el(id);
+            if (card) card.classList.remove("collapsed");
+          });
+          const farmDet = document.querySelector("#anchor-farm details");
+          if (farmDet) farmDet.open = true;
+          clearMooPilotHighlights();
+          document.querySelector(".anchored-controls")?.classList.add("moo-pilot-highlight");
+          el("topExportReportBtn")?.classList.add("moo-pilot-highlight");
           mpActive = false;
           if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
-          if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
         }
       }
     ];
