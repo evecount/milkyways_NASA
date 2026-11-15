@@ -2574,10 +2574,12 @@
     let mooCount = parseInt(localStorage.getItem("milkyways_moo_count") || "0", 10) || 0;
     if (el("mooCount")) el("mooCount").textContent = mooCount;
 
-    function playMooSound() {
-      mooCount += 1;
-      localStorage.setItem("milkyways_moo_count", String(mooCount));
-      if (el("mooCount")) el("mooCount").textContent = mooCount;
+    function playMooSound(countIt = true) {
+      if (countIt) {
+        mooCount += 1;
+        localStorage.setItem("milkyways_moo_count", String(mooCount));
+        if (el("mooCount")) el("mooCount").textContent = mooCount;
+      }
       try {
         const Ctx = window.AudioContext || window.webkitAudioContext;
         if (!Ctx) return;
@@ -3173,6 +3175,7 @@
     }
 
     function startMooPilotTour() {
+      playMooSound(false);
       dismissMooPilotModal();
       stopMooPilotTour();
       mpActive = true;
