@@ -20,7 +20,7 @@ https://github.com/evecount/milkyways_NASA/raw/main/03-submission/demo/milkyway_
 | :--- | :--- |
 | **Compare rotations & reveal tradeoffs** | 4 rotations (incl. N-fixing & negative control) + **6 Farm & Municipal MCDA sliders** (Soil, Water, Heat, Feed, Grid Proximity, Flood Buffer) that visibly re-rank winners |
 | **Understand risk & make uncertainty visible** | **4 Mandatory Checks**, **Open-Water Hard Exclusion Gate**, `FodderWeatherNet` Stress Risk, and honest `~50 km` POWER / `2015+` SMAP limits |
-| **Build an AI model** | **PyTorch `FodderWeatherNet`** (`R² = 0.8740` vs. Ridge `0.8553`), running live in browser + transparent **Inside the Tuning** WLC formula |
+| **Build an AI model** | **PyTorch `FodderWeatherNet`** (`R² = 0.8740`, `MAE = 5.27` vs. Ridge `0.8553`), running live in browser ([`model_weights.json`](./docs/app/model_weights.json), [`train_weather_predictor.py`](./03-submission/app/engine/train_weather_predictor.py), [`model-card.md`](./docs/model-card.md)) + transparent **Inside the Tuning** WLC formula |
 | **An interactive map** | **Leaflet Satellite + Topo World View** with **13 global farms**, dynamic **NASA MCDA raster grid**, & **Zoom-Out Synergy Spider** |
 | **Web app & decision support tool** | **Zero-install browser SDSS**, **12-Month Calendar**, **Dairy Diary**, & **Symbiotic Co-Location** (`55–70 °C` data-center loop → `72–78 °C` HTST) |
 
