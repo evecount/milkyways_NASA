@@ -219,6 +219,28 @@
             value="10" />
         </div>
       </div>
+      <div class="anchor-card collapsed" id="anchor-rotation">
+        <h2><span class="section-number">03</span>Crop rotation<button aria-expanded="false"
+            aria-label="Expand crop rotation" class="mw-control collapse-toggle"
+            data-collapse="rotation" type="button">+</button></h2>
+        <div class="anchor-content">
+          <p class="panel-kicker">LIVE TOP PICK &amp; QUICK COMPARE</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+            <strong id="rotCardTopName" style="font-size:12px;color:var(--foreground);">Loading rotation…</strong>
+            <span id="rotCardTopScore" class="badge">--/100</span>
+          </div>
+          <div id="rotCardBareBadge" class="status" style="margin-bottom:8px;color:var(--primary);">Bare-Field Window: Checking…</div>
+          <label for="currentCropSelect">Your current crop / baseline</label>
+          <select id="currentCropSelect">
+            <option value="Continuous Maize Silage">Continuous Maize Silage (Baseline)</option>
+            <option value="Maize–Soybean">Maize–Soybean</option>
+            <option value="Permanent Pasture">Permanent Pasture</option>
+            <option value="Bare Winter Fallow">Bare Winter Fallow</option>
+          </select>
+          <div id="rotCardCompare" class="status" style="margin-top:8px;line-height:1.45;">Adjust priorities in 02 to compare your current crop against the #1 rotation.</div>
+          <button type="button" id="rotCardOpenAllBtn" class="mw-control" style="width:100%;margin-top:8px;" onclick="window.focusFeature && window.focusFeature('rotationsList')">Compare all 4 rotations →</button>
+        </div>
+      </div>
     </aside>
   </div>
 
@@ -917,6 +939,9 @@
           </div>
         </div>
       `).join("");
+
+      window._latestScoredRotations = scored;
+      if (typeof updateCropRotationCard === "function") updateCropRotationCard();
 
       const milk = Math.max(500, +el("milk").value || 2500);
       const cows = Math.max(1, +el("cows").value || 75);
@@ -3179,6 +3204,29 @@
       }, { passive: true });
     });
 
+
+    function updateCropRotationCard() {
+      const scored = window._latestScoredRotations || [];
+      if (!scored.length) return;
+      const top = scored[0];
+      const base = scored.find(r => (r.control || "").includes("Negative Control")) || scored[scored.length - 1];
+      if (el("rotCardTopName")) el("rotCardTopName").textContent = "#1 " + top.name;
+      if (el("rotCardTopScore")) el("rotCardTopScore").textContent = top.total + "/100";
+      const bare = el("rotCardBareBadge");
+      if (bare) {
+        const isControl = (top.control || "").includes("Negative Control");
+        bare.textContent = isControl ? "Bare-Field Window: Exposed (High Runoff Risk)" : "Bare-Field Window: Covered 12/12 mo (Living Roots)";
+        bare.style.color = isControl ? "var(--destructive)" : "var(--primary)";
+      }
+      const cur = el("currentCropSelect")?.value || "Continuous Maize Silage";
+      const delta = base ? (top.total - base.total) : 0;
+      const nNote = cur === "Permanent Pasture" ? "Maintains perennial cover; adds legume N-fixation (+10–15%)" : "Cuts synthetic N ~25–30% &amp; eliminates bare-soil window";
+      if (el("rotCardCompare")) {
+        el("rotCardCompare").innerHTML = `<strong>vs. ${cur}:</strong> ${delta >= 0 ? "+" : ""}${delta} MCDA pts · ${nNote}.<br/><span style="color:var(--muted);">${top.note}</span>`;
+      }
+    }
+    if (el("currentCropSelect")) el("currentCropSelect").addEventListener("change", updateCropRotationCard);
+    updateCropRotationCard();
   </script>
   <script id="workspace-asset-map"
     type="application/json">{"moo_button.png": "./moo_button.png", "nasa-power.png": "./stickers/nasa-power.png", "rotations.png": "./stickers/rotations.png", "waste-heat.png": "./stickers/waste-heat.png", "four-checks.png": "./stickers/four-checks.png", "dairy-diary.png": "./stickers/dairy-diary.png"}</script>

@@ -25,7 +25,7 @@
     const button = anchor.querySelector('[data-collapse]');
     button.setAttribute('aria-expanded', String(expanded));
     button.textContent = expanded ? '−' : '+';
-    button.setAttribute('aria-label',(expanded?'Collapse ':'Expand ')+(key==='farm'?'farm location':'farm & municipal priorities'));
+    button.setAttribute('aria-label',(expanded?'Collapse ':'Expand ')+(key==='farm'?'farm location':(key==='rotation'?'crop rotation':'farm & municipal priorities')));
   }
   document.addEventListener('click',event => {
     const target=event.target.closest('button');
