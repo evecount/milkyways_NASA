@@ -2847,7 +2847,9 @@
           mcdaMap.on("move zoom", () => { if (mpActive) redrawCurrentStep(); });
         }
         mcdaMap.invalidateSize();
-        if (typeof zoomLevel === "number") mcdaMap.setZoom(zoomLevel);
+        const lat = parseFloat(el("lat")?.value) || 47.36;
+        const lon = parseFloat(el("lon")?.value) || 9.45;
+        if (typeof zoomLevel === "number") mcdaMap.setView([lat, lon], zoomLevel, { animate: false });
       }
     }
 
