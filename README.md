@@ -2,6 +2,11 @@
 **NASA Space Apps Challenge Singapore 2026** (14–15 Nov 2026)  
 **Challenge 7:** *Field Shift: Adapting Farms with NASA Data*
 
+## Demo Video
+https://github.com/evecount/milkyways_NASA/raw/main/03-submission/demo/milkyway_video.mp4
+
+- **Direct File:** [03-submission/demo/milkyway_video.mp4](./03-submission/demo/milkyway_video.mp4)
+
 ## What is this?
 **MilkyWays** is a zero-install Spatial Decision Support System (SDSS) and predictive diagnostic tool for dairy farms and rural municipalities navigating co-location with AI data centers. It helps farms and planners choose fodder rotations using live NASA Earth observations, local soil data, and **6 Farm & Municipal MCDA priorities** — while pairing dairy pasteurization and cooling with indirect data center waste heat (*"the coolant never touches the milk"*).
 
