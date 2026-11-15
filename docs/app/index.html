@@ -750,11 +750,142 @@
     .export-report-btn:active {
       transform: translateY(1px);
     }
+    .moo-pilot-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      padding: 16px;
+    }
+    .moo-pilot-modal.hidden {
+      display: none;
+    }
+    .moo-pilot-card {
+      pointer-events: auto;
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border: 2px solid #fde68a;
+      border-radius: 20px;
+      padding: 20px 24px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(56, 189, 248, 0.25);
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      animation: mooPopIn 0.24s ease-out;
+    }
+    @keyframes mooPopIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .moo-pilot-card img {
+      width: 128px;
+      height: 128px;
+      object-fit: contain;
+      border-radius: 16px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.5));
+    }
+    .moo-pilot-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .moo-pilot-start {
+      width: auto;
+      margin: 0;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #0d9488, #2563eb);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .moo-pilot-skip {
+      width: auto;
+      margin: 0;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid #475569;
+      background: #1e293b;
+      color: #cbd5e1;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .moo-pilot-hud {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      z-index: 9998;
+      background: rgba(15, 23, 42, 0.96);
+      border: 1.5px solid #818cf8;
+      border-radius: 14px;
+      padding: 10px 14px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+      max-width: 380px;
+      display: none;
+      gap: 10px;
+      align-items: center;
+    }
+    .moo-pilot-hud.show {
+      display: flex;
+    }
+    .moo-pilot-dots {
+      display: flex;
+      gap: 5px;
+      margin-top: 5px;
+    }
+    .moo-pilot-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #334155;
+      transition: all 0.2s ease;
+    }
+    .moo-pilot-dot.done {
+      background: #14b8a6;
+    }
+    .moo-pilot-dot.active {
+      background: #fde68a;
+      width: 18px;
+    }
   </style>
 </head>
 
 <body>
   <div id="mooSticker" class="moo-sticker" aria-live="polite"></div>
+  <div id="mooPilotModal" class="moo-pilot-modal" role="dialog" aria-label="Moo-Pilot Guided Tour">
+    <div class="moo-pilot-card">
+      <img src="stickers/moo-pilot.png" alt="Moo Pilot Cow Astronaut" />
+      <div>
+        <div style="color:#5eead4; font-size:0.72rem; font-weight:800; letter-spacing:0.06em; text-transform:uppercase;">30-Second Guided Demo</div>
+        <h3 style="margin:2px 0 6px; font-size:1.15rem; color:#fde68a;">Moo-pilot?</h3>
+        <div style="color:#e2e8f0; font-size:0.84rem; line-height:1.4;">Take the 30-second tour, no clicking needed. Pauses the second you touch any control.</div>
+        <div class="moo-pilot-actions">
+          <button type="button" id="mooPilotStartBtn" class="moo-pilot-start">&#9654; Start the tour</button>
+          <button type="button" id="mooPilotDismissBtn" class="moo-pilot-skip">No thanks, I will explore</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="mooPilotHud" class="moo-pilot-hud" aria-live="polite">
+    <img src="stickers/moo-pilot.png" alt="Moo Pilot" style="width:44px; height:44px; border-radius:10px; object-fit:contain; flex-shrink:0;" />
+    <div style="flex:1; min-width:0;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <span id="mooPilotStepLabel" style="color:#fde68a; font-size:0.75rem; font-weight:800;">Moo-Pilot · Step 1/7</span>
+        <button type="button" id="mooPilotPauseBtn" style="width:auto; margin:0; padding:2px 8px; font-size:0.7rem; background:#334155; border:1px solid #475569; border-radius:6px; color:#f8fafc;">Pause</button>
+      </div>
+      <div id="mooPilotCaption" style="color:#e2e8f0; font-size:0.76rem; line-height:1.3; margin-top:2px;">Touring global dairy sites...</div>
+      <div id="mooPilotDots" class="moo-pilot-dots"></div>
+    </div>
+  </div>
   <header>
     <div class="header-inner">
     <div>
@@ -888,6 +1019,7 @@
           <div style="display:flex; gap:0.45rem; align-items:center;">
             <span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span>
             <span id="autopilotBadge" style="display:none; font-size:0.72rem; padding:0.2rem 0.6rem; border-radius:999px; background:rgba(99,102,241,0.28); color:#e0e7ff; border:1px solid rgba(129,140,248,0.75); font-weight:700;">▶ Autopilot: touring farms — click anywhere to pause</span>
+            <button type="button" id="mooPilotToolbarBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#312e81; color:#e0e7ff; border:1px solid #6366f1; font-weight:700;">&#9654; Moo-Pilot (30s)</button>
             <button type="button" id="worldViewBtn" style="width:auto; margin:0; padding:0.25rem 0.6rem; font-size:0.75rem; background:#1e293b; border:1px solid var(--border);">World View (14 Farms)</button>
             <button type="button" id="topExportReportBtn" style="width:auto; margin:0; padding:0.25rem 0.65rem; font-size:0.75rem; background:#0d9488; color:#fff; border:1px solid #14b8a6; font-weight:700;">Export Municipal Report</button>
             <span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm & Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span>
@@ -2962,82 +3094,152 @@
       });
     }
 
-    // 3s + 5s + 20s Idle Judge Progression (cancels instantly on any user interaction)
-    let idle3sTimer = null;
-    let idle5sTimer = null;
-    let idleTimer = null;
+    // Moo-Pilot: 3-5s paced 7-beat (~30s) guided tour launched from entry popup or toolbar
     let autopilotTimers = [];
     let autopilotActive = false;
-    let hasShownEarlyNudge = false;
 
-    function run3sNudge() {
-      if (hasShownEarlyNudge || autopilotActive) return;
-      if (el("capcomLatest")) {
-        el("capcomLatest").innerHTML = `<strong style="color:#14b8a6;">CAPCOM:</strong> Click any map pin (or land) to test siting, drag a priority slider, or click <strong>Moo!</strong> (3x hops the globe).`;
+    const MOO_PILOT_STEPS = [
+      {
+        delay: 0,
+        caption: "Singapore (27.1 °C): Sorghum → Cowpea → Berseem ranks #1 (88/100).",
+        run: () => {
+          if (el("preset")) {
+            el("preset").value = "1.42,103.72";
+            el("preset").dispatchEvent(new Event("change"));
+          }
+        }
+      },
+      {
+        delay: 3000,
+        caption: "Gais, Switzerland (8.5 °C, 1.5 GWh/yr proof): Maize → Alfalfa ranks #1 (86/100).",
+        run: () => {
+          if (el("preset")) {
+            el("preset").value = "47.36,9.45";
+            el("preset").dispatchEvent(new Event("change"));
+          }
+        }
+      },
+      {
+        delay: 8000,
+        caption: "MCDA Soil Health slider → 55%: rotation scores re-rank live.",
+        run: () => {
+          if (el("wSoil")) {
+            el("wSoil").value = 55;
+            el("wSoil").dispatchEvent(new Event("input"));
+          }
+        }
+      },
+      {
+        delay: 11000,
+        caption: "Synergy Spider (z=10): 12 km viable pipes vs. >12 km Position Beacons.",
+        run: () => {
+          if (typeof mcdaMap !== "undefined" && mcdaMap) mcdaMap.setZoom(10);
+        }
+      },
+      {
+        delay: 16000,
+        caption: "Double-wall HX: 55–70 °C loop → 72–78 °C HTST. Coolant NEVER touches milk.",
+        run: () => {
+          focusFeature("hDemand");
+        }
+      },
+      {
+        delay: 21000,
+        caption: "CAPCOM Dairy Diary: plain-language safety Q&A, zero API keys required.",
+        run: () => {
+          handleDiaryChat("Can a data center heat my pasteurizer safely?");
+        }
+      },
+      {
+        delay: 26000,
+        caption: "Done! Click Export Municipal Report anytime for a print-to-PDF packet.",
+        run: () => {
+          focusFeature("topExportReportBtn");
+        }
       }
+    ];
+
+    function dismissMooPilotModal() {
+      if (el("mooPilotModal")) el("mooPilotModal").classList.add("hidden");
     }
 
-    function run5sNudge() {
-      if (hasShownEarlyNudge || autopilotActive) return;
-      hasShownEarlyNudge = true;
-      if (typeof bufferLayer !== "undefined" && bufferLayer) {
-        bufferLayer.eachLayer(l => {
-          if (typeof l.openPopup === "function" && l.getPopup && l.getPopup()) l.openPopup();
-        });
+    function updateMooPilotHud(stepIdx) {
+      if (el("mooPilotStepLabel")) el("mooPilotStepLabel").textContent = `Moo-Pilot · Step ${stepIdx + 1}/${MOO_PILOT_STEPS.length}`;
+      if (el("mooPilotCaption")) el("mooPilotCaption").textContent = MOO_PILOT_STEPS[stepIdx].caption;
+      if (el("mooPilotDots")) {
+        el("mooPilotDots").innerHTML = MOO_PILOT_STEPS.map((_, i) =>
+          `<span class="moo-pilot-dot ${i < stepIdx ? "done" : i === stepIdx ? "active" : ""}"></span>`
+        ).join("");
       }
     }
-
-    let autopilotPausedByUser = false;
 
     function stopJudgeAutopilot() {
-      autopilotPausedByUser = true;
-      if (idle3sTimer) clearTimeout(idle3sTimer);
-      if (idle5sTimer) clearTimeout(idle5sTimer);
-      if (idleTimer) clearTimeout(idleTimer);
       autopilotTimers.forEach(t => clearTimeout(t));
       autopilotTimers = [];
       if (autopilotActive) {
         autopilotActive = false;
         if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+        if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
       }
     }
 
     function startJudgeAutopilot() {
-      if (autopilotActive || autopilotPausedByUser) return;
+      dismissMooPilotModal();
+      stopJudgeAutopilot();
       autopilotActive = true;
       if (el("autopilotBadge")) el("autopilotBadge").style.display = "inline-flex";
+      if (el("mooPilotHud")) el("mooPilotHud").classList.add("show");
       if (el("capcomLatest")) {
-        el("capcomLatest").innerHTML = `<strong style="color:#a5b4fc;">▶ Autopilot:</strong> Touring farms automatically — <strong>click anywhere or touch any control to pause</strong>.`;
+        el("capcomLatest").innerHTML = `<strong style="color:#a5b4fc;">▶ Moo-Pilot:</strong> 30s guided tour running — <strong>click or touch any control to pause</strong>.`;
       }
-
-      // Beat 1: Fly to Gais, Switzerland (1.5 GWh/yr proof)
-      if (el("preset")) {
-        el("preset").value = "47.36,9.45";
-        el("preset").dispatchEvent(new Event("change"));
-      }
-      // Beat 2: Nudge Soil Health slider
+      MOO_PILOT_STEPS.forEach((step, idx) => {
+        autopilotTimers.push(setTimeout(() => {
+          if (!autopilotActive) return;
+          updateMooPilotHud(idx);
+          step.run();
+        }, step.delay));
+      });
       autopilotTimers.push(setTimeout(() => {
-        if (!autopilotActive || !el("wSoil")) return;
-        el("wSoil").value = 55;
-        el("wSoil").dispatchEvent(new Event("input"));
-      }, 4000));
-      // Beat 3: Zoom to 10 to show 12 km Pipe & Position Beacons
-      autopilotTimers.push(setTimeout(() => {
-        if (!autopilotActive || typeof mcdaMap === "undefined" || !mcdaMap) return;
-        mcdaMap.setZoom(10);
-      }, 8000));
-      // Beat 4: Ping CAPCOM so judge sees plain-speaking safety reply
-      autopilotTimers.push(setTimeout(() => {
-        if (!autopilotActive) return;
-        handleDiaryChat("Can a data center heat my pasteurizer safely?");
-      }, 12000));
+        stopJudgeAutopilot();
+      }, 30500));
     }
 
-    // Start 20s Autopilot Tour only if the judge hasn't interacted; any touch pauses it permanently.
-    ["pointerdown", "keydown", "wheel", "touchstart", "mousedown", "input"].forEach(evt => {
-      window.addEventListener(evt, stopJudgeAutopilot, { passive: true });
+    if (el("mooPilotStartBtn")) {
+      el("mooPilotStartBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        startJudgeAutopilot();
+      });
+    }
+    if (el("mooPilotDismissBtn")) {
+      el("mooPilotDismissBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        dismissMooPilotModal();
+      });
+    }
+    if (el("mooPilotToolbarBtn")) {
+      el("mooPilotToolbarBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        startJudgeAutopilot();
+      });
+    }
+    if (el("mooPilotPauseBtn")) {
+      el("mooPilotPauseBtn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        stopJudgeAutopilot();
+      });
+    }
+
+    // Any real user interaction dismisses the entry prompt and pauses Moo-Pilot immediately
+    ["pointerdown", "keydown", "wheel", "touchstart", "input"].forEach(evt => {
+      window.addEventListener(evt, (ev) => {
+        const target = ev.target;
+        if (target && target.closest && (target.closest("#mooPilotModal") || target.closest("#mooPilotHud") || target.closest("#mooPilotToolbarBtn"))) {
+          return;
+        }
+        dismissMooPilotModal();
+        stopJudgeAutopilot();
+      }, { passive: true });
     });
-    idleTimer = setTimeout(startJudgeAutopilot, 20000);
 
     if (el("topExportReportBtn")) {
       el("topExportReportBtn").addEventListener("click", generateMunicipalReport);
