@@ -34,3 +34,9 @@
 .moo-pilot-dot{width:8px;height:8px;border-radius:999px;background:var(--secondary);transition:all .2s ease}
 .moo-pilot-dot.done{background:var(--primary)}
 .moo-pilot-dot.active{background:var(--accent);width:18px}
+
+.node-pill-tip{background:rgba(10,18,22,.88)!important;color:var(--foreground)!important;border:1px solid var(--border)!important;border-radius:999px!important;padding:2px 8px!important;font-family:var(--font-mono)!important;font-size:10px!important;font-weight:600!important;box-shadow:0 4px 12px rgba(0,0,0,.45)!important;pointer-events:auto!important;cursor:pointer!important}
+.node-pill-tip.beacon{border-color:#f59e0b!important;color:#fde68a!important}
+.node-pill-tip.pipe{border-color:#14b8a6!important;color:#5eead4!important}
+.node-pill-tip.parcel{border-color:#22c55e!important;color:#bbf7d0!important}
+.node-pill-tip:before{display:none!important}
