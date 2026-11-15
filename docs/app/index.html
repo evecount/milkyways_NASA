@@ -2501,7 +2501,7 @@
       if (stage) stage.classList.remove("space-view");
       if (globeHost) globeHost.hidden = true;
       if (typeof mcdaMap !== "undefined" && mcdaMap) {
-        mcdaMap.invalidateSize();
+        if (!window._mpMapBound) { window._mpMapBound = true; mcdaMap.on("move zoom", () => { if (mpActive) redrawCurrentStep(); }); } mcdaMap.invalidateSize();
         if (typeof zoomLevel === "number") mcdaMap.setZoom(zoomLevel);
       }
     }
