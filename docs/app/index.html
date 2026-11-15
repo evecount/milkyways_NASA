@@ -2695,7 +2695,16 @@
               <div style="color:#38bdf8; font-size:0.74rem; font-weight:700; margin-top:4px;">${s.cta}</div>
             </div>
           `;
-          st.onclick = () => focusFeature(s.targetId);
+          st.onclick = () => {
+            focusFeature(s.targetId);
+            if (s.targetId === "fetchBtn" && el("fetchBtn")) {
+              el("fetchBtn").click();
+              const prevOut = el("fetchBtn").style.outline;
+              el("fetchBtn").style.outline = "2px solid #fde68a";
+              setTimeout(() => { el("fetchBtn").style.outline = prevOut; }, 1800);
+            }
+            st.classList.remove("show");
+          };
           st.classList.add("show");
           if (mooStickerTimer) clearTimeout(mooStickerTimer);
           mooStickerTimer = setTimeout(() => st.classList.remove("show"), 5500);
