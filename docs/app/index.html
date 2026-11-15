@@ -1714,8 +1714,14 @@
         return { title, body };
       });
 
-      const topRotEl = document.querySelector("#rotationsList .rot-item, #rotationsList > div");
-      const topRotationText = topRotEl ? topRotEl.textContent.trim().replace(/\s+/g, " ") : "See live ranking";
+      const rankedRotations = Array.from(document.querySelectorAll("#rotationsList .rot-item, #rotationsList > div")).map((card, idx) => {
+        const strongText = card.querySelector("strong")?.textContent?.trim() || `Rotation #${idx + 1}`;
+        const scoreEl = card.querySelector(".score-pill, .rot-score, .badge");
+        const scoreText = scoreEl ? scoreEl.textContent.trim() : "";
+        const fullText = card.textContent.trim().replace(/\s+/g, " ");
+        return { rank: idx + 1, title: strongText, score: scoreText, summary: fullText };
+      });
+      const topRotationText = rankedRotations.length ? rankedRotations[0].summary : "See live ranking";
 
       const hDemand = el("hDemand")?.textContent || "—";
       const hKw = el("hKw")?.textContent || "—";
@@ -1862,7 +1868,21 @@
       </div>
     </div>
 
-    <h2>1. Parcel Profile &amp; Closed-Loop Thermal Balance</h2>
+    <h2>1. Ranked Fodder Crop Rotations &amp; Soil Adaptation (Challenge 7 Core)</h2>
+    <div class="note-box">
+      <strong>Top-Ranked Rotation:</strong> ${escHtml(topRotationText)}<br/>
+      <em>Method:</em> Weighted Linear Combination (WLC) over live NASA POWER agroclimatology, local soil-water capacity, legume N-fixation (25–30% synthetic N reduction), and thermal/grid priorities.
+    </div>
+    <table>
+      <tr><th>Rank</th><th>Fodder Rotation &amp; Agronomic Rationale</th></tr>
+      ${rankedRotations.length ? rankedRotations.map(r => `<tr><td><strong>#${r.rank}</strong></td><td>${escHtml(r.summary)}</td></tr>`).join("") : "<tr><td colspan='2'>Run Fetch NASA POWER Climatology to rank rotations.</td></tr>"}
+    </table>
+    <table>
+      <tr><th>MCDA Criterion</th><th>Normalized Weight</th><th>Agronomic &amp; Municipal Rationale</th></tr>
+      ${weights.map(w => `<tr><td><strong>${escHtml(w[0])}</strong></td><td>${escHtml(w[1])}</td><td>${escHtml(w[2])}</td></tr>`).join("")}
+    </table>
+
+    <h2>2. Municipal Feasibility Packet — Candidate Parcel &amp; Closed-Loop Thermal Balance</h2>
     <table>
       <tr>
         <th>Milking Herd</th><th>Daily Milk Yield</th><th>Fodder Acreage</th><th>Soil Class</th><th>Baseline Silage / Synthetic N</th>
@@ -1878,16 +1898,6 @@
     <div class="note-box">
       <strong>Pasteurization &amp; Waste-Heat Match:</strong> Daily thermal demand is <strong>${escHtml(hDemand)}</strong> against <strong>${escHtml(hKw)}</strong> continuous data-center recovery capacity (${escHtml(hHtst)}).<br/>
       <strong>Food Safety &amp; Plumbing Isolation:</strong> ${escHtml(safetyText)}
-    </div>
-
-    <h2>2. Multi-Criteria Decision Analysis (MCDA) Weights &amp; Siting Rationale</h2>
-    <table>
-      <tr><th>Criterion</th><th>Normalized Weight</th><th>Municipal &amp; Agronomic Rationale</th></tr>
-      ${weights.map(w => `<tr><td><strong>${escHtml(w[0])}</strong></td><td>${escHtml(w[1])}</td><td>${escHtml(w[2])}</td></tr>`).join("")}
-    </table>
-    <div class="note-box">
-      <strong>Top-Ranked Fodder Rotation:</strong> ${escHtml(topRotationText)}<br/>
-      <em>Method:</em> Weighted Linear Combination (WLC) over normalized NASA POWER climate suitability, soil-water capacity, legume nitrogen credit (25–30% synthetic N reduction), and data-center thermal proximity.
     </div>
 
     <h2>3. Mandatory Regulatory &amp; Engineering Checks</h2>
@@ -2414,27 +2424,29 @@
       },
       {
         delay: 30600,
-        caption: "Export Report: one-click Municipal Land Use & Circular Energy Feasibility Packet (print-to-PDF).",
+        caption: "Export Report: Crop Rotations top-billed under the map, followed by the Municipal Feasibility Packet.",
         run: () => {
           closeAllWorkspacePanels();
           highlightEl("#topExportReportBtn");
           const farmName = el("workspaceFarmName") ? el("workspaceFarmName").textContent : "Selected Dairy Parcel";
           const suitText = el("heroSuitabilityBadge") ? el("heroSuitabilityBadge").textContent : "Suitable";
           const lockText = el("hudLockReadout") ? el("hudLockReadout").textContent.trim() : "NASA LOCK";
+          const topRot = document.querySelector("#rotationsList .rot-item, #rotationsList > div")?.textContent?.trim()?.replace(/\s+/g, " ")?.slice(0, 125) || "Sorghum -> Cowpea -> Berseem Clover";
           const checksCount = document.querySelectorAll("#checksGrid > div").length || 4;
           const failCount = document.querySelectorAll("#checksGrid .fail").length;
           showMooSlide(`
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Municipal Feasibility Packet · Live Preview</span>
+              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Exported Report · Crop Rotations + Municipal Feasibility</span>
               <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
             </div>
             <h3 style="margin:0 0 4px;font-size:18px;color:var(--accent);">${farmName}</h3>
             <div style="font-size:11px;color:#94a3b8;font-family:var(--font-mono);margin-bottom:10px;">${lockText} · Print-to-PDF ready</div>
+            <div class="moo-pilot-slide-box" style="margin-bottom:10px;border-color:var(--primary);">
+              <strong style="color:var(--primary);">1. Top-Ranked Crop Rotation (Challenge 7 Core)</strong><br/>${topRot}...
+            </div>
             <div class="moo-pilot-slide-grid">
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Siting Verdict</strong><br/>${suitText}</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Domain Checks</strong><br/>${checksCount - failCount}/${checksCount} mandatory gates passed</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Setback &amp; Pipe Limit</strong><br/>1,500 ft watershed setback · 12 km thermal envelope</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">HTST Safety Loop</strong><br/>55–70 °C DC heat -> 72–78 °C double-wall HX (isolated)</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Municipal Siting Verdict</strong><br/>${suitText} (${checksCount - failCount}/${checksCount} gates passed)</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Circular Thermal Loop</strong><br/>1,500 ft setback · 12 km pipe · 72–78 °C double-wall HX</div>
             </div>
             <div class="moo-pilot-actions">
               <button type="button" class="moo-pilot-start" onclick="generateMunicipalReport()">Download Full HTML / PDF Packet</button>
@@ -2444,23 +2456,23 @@
       },
       {
         delay: 35000,
-        caption: "Why MilkyWays exists: Gaia-style closed-loop Earth systems uniting NASA telemetry, dairy & compute.",
+        caption: "Candidate Parcel & Gaia: multi-use decision support uniting crop rotations with circular siting.",
         run: () => {
           clearMooPilotHighlights();
           showMooSlide(`
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
-              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">MilkyWays Mission · Gaia-Style Closed-Loop Systems</span>
+              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Candidate Parcel · Gaia-Inspired Multi-Use Decision Tool</span>
               <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
             </div>
-            <h3 style="margin:0 0 8px;font-size:19px;color:var(--accent);">Why Experiments Like Gaia Matter</h3>
+            <h3 style="margin:0 0 8px;font-size:19px;color:var(--accent);">From Crop Rotations to Candidate Parcels (Like Gaia)</h3>
             <p style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--foreground);">
-              Just as Gaia and closed-loop biosphere experiments reveal how climate, soil, water, and life regulate one another through coupled feedback loops, <strong>MilkyWays</strong> turns Earth observation into circular infrastructure—making food and compute mutually regenerative instead of extractive.
+              Just as <strong>Gaia</strong> and closed-loop biosphere experiments show that soil, crops, water, and energy regulate one another in coupled feedback loops, choosing the right <strong>fodder crop rotation</strong> cannot be separated from <strong>where the candidate parcel sits</strong>. MilkyWays turns one NASA Earth-observation engine into a <strong>multi-use decision tool</strong>—leading with agronomy while unlocking circular siting:
             </p>
             <div class="moo-pilot-slide-grid">
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">1. Living Soil Feedback</strong><br/>NASA POWER telemetry guides N-fixing fodder rotations, cutting synthetic nitrogen 25–30% while building drought &amp; heat resilience.</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Circular Thermal Symbiosis</strong><br/>55–70 °C data-center liquid heat is boosted to 72–78 °C HTST pasteurization via double-wall HX—coolant never touches milk.</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">3. Hard Safety Boundaries</strong><br/>1,500 ft parcel setbacks, open-water exclusion, and a 12 km viable pipe cutoff keep ecological &amp; food-safety rules non-negotiable.</div>
-              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">4. Planetary to Local Action</strong><br/>Any municipality or dairy farmer on Earth can test a parcel in seconds and export an audit-ready feasibility packet.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">1. Crop Rotations First</strong><br/>NASA POWER climate + soil-water telemetry ranks N-fixing fodder rotations to cut synthetic nitrogen 25–30% and buffer heat/drought.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Candidate Parcel Screening</strong><br/>The same NASA layers evaluate candidate farm &amp; co-location parcels against 1,500 ft setbacks, open-water gates, and flood zones.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">3. Circular Energy Symbiosis</strong><br/>Where a parcel sits near compute, 55–70 °C liquid data-center waste heat is safely boosted to 72–78 °C HTST pasteurization (coolant never touches milk).</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">4. One Engine, Two Audiences</strong><br/>Farmers get resilient rotation schedules; municipalities get a print-ready Feasibility Packet—zero API keys, anywhere on Earth.</div>
             </div>
             <div class="moo-pilot-actions" style="margin-top:12px;">
               <button type="button" id="mooPilotReplayBtn" class="moo-pilot-start">&#8634; Replay Moo-Pilot</button>
