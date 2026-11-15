@@ -40,3 +40,10 @@
 .node-pill-tip.pipe{border-color:#14b8a6!important;color:#5eead4!important}
 .node-pill-tip.parcel{border-color:#22c55e!important;color:#bbf7d0!important}
 .node-pill-tip:before{display:none!important}
+.moo-pilot-highlight{outline:2.5px solid var(--accent)!important;outline-offset:3px!important;box-shadow:0 0 0 5px rgba(245,158,11,.22),0 10px 28px rgba(0,0,0,.55)!important;transition:outline .2s ease,box-shadow .2s ease}
+.moo-pilot-slide-modal{position:fixed;inset:0;z-index:10001;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(4,10,16,.62);backdrop-filter:blur(6px)}
+.moo-pilot-slide-modal.show{display:flex}
+.moo-pilot-slide-card{background:var(--card);backdrop-filter:blur(24px);border:2px solid var(--accent);border-radius:18px;max-width:620px;width:100%;padding:20px 22px;box-shadow:0 24px 64px rgba(0,0,0,.82);animation:mooPopIn .24s ease-out;color:var(--foreground)}
+.moo-pilot-slide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+.moo-pilot-slide-box{background:rgba(15,23,42,.66);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.45}
+@media(max-width:640px){.moo-pilot-slide-grid{grid-template-columns:1fr}}

@@ -10,16 +10,16 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/><link href="./workspace.css" rel="stylesheet"/><meta content="MilkyWays — Earth Workspace" property="og:title"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." property="og:description"/><meta content="website" property="og:type"/><meta content="summary_large_image" name="twitter:card"/><meta content="NASA-informed dairy farm siting, fodder rotations and recovered heat on one geographic workspace." name="description"/></head>
 <body>
-<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot (30s)</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
+<header class="workspace-header"><a class="workspace-brand" href="../"><span class="brand-symbol">m<span>✦</span></span><strong>MilkyWays</strong></a><div class="mission-label">EARTH OBSERVATION / DAIRY SYSTEMS</div><div class="header-actions"><span class="live-mark">NASA POWER</span><button class="mw-control export-report" id="topExportReportBtn" type="button">Export report</button><button aria-label="Moo!" class="mw-control" id="mooBtn" title="Click to Moo! Every 3rd Moo hops to a new global dairy region." type="button"><img alt="Moo!" src="./moo_button.png"/><span id="mooCount">0</span></button></div></header><div aria-label="Global dairy farm map" class="map-stage"><div class="earth-map" id="mcdaMap"></div><div class="map-tools"><button class="mw-control world-view" id="mooPilotToolbarBtn" type="button" style="border-color:var(--accent);color:var(--accent);">&#9654; Moo-Pilot</button><button class="mw-control world-view" id="worldViewBtn" type="button">World view</button></div><div class="selection-readout"><span class="panel-kicker">SELECTED PARCEL</span><strong id="workspaceFarmName">Singapore Tropical Dairy Demo</strong><div class="selection-data"><span class="hud-lock" id="hudLockReadout"><span class="hud-dot"></span><span>NASA LOCK · 1.42°, 103.72°</span></span><span class="badge" id="heroSuitabilityBadge" title="Weighted Linear Combination (WLC) site score from 6 Farm &amp; Municipal MCDA weights, guarded by the Open-Water Hard Exclusion Gate.">Suitability: --/100</span><span id="autopilotBadge" style="display:none">▶ Autopilot: touring farms — click anywhere to pause</span></div></div></div><div aria-live="polite" class="moo-sticker" id="mooSticker"></div>
 <div id="mooPilotModal" class="moo-pilot-modal" role="dialog" aria-label="Moo-Pilot Guided Tour">
   <div class="moo-pilot-card">
     <img class="moo-pilot-banner" src="./hero-split.svg" alt="Milk &amp; Cows paired with Servers &amp; Heat" />
     <div class="moo-pilot-body">
       <img src="./stickers/moo-pilot.png" alt="Moo Pilot Cow Astronaut" />
       <div>
-        <div style="color:var(--primary); font-size:10px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-mono);">Welcome to MilkyWays · 30s Demo</div>
+        <div style="color:var(--primary); font-size:10px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; font-family:var(--font-mono);">Welcome to MilkyWays · Guided Tour</div>
         <h3 style="margin:3px 0 5px; font-size:18px; color:var(--accent);">Moo-pilot?</h3>
-        <div style="color:var(--foreground); font-size:12px; line-height:1.45;">Take the 30-second tour, no clicking needed. Pauses the second you touch any control.</div>
+        <div style="color:var(--foreground); font-size:12px; line-height:1.45;">Take the guided tour, no clicking needed. Pauses the second you touch any control.</div>
         <div class="moo-pilot-actions">
           <button type="button" id="mooPilotStartBtn" class="moo-pilot-start">&#9654; Start the tour</button>
           <button type="button" id="mooPilotDismissBtn" class="moo-pilot-skip">No thanks, I will explore</button>
@@ -32,7 +32,7 @@
   <img src="./stickers/moo-pilot.png" alt="Moo Pilot" style="width:42px; height:42px; border-radius:8px; object-fit:contain; flex-shrink:0;" />
   <div style="flex:1; min-width:0;">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-      <span id="mooPilotStepLabel" style="color:var(--accent); font-size:11px; font-weight:800;">Moo-Pilot · Step 1/7</span>
+      <span id="mooPilotStepLabel" style="color:var(--accent); font-size:11px; font-weight:800;">Moo-Pilot · Step 1/10</span>
       <button type="button" id="mooPilotPauseBtn" class="mw-control" style="padding:2px 8px; font-size:10px;">Pause</button>
     </div>
     <div id="mooPilotCaption" style="color:var(--foreground); font-size:11px; line-height:1.35; margin-top:2px;">Touring global dairy sites...</div>
@@ -40,7 +40,7 @@
   </div>
 </div>
 
-<div class="container"><aside class="anchored-controls">
+<div id="mooPilotSlideModal" class="moo-pilot-slide-modal" role="dialog" aria-label="Moo-Pilot Feature Slide"><div id="mooPilotSlideCard" class="moo-pilot-slide-card"></div></div><div class="container"><aside class="anchored-controls">
 <div class="anchor-card" id="anchor-farm"><h2><span class="section-number">01</span>Farm location<button aria-expanded="true" aria-label="Collapse farm location" class="mw-control collapse-toggle" data-collapse="farm" type="button">−</button></h2><div class="anchor-content">
 
 <label for="preset">Dairy region</label>
@@ -2255,32 +2255,114 @@
       el("exportReportBtn").addEventListener("click", generateMunicipalReport);
     }
   
-    // Moo-Pilot: 3-5s paced 7-beat (~30s) guided tour launched from entry greeting card or toolbar
+    // Moo-Pilot: 10-step guided tour (Earth -> Singapore -> Sheldon Creek -> HUD -> Key -> Anchors -> Left/Right Nav -> Export Report -> Gaia Mission Slide)
+    let mpTimers = [];
+    let mpSubTimers = [];
+    let mpActive = false;
+
+    function clearMooPilotHighlights() {
+      document.querySelectorAll(".moo-pilot-highlight").forEach(n => n.classList.remove("moo-pilot-highlight"));
+    }
+
+    function highlightEl(target) {
+      clearMooPilotHighlights();
+      const node = typeof target === "string" ? document.querySelector(target) : target;
+      if (node) node.classList.add("moo-pilot-highlight");
+    }
+
+    function closeAllWorkspacePanels() {
+      document.querySelectorAll(".workspace-panel").forEach(pn => { pn.hidden = true; pn.classList.remove("strip-open"); });
+      document.querySelectorAll("[data-panel]").forEach(b => b.setAttribute("aria-expanded", "false"));
+      document.querySelectorAll(".edge-strip.expanded").forEach(st => st.classList.remove("expanded"));
+      document.querySelectorAll("[data-expand]").forEach(b => b.setAttribute("aria-expanded", "false"));
+    }
+
+    function showMooSlide(html) {
+      if (el("mooPilotSlideCard")) el("mooPilotSlideCard").innerHTML = html;
+      if (el("mooPilotSlideModal")) el("mooPilotSlideModal").classList.add("show");
+    }
+
+    function hideMooSlide() {
+      if (el("mooPilotSlideModal")) el("mooPilotSlideModal").classList.remove("show");
+    }
+
+    function enterFarmMap(zoomLevel) {
+      const stage = document.querySelector(".map-stage");
+      const globeHost = document.querySelector(".globe-stage");
+      if (stage) stage.classList.remove("space-view");
+      if (globeHost) globeHost.hidden = true;
+      if (typeof mcdaMap !== "undefined" && mcdaMap) {
+        mcdaMap.invalidateSize();
+        if (typeof zoomLevel === "number") mcdaMap.setZoom(zoomLevel);
+      }
+    }
+
+    function openDrawerKey(panelKey) {
+      document.querySelectorAll(".workspace-panel").forEach(pn => { pn.hidden = true; });
+      const target = el("panel-" + panelKey);
+      if (target) target.hidden = false;
+      document.querySelectorAll("[data-panel]").forEach(b => b.setAttribute("aria-expanded", b.dataset.panel === panelKey ? "true" : "false"));
+    }
+
     const MOO_PILOT_STEPS = [
       {
         delay: 0,
-        caption: "Singapore (27.1 °C): Sorghum -> Cowpea -> Berseem ranks #1 (88/100).",
+        caption: "Earth from space: 14 global dairy regions mapped with NASA POWER climatology.",
+        run: () => {
+          hideMooSlide();
+          closeAllWorkspacePanels();
+          clearMooPilotHighlights();
+          if (el("worldViewBtn")) el("worldViewBtn").click();
+        }
+      },
+      {
+        delay: 3000,
+        caption: "Singapore Tropical Dairy Demo (1.42°, 103.72°): Sorghum -> Cowpea -> Berseem ranks #1 (88/100).",
         run: () => {
           if (el("preset")) {
             el("preset").value = "1.42,103.72";
             el("preset").dispatchEvent(new Event("change"));
           }
+          enterFarmMap(11);
         }
       },
       {
-        delay: 3000,
-        caption: "Gais, Switzerland (8.5 °C, 1.5 GWh/yr proof): Maize -> Alfalfa ranks #1 (86/100).",
+        delay: 6500,
+        caption: "Sheldon Creek / Ontario Dairy Region (44.08°, -79.88°): temperate benchmark & 12 km corridor.",
         run: () => {
           if (el("preset")) {
-            el("preset").value = "47.36,9.45";
+            el("preset").value = "44.08,-79.88";
             el("preset").dispatchEvent(new Event("change"));
           }
+          enterFarmMap(11);
         }
       },
       {
-        delay: 8000,
-        caption: "MCDA Soil Health slider -> 55%: rotation scores re-rank live.",
+        delay: 10000,
+        caption: "Always-visible HUD: Selected parcel, NASA LOCK coordinates, Suitability score & safety verdict.",
         run: () => {
+          enterFarmMap(11);
+          highlightEl(".selection-readout");
+        }
+      },
+      {
+        delay: 13500,
+        caption: "Map Key: Candidate parcel, 1,500 ft setback, 12 km thermal pipe envelope & >12 km Position Beacons.",
+        run: () => {
+          const det = document.querySelector(".map-key details");
+          if (det) det.open = true;
+          highlightEl(".map-key");
+        }
+      },
+      {
+        delay: 17000,
+        caption: "Anchored Farm & MCDA Priorities: adjusting Soil Health (55%) re-ranks rotations live.",
+        run: () => {
+          ["anchor-farm", "anchor-priorities"].forEach(id => {
+            const card = el(id);
+            if (card) card.classList.remove("collapsed");
+          });
+          highlightEl(".anchored-controls");
           if (el("wSoil")) {
             el("wSoil").value = 55;
             el("wSoil").dispatchEvent(new Event("input"));
@@ -2288,42 +2370,108 @@
         }
       },
       {
-        delay: 11000,
-        caption: "Farm map (z=10): 12 km thermal pipes vs. >12 km Position Beacons.",
+        delay: 20500,
+        caption: "Left navigation: Farm, Priorities, World view, Map layers, Parcel & heat network, and Project docs.",
         run: () => {
-          const stage = document.querySelector(".map-stage");
-          const globeHost = document.querySelector(".globe-stage");
-          if (stage) stage.classList.remove("space-view");
-          if (globeHost) globeHost.hidden = true;
-          if (typeof mcdaMap !== "undefined" && mcdaMap) {
-            mcdaMap.invalidateSize();
-            mcdaMap.setZoom(10);
-          }
+          closeAllWorkspacePanels();
+          const leftStrip = document.querySelector(".edge-left");
+          if (leftStrip) leftStrip.classList.add("expanded");
+          highlightEl(".edge-left");
+          const leftSequence = [
+            () => { const b = document.querySelector('.edge-left [data-action="farm"]'); if (b) b.classList.add("moo-pilot-highlight"); },
+            () => { const b = document.querySelector('.edge-left [data-action="priorities"]'); if (b) b.classList.add("moo-pilot-highlight"); },
+            () => { const b = document.querySelector('.edge-left [data-action="layers"]'); if (b) b.classList.add("moo-pilot-highlight"); },
+            () => { openDrawerKey("network"); },
+            () => { openDrawerKey("docs"); },
+            () => { closeAllWorkspacePanels(); clearMooPilotHighlights(); }
+          ];
+          leftSequence.forEach((fn, i) => {
+            mpSubTimers.push(setTimeout(() => { if (mpActive) fn(); }, i * 650));
+          });
         }
       },
       {
-        delay: 16000,
-        caption: "Double-wall HX: 55-70 °C loop -> 72-78 °C HTST. Coolant NEVER touches milk.",
+        delay: 24800,
+        caption: "Right navigation: CAPCOM, Calendar, Dairy Diary, Climate, Forecast, Checks, Rotations & Waste Heat.",
         run: () => {
-          if (typeof window.focusFeature === "function") window.focusFeature("hDemand");
+          closeAllWorkspacePanels();
+          const rightStrip = document.querySelector(".edge-right");
+          if (rightStrip) rightStrip.classList.add("expanded");
+          highlightEl(".edge-right");
+          const rightPanels = ["chat", "calendar", "diary", "climate", "forecast", "checks", "rotations", "heat"];
+          rightPanels.forEach((key, i) => {
+            mpSubTimers.push(setTimeout(() => {
+              if (!mpActive) return;
+              openDrawerKey(key);
+            }, i * 650));
+          });
+          mpSubTimers.push(setTimeout(() => {
+            if (!mpActive) return;
+            closeAllWorkspacePanels();
+            clearMooPilotHighlights();
+          }, rightPanels.length * 650 + 250));
         }
       },
       {
-        delay: 21000,
-        caption: "CAPCOM Dairy Diary: plain-language safety Q&A, zero API keys required.",
+        delay: 30600,
+        caption: "Export Report: one-click Municipal Land Use & Circular Energy Feasibility Packet (print-to-PDF).",
         run: () => {
-          if (typeof window.focusFeature === "function") window.focusFeature("diaryChatBox");
-          if (typeof handleDiaryChat === "function") handleDiaryChat("Can a data center heat my pasteurizer safely?");
+          closeAllWorkspacePanels();
+          highlightEl("#topExportReportBtn");
+          const farmName = el("workspaceFarmName") ? el("workspaceFarmName").textContent : "Selected Dairy Parcel";
+          const suitText = el("heroSuitabilityBadge") ? el("heroSuitabilityBadge").textContent : "Suitable";
+          const lockText = el("hudLockReadout") ? el("hudLockReadout").textContent.trim() : "NASA LOCK";
+          const checksCount = document.querySelectorAll("#checksGrid > div").length || 4;
+          const failCount = document.querySelectorAll("#checksGrid .fail").length;
+          showMooSlide(`
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">Municipal Feasibility Packet · Live Preview</span>
+              <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
+            </div>
+            <h3 style="margin:0 0 4px;font-size:18px;color:var(--accent);">${farmName}</h3>
+            <div style="font-size:11px;color:#94a3b8;font-family:var(--font-mono);margin-bottom:10px;">${lockText} · Print-to-PDF ready</div>
+            <div class="moo-pilot-slide-grid">
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Siting Verdict</strong><br/>${suitText}</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Domain Checks</strong><br/>${checksCount - failCount}/${checksCount} mandatory gates passed</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">Setback &amp; Pipe Limit</strong><br/>1,500 ft watershed setback · 12 km thermal envelope</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">HTST Safety Loop</strong><br/>55–70 °C DC heat -> 72–78 °C double-wall HX (isolated)</div>
+            </div>
+            <div class="moo-pilot-actions">
+              <button type="button" class="moo-pilot-start" onclick="generateMunicipalReport()">Download Full HTML / PDF Packet</button>
+            </div>
+          `);
         }
       },
       {
-        delay: 26000,
-        caption: "Done! Click Export report anytime for a print-to-PDF municipal packet.",
+        delay: 35000,
+        caption: "Why MilkyWays exists: Gaia-style closed-loop Earth systems uniting NASA telemetry, dairy & compute.",
         run: () => {
-          if (el("topExportReportBtn")) {
-            el("topExportReportBtn").style.outline = "2px solid var(--accent)";
-            setTimeout(() => { el("topExportReportBtn").style.outline = ""; }, 2000);
-          }
+          clearMooPilotHighlights();
+          showMooSlide(`
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+              <span style="color:var(--primary);font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);">MilkyWays Mission · Gaia-Style Closed-Loop Systems</span>
+              <button type="button" class="mw-control" onclick="document.getElementById('mooPilotSlideModal').classList.remove('show')" style="padding:2px 8px;font-size:11px;">×</button>
+            </div>
+            <h3 style="margin:0 0 8px;font-size:19px;color:var(--accent);">Why Experiments Like Gaia Matter</h3>
+            <p style="margin:0 0 10px;font-size:12.5px;line-height:1.5;color:var(--foreground);">
+              Just as Gaia and closed-loop biosphere experiments reveal how climate, soil, water, and life regulate one another through coupled feedback loops, <strong>MilkyWays</strong> turns Earth observation into circular infrastructure—making food and compute mutually regenerative instead of extractive.
+            </p>
+            <div class="moo-pilot-slide-grid">
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">1. Living Soil Feedback</strong><br/>NASA POWER telemetry guides N-fixing fodder rotations, cutting synthetic nitrogen 25–30% while building drought &amp; heat resilience.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">2. Circular Thermal Symbiosis</strong><br/>55–70 °C data-center liquid heat is boosted to 72–78 °C HTST pasteurization via double-wall HX—coolant never touches milk.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">3. Hard Safety Boundaries</strong><br/>1,500 ft parcel setbacks, open-water exclusion, and a 12 km viable pipe cutoff keep ecological &amp; food-safety rules non-negotiable.</div>
+              <div class="moo-pilot-slide-box"><strong style="color:var(--primary);">4. Planetary to Local Action</strong><br/>Any municipality or dairy farmer on Earth can test a parcel in seconds and export an audit-ready feasibility packet.</div>
+            </div>
+            <div class="moo-pilot-actions" style="margin-top:12px;">
+              <button type="button" id="mooPilotReplayBtn" class="moo-pilot-start">&#8634; Replay Moo-Pilot</button>
+              <button type="button" id="mooPilotExploreBtn" class="moo-pilot-skip">Explore Workspace</button>
+            </div>
+          `);
+          if (el("mooPilotReplayBtn")) el("mooPilotReplayBtn").onclick = (e) => { e.stopPropagation(); startMooPilotTour(); };
+          if (el("mooPilotExploreBtn")) el("mooPilotExploreBtn").onclick = (e) => { e.stopPropagation(); hideMooSlide(); stopMooPilotTour(); };
+          mpActive = false;
+          if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
+          if (el("mooPilotHud")) el("mooPilotHud").classList.remove("show");
         }
       }
     ];
@@ -2342,12 +2490,13 @@
       }
     }
 
-    let mpTimers = [];
-    let mpActive = false;
-
-    function stopMooPilotTour() {
+    function stopMooPilotTour(keepSlide) {
       mpTimers.forEach(t => clearTimeout(t));
       mpTimers = [];
+      mpSubTimers.forEach(t => clearTimeout(t));
+      mpSubTimers = [];
+      clearMooPilotHighlights();
+      if (!keepSlide) hideMooSlide();
       if (mpActive) {
         mpActive = false;
         if (el("autopilotBadge")) el("autopilotBadge").style.display = "none";
@@ -2368,9 +2517,6 @@
           step.run();
         }, step.delay));
       });
-      mpTimers.push(setTimeout(() => {
-        stopMooPilotTour();
-      }, 30500));
     }
 
     if (el("mooPilotStartBtn")) el("mooPilotStartBtn").addEventListener("click", (e) => { e.stopPropagation(); startMooPilotTour(); });
@@ -2381,7 +2527,7 @@
     ["pointerdown", "keydown", "wheel", "touchstart", "input"].forEach(evt => {
       window.addEventListener(evt, (ev) => {
         const t = ev.target;
-        if (t && t.closest && (t.closest("#mooPilotModal") || t.closest("#mooPilotHud") || t.closest("#mooPilotToolbarBtn"))) return;
+        if (t && t.closest && (t.closest("#mooPilotModal") || t.closest("#mooPilotHud") || t.closest("#mooPilotToolbarBtn") || t.closest("#mooPilotSlideModal"))) return;
         dismissMooPilotModal();
         stopMooPilotTour();
       }, { passive: true });
