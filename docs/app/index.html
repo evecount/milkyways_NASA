@@ -91,7 +91,7 @@
   </div>
   <div id="mooPilotRing" class="mp-ring" aria-hidden="true"></div>
 <svg id="mooPilotSvg" class="mp-svg" aria-hidden="true"><line id="mpCoordLine" x1="0" y1="0" x2="0" y2="0" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/><circle id="mpCoordDot" cx="0" cy="0" r="4.5" fill="#f59e0b" stroke="#071018" stroke-width="1.5"/></svg>
-<div id="mooPilotFlightPill" class="mp-flight-pill">Singapore &#8594; Sheldon Creek Dairy, Ontario</div>
+<div id="mooPilotFlightPill" class="mp-flight-pill">Singapore &#8594; Ontario Dairy Region, Canada</div>
 <div id="mooPilotStepCard" class="mp-card" role="dialog" aria-live="polite">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:4px;">
     <span id="mpCardCounter" style="color:var(--primary);font-size:10px;font-weight:800;font-family:var(--font-mono);text-transform:uppercase;">Step 1 of 12</span>
@@ -119,7 +119,7 @@
           <select id="preset">
             <option value="1.42,103.72">Singapore Tropical Dairy Demo (1.42, 103.72)</option>
             <option value="2.03,103.32">Kluang Dairy Valley, Johor, Malaysia (2.03, 103.32)</option>
-            <option value="44.08,-79.88">Sheldon Creek Dairy, Loretto, Ontario, Canada (44.08, -79.88)</option>
+            <option value="44.08,-79.88">Ontario Dairy Region, Canada (44.08, -79.88)</option>
             <option value="47.36,9.45">Gais Dairy Reference, Switzerland (47.36, 9.45)</option>
             <option value="43.07,-89.40">Wisconsin Dairy Belt, USA (43.07, -89.40)</option>
             <option value="-37.79,175.28">Waikato Pasture Dairy, New Zealand (-37.79, 175.28)</option>
@@ -1261,7 +1261,7 @@
 
       { key: "2.03,103.32", name: "Kluang Dairy Valley, Johor, Malaysia", lat: 2.03, lon: 103.32 },
 
-      { key: "44.08,-79.88", name: "Sheldon Creek Dairy (Loretto, Ontario)", lat: 44.08, lon: -79.88 },
+      { key: "44.08,-79.88", name: "Ontario Dairy Region, Canada", lat: 44.08, lon: -79.88 },
 
       { key: "47.36,9.45", name: "Gais Dairy Reference, Switzerland", lat: 47.36, lon: 9.45 },
 
@@ -2250,7 +2250,7 @@
       const topRotationShort = rankedRotations.length ? rankedRotations[0].title.replace(/^#\d+\s*/, "") : "See live ranking";
       const isSheldon = presetKey === "44.08,-79.88";
       const regionalCropNote = isSheldon
-        ? "Sheldon Creek Dairy (Loretto, Ontario): Perennial Alfalfa (3 yr) + Red Clover maintains living root cover through sub-zero frost windows (T_min < 0 °C) and spring snowmelt, eliminating bare-field erosion while cutting synthetic N by 25–30%."
+        ? "Ontario Dairy Region (Canada): Perennial Alfalfa (3 yr) + Red Clover maintains living root cover through sub-zero frost windows (T_min < 0 °C) and spring snowmelt, eliminating bare-field erosion while cutting synthetic N by 25–30%."
         : "Seasonal Cover & Resilience Strategy: Pair legume N-fixation (25–30% synthetic N reduction) with heat- or frost-matched C3/C4 forage species to minimize bare-field intervals and buffer water stress.";
 
       const hDemand = el("hDemand")?.textContent || "—";
@@ -2430,7 +2430,7 @@
     <div class="note-box">
       <strong>Pasteurization &amp; Waste-Heat Match:</strong> Daily thermal demand is <strong>${escHtml(hDemand)}</strong> against <strong>${escHtml(hKw)}</strong> continuous data-center recovery capacity (${escHtml(hHtst)}).<br/>
       <strong>Food Safety &amp; Plumbing Isolation:</strong> ${escHtml(safetyText)}
-      ${isSheldon ? `<br/><strong>Reference Framing:</strong> Sheldon Creek Dairy (non-homogenized A2 milk, 600 acres home-grown feed) is modeled here for fodder rotation &amp; soil stewardship only; data-center waste-heat recovery is modeled from the Gais, Switzerland benchmark (1.5 GWh/yr) as a separate co-location scenario.` : ""}
+      ${isSheldon ? `<br/><strong>Regional Context:</strong> Temperate Ontario fodder-rotation &amp; soil-stewardship scenario; data-center waste-heat recovery benchmarked from Gais, Switzerland (1.5 GWh/yr).` : ""}
     </div>
 
     <h2>3. Mandatory Regulatory &amp; Engineering Checks</h2>
@@ -2950,7 +2950,7 @@
         target: "#preset",
         prefer: "right",
         duration: 3500,
-        caption: "Start here. Pick the farm. We are using Sheldon Creek Dairy.",
+        caption: "Start here. Pick the farm. We are using the Ontario Dairy Region, Canada.",
         prepare: () => {
           closeAllWorkspacePanels();
           el("anchor-farm")?.classList.remove("collapsed");
@@ -3029,7 +3029,7 @@
         target: '.edge-left [data-panel="network"]',
         prefer: "right",
         duration: 3500,
-        caption: "And separately, here is the heat-recovery model (proven at Gais, Switzerland, 1.5 GWh/yr) — showing how co-located data centres can supply pasteurisation heat, while Sheldon Creek models the fodder rotation.",
+        caption: "This is where the data centre heat comes in (modeled after Gais, Switzerland, 1.5 GWh/yr).",
         prepare: () => { closeAllWorkspacePanels(); }
       },
       {

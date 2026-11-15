@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +16,11 @@
       --primary: #14b8a6;
       --indigo: #6366f1;
     }
-    * { box-sizing: border-box; }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       background: #020617;
@@ -24,6 +29,7 @@
       position: relative;
       min-height: 100vh;
     }
+
     body::before {
       content: "";
       position: fixed;
@@ -36,6 +42,7 @@
       filter: saturate(1.18) brightness(0.54) blur(1.5px);
       transform: scale(1.03);
     }
+
     body::after {
       content: "";
       position: fixed;
@@ -44,6 +51,7 @@
       background: linear-gradient(180deg, rgba(2, 6, 23, 0.42) 0%, rgba(2, 6, 23, 0.68) 100%);
       pointer-events: none;
     }
+
     .toolbar {
       position: sticky;
       top: 0;
@@ -58,7 +66,14 @@
       gap: 1rem;
       z-index: 20;
     }
-    .toolbar-links { display: flex; gap: 0.55rem; flex-wrap: wrap; align-items: center; }
+
+    .toolbar-links {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     .toolbar button {
       background: var(--primary);
       color: #041315;
@@ -68,6 +83,7 @@
       font-weight: 800;
       cursor: pointer;
     }
+
     .toolbar a {
       color: var(--muted);
       text-decoration: none;
@@ -76,7 +92,12 @@
       border: 1px solid var(--border);
       border-radius: 7px;
     }
-    .toolbar a:hover { color: var(--text); border-color: var(--primary); }
+
+    .toolbar a:hover {
+      color: var(--text);
+      border-color: var(--primary);
+    }
+
     .deck {
       max-width: 1120px;
       margin: 1.5rem auto 3rem;
@@ -85,6 +106,7 @@
       flex-direction: column;
       gap: 1.75rem;
     }
+
     .slide {
       background: rgba(7, 16, 24, 0.66);
       backdrop-filter: blur(22px) saturate(140%);
@@ -99,6 +121,7 @@
       box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       page-break-after: always;
     }
+
     .slide-num {
       font-size: 0.75rem;
       color: var(--primary);
@@ -107,11 +130,37 @@
       text-transform: uppercase;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     }
-    h1 { font-size: 2.35rem; margin: 0.35rem 0 0.6rem; line-height: 1.12; color: var(--text); }
-    h2 { font-size: 1.55rem; margin: 0.3rem 0 0.75rem; color: var(--accent); line-height: 1.2; }
-    p, li { font-size: 0.98rem; color: #dbe7f0; line-height: 1.52; }
-    ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
-    li { margin-bottom: 0.42rem; }
+
+    h1 {
+      font-size: 2.35rem;
+      margin: 0.35rem 0 0.6rem;
+      line-height: 1.12;
+      color: var(--text);
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      margin: 0.3rem 0 0.75rem;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    p,
+    li {
+      font-size: 0.98rem;
+      color: #dbe7f0;
+      line-height: 1.52;
+    }
+
+    ul {
+      margin: 0.4rem 0 0;
+      padding-left: 1.2rem;
+    }
+
+    li {
+      margin-bottom: 0.42rem;
+    }
+
     .hero-split {
       display: grid;
       grid-template-columns: 310px 1fr;
@@ -119,6 +168,7 @@
       align-items: center;
       margin: 0.6rem 0;
     }
+
     .video-frame {
       width: 100%;
       aspect-ratio: 4 / 5;
@@ -128,12 +178,14 @@
       overflow: hidden;
       box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65);
     }
+
     .video-frame video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
+
     .split-shot {
       display: grid;
       grid-template-columns: 1.35fr 1fr;
@@ -141,12 +193,14 @@
       align-items: center;
       margin: 0.5rem 0;
     }
+
     .dual-shots {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.1rem;
       margin: 0.6rem 0;
     }
+
     .shot-card {
       background: rgba(15, 28, 38, 0.58);
       backdrop-filter: blur(12px);
@@ -156,24 +210,28 @@
       overflow: hidden;
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
     }
+
     .shot-card img {
       width: 100%;
       display: block;
       aspect-ratio: 16 / 10;
       object-fit: cover;
     }
+
     .shot-cap {
       padding: 0.55rem 0.8rem;
       font-size: 0.8rem;
       color: var(--muted);
       border-top: 1px solid var(--border);
     }
+
     .pill-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 0.75rem;
       margin-top: 1rem;
     }
+
     .box {
       background: rgba(15, 28, 38, 0.56);
       backdrop-filter: blur(12px);
@@ -182,8 +240,21 @@
       border-radius: 10px;
       padding: 0.85rem 1rem;
     }
-    .box strong { color: var(--primary); display: block; margin-bottom: 0.25rem; font-size: 0.9rem; }
-    .box span, .box p { font-size: 0.86rem; margin: 0; color: #cbd5e1; }
+
+    .box strong {
+      color: var(--primary);
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .box span,
+    .box p {
+      font-size: 0.86rem;
+      margin: 0;
+      color: #cbd5e1;
+    }
+
     .slide-foot {
       display: flex;
       justify-content: space-between;
@@ -194,7 +265,14 @@
       padding-top: 0.7rem;
       margin-top: 0.8rem;
     }
-    .cta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.9rem; }
+
+    .cta-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.9rem;
+    }
+
     .cta-btn {
       display: inline-block;
       padding: 0.55rem 1rem;
@@ -203,25 +281,91 @@
       font-size: 0.88rem;
       text-decoration: none;
     }
-    .cta-primary { background: var(--primary); color: #041315; }
-    .cta-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); }
-    .rot-table { width: 100%; border-collapse: collapse; margin-top: 0.65rem; font-size: 0.8rem; }
-    .rot-table th, .rot-table td { border: 1px solid var(--border); padding: 0.48rem 0.6rem; text-align: left; vertical-align: top; line-height: 1.38; }
-    .rot-table th { background: rgba(20, 184, 166, 0.14); color: var(--primary); font-weight: 800; }
-    .rot-table tr.neg { background: rgba(239, 68, 68, 0.08); }
-    .advisory-bar { margin-top: 0.65rem; padding: 0.5rem 0.75rem; border-radius: 8px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.42); font-size: 0.84rem; color: #fde68a; }
-    @media (max-width: 860px) {
-      .hero-split, .split-shot, .dual-shots, .pill-grid { grid-template-columns: 1fr; }
-      .video-frame { max-width: 340px; margin: 0 auto; }
+
+    .cta-primary {
+      background: var(--primary);
+      color: #041315;
     }
+
+    .cta-secondary {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .rot-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.65rem;
+      font-size: 0.8rem;
+    }
+
+    .rot-table th,
+    .rot-table td {
+      border: 1px solid var(--border);
+      padding: 0.48rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.38;
+    }
+
+    .rot-table th {
+      background: rgba(20, 184, 166, 0.14);
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .rot-table tr.neg {
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .advisory-bar {
+      margin-top: 0.65rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.42);
+      font-size: 0.84rem;
+      color: #fde68a;
+    }
+
+    @media (max-width: 860px) {
+
+      .hero-split,
+      .split-shot,
+      .dual-shots,
+      .pill-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .video-frame {
+        max-width: 340px;
+        margin: 0 auto;
+      }
+    }
+
     @media print {
-      .toolbar { display: none; }
-      body { background: #071018; }
-      .deck { margin: 0; max-width: none; }
-      .slide { box-shadow: none; margin-bottom: 0; }
+      .toolbar {
+        display: none;
+      }
+
+      body {
+        background: #071018;
+      }
+
+      .deck {
+        margin: 0;
+        max-width: none;
+      }
+
+      .slide {
+        box-shadow: none;
+        margin-bottom: 0;
+      }
     }
   </style>
 </head>
+
 <body>
   <div class="toolbar">
     <div class="toolbar-links">
@@ -239,22 +383,30 @@
       <div class="slide-num">Slide 1 / 7 · NASA Space Apps Challenge 7 · Field Shift</div>
       <div class="hero-split">
         <div class="video-frame">
-          <video src="./milkyway_video.mp4" autoplay muted loop playsinline controls poster="../app/stickers/moo-pilot.png"></video>
+          <video src="./milkyway_video.mp4" autoplay muted loop playsinline controls
+            poster="../app/stickers/moo-pilot.png"></video>
         </div>
         <div>
-          <span style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(20,184,166,0.14);border:1px solid var(--primary);color:var(--primary);font-size:0.75rem;font-weight:800;">MULTI-USE EARTH OBSERVATION DECISION TOOL</span>
+          <span
+            style="display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(20,184,166,0.14);border:1px solid var(--primary);color:var(--primary);font-size:0.75rem;font-weight:800;">MULTI-USE
+            EARTH OBSERVATION DECISION TOOL</span>
           <h1>MilkyWays</h1>
           <p style="font-size:1.08rem;color:#f1f5f9;">
-            Built for <strong>Challenge 7 (Field Shift: Adapting Farms with NASA Data)</strong>, MilkyWays pairs live NASA agroclimatology with local soil &amp; farm priorities to rank <strong>nitrogen-fixing fodder crop rotations</strong>—while extending the same parcel engine to <strong>candidate farm siting &amp; municipal circular waste-heat co-location</strong>.
+            Built for <strong>Challenge 7 (Field Shift: Adapting Farms with NASA Data)</strong>, MilkyWays pairs live
+            NASA agroclimatology with local soil &amp; farm priorities to rank <strong>nitrogen-fixing fodder crop
+              rotations</strong>—while extending the same parcel engine to <strong>candidate farm siting &amp; municipal
+              circular waste-heat co-location</strong>.
           </p>
           <div class="pill-grid">
             <div class="box">
               <strong>1. Crop Rotations First</strong>
-              <span>Live NASA POWER + MCDA weights rank C3/C4 &amp; legume rotations, cutting synthetic N by 25–30%.</span>
+              <span>Live NASA POWER + MCDA weights rank C3/C4 &amp; legume rotations, cutting synthetic N by
+                25–30%.</span>
             </div>
             <div class="box">
               <strong>2. Candidate Parcel Screening</strong>
-              <span>Evaluates any coordinate on Earth against 1,500 ft setbacks, open-water gates, and flood risk.</span>
+              <span>Evaluates any coordinate on Earth against 1,500 ft setbacks, open-water gates, and flood
+                risk.</span>
             </div>
             <div class="box">
               <strong>3. Municipal Circularity</strong>
@@ -273,25 +425,29 @@
       </div>
     </section>
 
-    <!-- SLIDE 2: MOO-PILOT STEPS 1-3 (EARTH -> SINGAPORE -> SHELDON CREEK) -->
+    <!-- SLIDE 2: MOO-PILOT STEPS 1-3 (EARTH -> SINGAPORE -> ONTARIO) -->
     <section class="slide" id="slide-2">
       <div>
         <div class="slide-num">Slide 2 / 7 · Moo-Pilot Replay (Steps 1–3) · Earth to Parcel</div>
         <h2>From 3D Earth Orbit Straight Into Any Candidate Dairy Parcel</h2>
-        <p>Start on the 3D Earth globe (14 global dairy regions), then select any region—like <strong>Singapore Tropical Dairy Demo</strong> or <strong>Sheldon Creek / Ontario Dairy Region</strong>—to auto-zoom from wide Earth view straight into the parcel map with zero extra clicks.</p>
+        <p>Start on the 3D Earth globe (14 global dairy regions), then select any region—like <strong>Singapore Tropical
+            Dairy Demo</strong> or <strong>Ontario Dairy Region, Canada</strong>—to auto-zoom from wide Earth
+          view straight into the parcel map with zero extra clicks.</p>
         <div class="dual-shots">
           <div class="shot-card">
             <img src="./shots/01_earth.png" alt="MilkyWays 3D Earth Globe View" />
-            <div class="shot-cap"><strong>Earth from Space:</strong> 14 global dairy regions pinned on the interactive Three.js globe.</div>
+            <div class="shot-cap"><strong>Earth from Space:</strong> 14 global dairy regions pinned on the interactive
+              Three.js globe.</div>
           </div>
           <div class="shot-card">
-            <img src="./shots/02_sheldon_creek.png" alt="Sheldon Creek Ontario Dairy Parcel Map" />
-            <div class="shot-cap"><strong>One-Click Fly-In (Sheldon Creek / Ontario):</strong> Ontario fodder-rotation parcel view (Gais, Switzerland models the waste-heat recovery link).</div>
+            <img src="./shots/02_sheldon_creek.png" alt="Ontario Dairy Region Parcel Map" />
+            <div class="shot-cap"><strong>One-Click Fly-In (Ontario, Canada):</strong> Ontario fodder-rotation
+              parcel view (Gais, Switzerland models the waste-heat recovery link).</div>
           </div>
         </div>
       </div>
       <div class="slide-foot">
-        <span>Moo-Pilot Steps 1–3: Earth → Singapore → Sheldon Creek</span>
+        <span>Moo-Pilot Steps 1–3: Earth → Singapore → Ontario, Canada</span>
         <span>Instant Leaflet zoom + live NASA POWER query</span>
       </div>
     </section>
@@ -304,13 +460,18 @@
         <div class="split-shot">
           <div class="shot-card">
             <img src="./shots/03_hud_key_anchors.png" alt="HUD, Map Key, and Anchored Farm Preferences" />
-            <div class="shot-cap">Highlighted HUD readout, Map Key, and anchored Farm Location &amp; MCDA priority sliders.</div>
+            <div class="shot-cap">Highlighted HUD readout, Map Key, and anchored Farm Location &amp; MCDA priority
+              sliders.</div>
           </div>
           <div>
             <ul>
-              <li><strong>Always-Visible HUD:</strong> Selected parcel, live <code>NASA LOCK</code> coordinates, suitability score, and mandatory safety verdict stay pinned over the map.</li>
-              <li><strong>Map Key:</strong> Distinguishes the candidate parcel (green), <code>1,500 ft</code> watershed setback (red), <code>12 km</code> viable pipe envelope (teal), and <code>&gt; 12 km</code> Position Beacons (amber).</li>
-              <li><strong>Anchored Priorities:</strong> Adjust Soil Health, Water Efficiency, Heat Resilience, Feed Quality, Grid Proximity, or Flood Buffer to re-rank rotations live.</li>
+              <li><strong>Always-Visible HUD:</strong> Selected parcel, live <code>NASA LOCK</code> coordinates,
+                suitability score, and mandatory safety verdict stay pinned over the map.</li>
+              <li><strong>Map Key:</strong> Distinguishes the candidate parcel (green), <code>1,500 ft</code> watershed
+                setback (red), <code>12 km</code> viable pipe envelope (teal), and <code>&gt; 12 km</code> Position
+                Beacons (amber).</li>
+              <li><strong>Anchored Priorities:</strong> Adjust Soil Health, Water Efficiency, Heat Resilience, Feed
+                Quality, Grid Proximity, or Flood Buffer to re-rank rotations live.</li>
             </ul>
           </div>
         </div>
@@ -329,13 +490,21 @@
         <div class="split-shot">
           <div class="shot-card">
             <img src="./shots/04_nasa_gibs_layers.png" alt="NASA GIBS Cloud Cover and Rainfall Overlays" />
-            <div class="shot-cap">Left-strip <strong>NASA Earth Layers</strong> drawer with MODIS Cloud Cover, GPM IMERG Rainfall, and multi-day animation.</div>
+            <div class="shot-cap">Left-strip <strong>NASA Earth Layers</strong> drawer with MODIS Cloud Cover, GPM IMERG
+              Rainfall, and multi-day animation.</div>
           </div>
           <div>
             <ul>
-              <li><strong>Zero-Key NASA GIBS Tiles:</strong> Toggle <em>MODIS Cloud Cover</em>, <em>GPM IMERG Rainfall</em>, <em>SMAP L4 Root-Zone Moisture</em>, <em>MODIS NDVI</em>, <em>MODIS LST Heat Stress</em>, and <em>VIIRS Nighttime Lights</em>.</li>
-              <li><strong>Multi-Day Animation:</strong> Step or play across recent days (<code>-14d</code> to <code>-2d</code>) to watch cloud systems and precipitation bands move across regions.</li>
-              <li><strong>Dataset Honesty (Resolutions):</strong> Pairs <code>NASA POWER (~50 km)</code>, <code>GPM IMERG (~10 km)</code>, <code>SMAP L4 (9 km)</code>, and <code>MODIS NDVI (250 m–1 km)</code> with farmer CSV soil facts—because coarse satellite pixels cannot replace field soil tests.</li>
+              <li><strong>Zero-Key NASA GIBS Tiles:</strong> Toggle <em>MODIS Cloud Cover</em>, <em>GPM IMERG
+                  Rainfall</em>, <em>SMAP L4 Root-Zone Moisture</em>, <em>MODIS NDVI</em>, <em>MODIS LST Heat
+                  Stress</em>, and <em>VIIRS Nighttime Lights</em>.</li>
+              <li><strong>Multi-Day Animation:</strong> Step or play across recent days (<code>-14d</code> to
+                <code>-2d</code>) to watch cloud systems and precipitation bands move across regions.
+              </li>
+              <li><strong>Dataset Honesty (Resolutions):</strong> Pairs <code>NASA POWER (~50 km)</code>,
+                <code>GPM IMERG (~10 km)</code>, <code>SMAP L4 (9 km)</code>, and <code>MODIS NDVI (250 m–1 km)</code>
+                with farmer CSV soil facts—because coarse satellite pixels cannot replace field soil tests.
+              </li>
             </ul>
           </div>
         </div>
@@ -362,43 +531,65 @@
           </thead>
           <tbody>
             <tr class="neg">
-              <td><strong>1. Continuous Maize Silage</strong><br/><span style="color:#fca5a5;">Existing Baseline (Negative Control)</span></td>
+              <td><strong>1. Continuous Maize Silage</strong><br /><span style="color:#fca5a5;">Existing Baseline
+                  (Negative Control)</span></td>
               <td>Reference benchmark; fails N-fixation &amp; pest-cycle checks in NASA POWER + MCDA scoring.</td>
               <td>Familiar equipment &amp; high short-term silage tonnage under ideal moisture.</td>
-              <td><strong>Gap:</strong> Field residual N &amp; pest pressure. <strong>Risk:</strong> Depletes soil N, worsens bare-soil erosion &amp; rootworm carry-over.</td>
+              <td><strong>Gap:</strong> Field residual N &amp; pest pressure. <strong>Risk:</strong> Depletes soil N,
+                worsens bare-soil erosion &amp; rootworm carry-over.</td>
             </tr>
             <tr>
-              <td><strong>2. Maize Silage → Alfalfa (3 yr) → Red Clover</strong><br/><span style="color:var(--primary);">Temperate (Sheldon Creek, ON)</span></td>
+              <td><strong>2. Maize Silage → Alfalfa (3 yr) → Red Clover</strong><br /><span
+                  style="color:var(--primary);">Temperate (Ontario, Canada)</span></td>
               <td>Matched to cool/frost climate (<code>T_min &lt; 0 °C</code>) and loam water-holding capacity.</td>
-              <td>Cuts synthetic N <code>25–30%</code>, adds deep-root organic matter &amp; eliminates winter bare-field erosion.</td>
-              <td><strong>Gap:</strong> Subsurface tile drainage &amp; soil pH. <strong>Risk:</strong> Alfalfa winterkill or compaction on poorly drained heavy clay.</td>
+              <td>Cuts synthetic N <code>25–30%</code>, adds deep-root organic matter &amp; eliminates winter bare-field
+                erosion.</td>
+              <td><strong>Gap:</strong> Subsurface tile drainage &amp; soil pH. <strong>Risk:</strong> Alfalfa
+                winterkill or compaction on poorly drained heavy clay.</td>
             </tr>
             <tr>
-              <td><strong>3. Sorghum Silage → Cowpea → Berseem Clover</strong><br/><span style="color:var(--primary);">Tropical / Heat-Stressed (Singapore)</span></td>
+              <td><strong>3. Sorghum Silage → Cowpea → Berseem Clover</strong><br /><span
+                  style="color:var(--primary);">Tropical / Heat-Stressed (Singapore)</span></td>
               <td>C4 heat tolerance triggered when NASA POWER <code>T2M ≥ 18 °C</code> or rainfall is erratic.</td>
               <td>High drought/heat resilience, warm-season legume N-fixation, and lower irrigation demand.</td>
-              <td><strong>Gap:</strong> Local seed/inoculant supply &amp; dairy ration digestibility. <strong>Risk:</strong> Monsoon waterlogging if drainage lags.</td>
+              <td><strong>Gap:</strong> Local seed/inoculant supply &amp; dairy ration digestibility.
+                <strong>Risk:</strong> Monsoon waterlogging if drainage lags.
+              </td>
             </tr>
             <tr>
-              <td><strong>4. Winter Rye / Triticale → Maize → Crimson Clover</strong><br/><span style="color:var(--accent);">Bare-Field Cover Bridge</span></td>
+              <td><strong>4. Winter Rye / Triticale → Maize → Crimson Clover</strong><br /><span
+                  style="color:var(--accent);">Bare-Field Cover Bridge</span></td>
               <td>Targets shoulder-season bare-field windows flagged in the 12-Month Crop &amp; Heat Calendar.</td>
               <td>Traps residual nitrate, suppresses weeds, and protects topsoil during snowmelt &amp; heavy rain.</td>
-              <td><strong>Gap:</strong> Spring termination window &amp; planter readiness. <strong>Risk:</strong> Delayed maize seeding in wet springs.</td>
+              <td><strong>Gap:</strong> Spring termination window &amp; planter readiness. <strong>Risk:</strong>
+                Delayed maize seeding in wet springs.</td>
             </tr>
           </tbody>
         </table>
-        <div class="advisory-bar" style="border-color:rgba(20,184,166,0.45);background:rgba(20,184,166,0.1);color:#e2e8f0;margin-top:0.55rem;">
-          <strong style="color:var(--primary);">Reproducible AI Verification (R² = 0.8740, MAE = 5.27 vs. Ridge R² = 0.8553):</strong>
-          Model Card: <a href="https://github.com/evecount/milkyways_NASA/blob/main/docs/model-card.md" target="_blank" style="color:var(--primary);">github.com/evecount/milkyways_NASA/blob/main/docs/model-card.md</a> &nbsp;|&nbsp;
-          Training Script: <a href="https://github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py" target="_blank" style="color:var(--accent);">github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py</a>
+        <div class="advisory-bar"
+          style="border-color:rgba(20,184,166,0.45);background:rgba(20,184,166,0.1);color:#e2e8f0;margin-top:0.55rem;">
+          <strong style="color:var(--primary);">Reproducible AI Verification (R² = 0.8740, MAE = 5.27 vs. Ridge R² =
+            0.8553):</strong>
+          Model Card: <a href="https://github.com/evecount/milkyways_NASA/blob/main/docs/model-card.md" target="_blank"
+            style="color:var(--primary);">github.com/evecount/milkyways_NASA/blob/main/docs/model-card.md</a>
+          &nbsp;|&nbsp;
+          Training Script: <a
+            href="https://github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py"
+            target="_blank"
+            style="color:var(--accent);">github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py</a>
         </div>
         <div class="advisory-bar">
-          <strong>Human-Judgment Reminder:</strong> MilkyWays is an advisory decision-support tool — it <strong>supports, never replaces, farmer judgment or local agricultural expertise</strong>. Validate rotation timing and soil fertility with local agronomists.
+          <strong>Human-Judgment Reminder:</strong> MilkyWays is an advisory decision-support tool — it
+          <strong>supports, never replaces, farmer judgment or local agricultural expertise</strong>. Validate rotation
+          timing and soil fertility with local agronomists.
         </div>
       </div>
       <div class="slide-foot">
-        <span>Driven by 6 farmer priority sliders: Soil, Water, Heat, Feed Quality, Grid Proximity &amp; Flood Buffer</span>
-        <span>Right-edge panels: <a href="../model-card.md" style="color:var(--primary);">Model Card</a> &middot; <a href="https://github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py" target="_blank" style="color:var(--primary);">Training Script (R² = 0.8740, MAE = 5.27)</a></span>
+        <span>Driven by 6 farmer priority sliders: Soil, Water, Heat, Feed Quality, Grid Proximity &amp; Flood
+          Buffer</span>
+        <span>Right-edge panels: <a href="../model-card.md" style="color:var(--primary);">Model Card</a> &middot; <a
+            href="https://github.com/evecount/milkyways_NASA/blob/main/03-submission/app/engine/train_weather_predictor.py"
+            target="_blank" style="color:var(--primary);">Training Script (R² = 0.8740, MAE = 5.27)</a></span>
       </div>
     </section>
 
@@ -410,12 +601,18 @@
         <div class="split-shot">
           <div class="shot-card">
             <img src="./shots/06_export_report.png" alt="Exported Report Preview Modal" />
-            <div class="shot-cap">Live Export Report preview leading with Ranked Crop Rotations followed by the Municipal Feasibility Packet.</div>
+            <div class="shot-cap">Live Export Report preview leading with Ranked Crop Rotations followed by the
+              Municipal Feasibility Packet.</div>
           </div>
           <div>
             <ul>
-              <li><strong>Challenge 7 Front &amp; Center:</strong> Directly below the city-framed Leaflet corridor map, Section 1 presents <strong>Ranked Fodder Crop Rotations &amp; Soil Adaptation</strong> and the full MCDA weights table.</li>
-              <li><strong>Municipal Feasibility Packet:</strong> Section 2+ delivers herd thermal demand, <code>1,500 ft</code> setback &amp; <code>12 km</code> pipe vs. Position Beacon classification, and a staged Eval → Pilot → Result plan—ready for Print / Save PDF.</li>
+              <li><strong>Challenge 7 Front &amp; Center:</strong> Directly below the city-framed Leaflet corridor map,
+                Section 1 presents <strong>Ranked Fodder Crop Rotations &amp; Soil Adaptation</strong> and the full MCDA
+                weights table.</li>
+              <li><strong>Municipal Feasibility Packet:</strong> Section 2+ delivers herd thermal demand,
+                <code>1,500 ft</code> setback &amp; <code>12 km</code> pipe vs. Position Beacon classification, and a
+                staged Eval → Pilot → Result plan—ready for Print / Save PDF.
+              </li>
             </ul>
           </div>
         </div>
@@ -434,12 +631,18 @@
         <div class="split-shot">
           <div class="shot-card">
             <img src="./shots/07_gaia_mission.png" alt="Gaia-Style Multi-Use Mission Slide in MilkyWays" />
-            <div class="shot-cap">Closing Moo-Pilot slide connecting Gaia-style closed-loop experiments with multi-use NASA decision support.</div>
+            <div class="shot-cap">Closing Moo-Pilot slide connecting Gaia-style closed-loop experiments with multi-use
+              NASA decision support.</div>
           </div>
           <div>
-            <p>Just as <strong>Gaia</strong> and closed-loop biosphere experiments show that soil, crops, water, and energy regulate one another in coupled feedback loops, a fodder rotation cannot be divorced from <strong>where the candidate parcel sits</strong>.</p>
+            <p>Just as <strong>Gaia</strong> and closed-loop biosphere experiments show that soil, crops, water, and
+              energy regulate one another in coupled feedback loops, a fodder rotation cannot be divorced from
+              <strong>where the candidate parcel sits</strong>.
+            </p>
             <ul>
-              <li><strong>One Engine, Multi-Use Appeal:</strong> Farmers get resilient N-fixing rotations; municipalities screen candidate parcels &amp; circular waste-heat co-location without obscuring the agronomy brief.</li>
+              <li><strong>One Engine, Multi-Use Appeal:</strong> Farmers get resilient N-fixing rotations;
+                municipalities screen candidate parcels &amp; circular waste-heat co-location without obscuring the
+                agronomy brief.</li>
             </ul>
             <div class="cta-row">
               <a class="cta-btn cta-primary" href="../app/">Open Live Earth Workspace</a>
@@ -469,4 +672,5 @@
     });
   </script>
 </body>
+
 </html>
